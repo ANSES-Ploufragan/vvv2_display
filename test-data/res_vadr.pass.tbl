@@ -1,0 +1,52 @@
+>Feature 1
+474	12326	gene
+			gene	1a
+474	12326	CDS
+			product	ORF1a
+			protein_id	1_2
+474	2492	mat_peptide
+			product	NSP1/2
+			protein_id	1_1
+474	>13356	gene
+			gene	1ab
+474	12296	CDS
+12296	>13356
+			product	ORF1ab polyprotein
+			exception	ribosomal slippage
+			protein_id	1_1
+2493	7265	mat_peptide
+			product	NSP3
+			product	putative papain-like protease
+			protein_id	1_1
+7266	8807	mat_peptide
+			product	NSP4
+			protein_id	1_1
+8808	9728	mat_peptide
+			product	NSP5
+			product	putative 3C-like proteinase
+			protein_id	1_1
+9729	10607	mat_peptide
+			product	NSP6
+			protein_id	1_1
+10608	10856	mat_peptide
+			product	NSP7
+			protein_id	1_1
+10857	11486	mat_peptide
+			product	NSP8
+			protein_id	1_1
+11487	11819	mat_peptide
+			product	NSP9
+			protein_id	1_1
+11820	12254	mat_peptide
+			product	NSP10
+			product	growth-factor domain-containing mature protein
+			protein_id	1_1
+12255	12296	mat_peptide
+12296	12319
+			product	NSP11
+			protein_id	1_1
+12255	12296	mat_peptide
+12296	>13356
+			product	NSP12
+			product	putative RNA-dependend RNA polymerase
+			protein_id	1_1
