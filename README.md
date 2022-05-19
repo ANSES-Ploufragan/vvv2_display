@@ -3,7 +3,7 @@
 # Description
 
 Tools to create:
-- a .png image file describing all variants (obtained from vardict-java variant caller) alongside a genome/assembly (to provide) with their proportion (ornidate), with CDS descriptions (obtained from vadr annotator).
+- a .png image file describing all variants (obtained from vardict-java variant caller) alongside a genome/assembly (to provide) with their proportion (ordinates), with CDS descriptions (obtained from vadr annotator).
 
 Python/R scripts and Galaxy wrapper to use them.
 
