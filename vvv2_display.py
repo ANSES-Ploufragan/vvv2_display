@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###
 # USE PYTHON3
-# vvv2 script: from vardict (variant calling) and vadr (annotator) results,
+# vvv2_display script: from vardict (variant calling) and vadr (annotator) results,
 # creates a picture of variants alongside the detected viral genome
 ###
 import argparse, os, sys, warnings
@@ -14,7 +14,7 @@ import inspect
 frame = inspect.currentframe()
 
 # debug
-b_test_vvv2                            = False # ok 2022 05 05 complet, partial tc
+b_test_vvv2_display                            = False # ok 2022 05 05 complet, partial tc
 b_test_convert_tbl2json                = False # ok 2022 04 26 complete tc,
 b_test_correct_multicontig_vardict_vcf = False # ok 2022 04 29 partial tc
 b_test_convert_vcffile_to_readable     = False # ok 2022 04 28 complete tc,
@@ -73,7 +73,7 @@ parser.add_argument("-n", "--vcf_f", dest='vardict_vcf_f',
 parser.add_argument("-r", "--png_var_f", dest='png_var_f',
                     help="out: png file with variant proportions and annotations",
                     metavar="FILE")
-parser.add_argument("-z", "--test_vvv2", dest='b_test_vvv2',
+parser.add_argument("-z", "--test_vvv2_display", dest='b_test_vvv2_display',
                     help="[Optional] run all tests",
                     action='store_true')
 parser.add_argument("-a", "--test_convert_tbl2json", dest='b_test_convert_tbl2json',
@@ -92,7 +92,7 @@ parser.add_argument("-v", "--verbose", dest='b_verbose',
                     help="[Optional] To have details on records when running",
                     action='store_true')
 # parser.set_defaults(b_test_all=False)
-# parser.set_defaults(b_test_vvv2=False)
+# parser.set_defaults(b_test_vvv2_display=False)
 # parser.set_defaults(b_test_convert_tbl2json=False)
 # parser.set_defaults(b_test_convert_vcffile_to_readable=False)
 # parser.set_defaults(b_test_visualize_snp_v4=False)
@@ -103,20 +103,20 @@ args = parser.parse_args()
 
 # -------------------------------------------
 # check arguments
-b_test_vvv2                            = args.b_test_vvv2
+b_test_vvv2_display                            = args.b_test_vvv2_display
 b_test_convert_tbl2json                = args.b_test_convert_tbl2json
 b_test_correct_multicontig_vardict_vcf = args.b_test_correct_multicontig_vardict_vcf
 b_test_convert_vcffile_to_readable     = args.b_test_convert_vcffile_to_readable
 b_test_visualize_snp_v4                = args.b_test_visualize_snp_v4
     
-if b_test_vvv2:
+if b_test_vvv2_display:
     b_test_convert_tbl2json                = True
     b_test_correct_multicontig_vardict_vcf = True
     b_test_convert_vcffile_to_readable     = True
     b_test_visualize_snp_v4                = True
     b_test                                 = True
 else:
-    b_test = (b_test_vvv2                            or
+    b_test = (b_test_vvv2_display                            or
               b_test_convert_tbl2json                or
               b_test_correct_multicontig_vardict_vcf or
               b_test_convert_vcffile_to_readable     or
@@ -166,10 +166,10 @@ if args.b_verbose is not None:
 
 
 # ------------------------------------------------------------------
-# TEST for vvv2
+# TEST for vvv2_display
 # ------------------------------------------------------------------
-test_dir = 'test_vvv2'
-if b_test_vvv2:
+test_dir = 'test_vvv2_display'
+if b_test_vvv2_display:
     # --------------------------------------------------------------
     # COMPLETE GENOME
     # in files
@@ -181,7 +181,7 @@ if b_test_vvv2:
     json_annot_f  = f"{test_dir}/res2.vadr.json"     # from convert_tbl2json.py
     # final out file
     png_var_f     = f"{test_dir}/res2.vvv2.png"     # from ...
-    cmd = ' '.join([f"python3 ./vvv2.py",
+    cmd = ' '.join([f"python3 ./vvv2_display.py",
                 f"--pass_tbl_f {pass_annot_f}",
                 f"--fail_tbl_f {fail_annot_f}",
                 f"--seq_stat_f {seq_stat_f}",
@@ -205,7 +205,7 @@ if b_test_vvv2:
     json_annot_f  = f"{test_dir}/res.vadr.json"     # from convert_tbl2json.py
     # final out file
     png_var_f    = f"{test_dir}/res.vvv2.png"     # from ...
-    cmd = ' '.join([f"python3 ./vvv2.py",
+    cmd = ' '.join([f"python3 ./vvv2_display.py",
                 f"--pass_tbl_f {pass_annot_f}",
                 f"--fail_tbl_f {fail_annot_f}",
                 f"--seq_stat_f {seq_stat_f}",
