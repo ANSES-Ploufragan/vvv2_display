@@ -14,7 +14,7 @@ import inspect
 frame = inspect.currentframe()
 
 # debug
-b_test_vvv2_display                            = False # ok 2022 05 05 complet, partial tc
+b_test_vvv2_display                    = False # ok 2022 05 05 complet, partial tc
 b_test_convert_tbl2json                = False # ok 2022 04 26 complete tc,
 b_test_correct_multicontig_vardict_vcf = False # ok 2022 04 29 partial tc
 b_test_convert_vcffile_to_readable     = False # ok 2022 04 28 complete tc,
@@ -173,14 +173,14 @@ if b_test_vvv2_display:
     # --------------------------------------------------------------
     # COMPLETE GENOME
     # in files
-    pass_annot_f  = f"{test_dir}/res2.vadr.pass.tbl" # from vadr results
-    fail_annot_f  = f"{test_dir}/res2.vadr.fail.tbl" # from vadr results
-    seq_stat_f    = f"{test_dir}/res2.vadr.seqstat"  # from vadr results
-    vardict_vcf_f = f"{test_dir}/res2.vardict.vcf"  # from lofreq results    
+    pass_annot_f  = f"{test_dir}/res2_vadr.pass.tbl" # from vadr results
+    fail_annot_f  = f"{test_dir}/res2_vadr.fail.tbl" # from vadr results
+    seq_stat_f    = f"{test_dir}/res2_vadr.seqstat"  # from vadr results
+    vardict_vcf_f = f"{test_dir}/res2_vardict.vcf"  # from lofreq results    
     # tmp out files
-    json_annot_f  = f"{test_dir}/res2.vadr.json"     # from convert_tbl2json.py
+    json_annot_f  = f"{test_dir}/res2_vadr.json"     # from convert_tbl2json.py
     # final out file
-    png_var_f     = f"{test_dir}/res2.vvv2.png"     # from ...
+    png_var_f     = f"{test_dir}/res2_vvv2.png"     # from ...
     cmd = ' '.join([f"python3 ./vvv2_display.py",
                 f"--pass_tbl_f {pass_annot_f}",
                 f"--fail_tbl_f {fail_annot_f}",
@@ -197,14 +197,14 @@ if b_test_vvv2_display:
     # --------------------------------------------------------------
     # CONTIGS
     # in files
-    pass_annot_f  = f"{test_dir}/res.vadr.pass.tbl" # from vadr results
-    fail_annot_f  = f"{test_dir}/res.vadr.fail.tbl" # from vadr results
-    seq_stat_f    = f"{test_dir}/res.vadr.seqstat"  # from vadr results
-    vardict_vcf_f = f"{test_dir}/res.vardict.vcf"  # from lofreq results    
+    pass_annot_f  = f"{test_dir}/res_vadr.pass.tbl" # from vadr results
+    fail_annot_f  = f"{test_dir}/res_vadr.fail.tbl" # from vadr results
+    seq_stat_f    = f"{test_dir}/res_vadr.seqstat"  # from vadr results
+    vardict_vcf_f = f"{test_dir}/res_vardict.vcf"  # from lofreq results    
     # tmp out files
-    json_annot_f  = f"{test_dir}/res.vadr.json"     # from convert_tbl2json.py
+    json_annot_f  = f"{test_dir}/res_vadr.json"     # from convert_tbl2json.py
     # final out file
-    png_var_f    = f"{test_dir}/res.vvv2.png"     # from ...
+    png_var_f    = f"{test_dir}/res_vvv2.png"     # from ...
     cmd = ' '.join([f"python3 ./vvv2_display.py",
                 f"--pass_tbl_f {pass_annot_f}",
                 f"--fail_tbl_f {fail_annot_f}",
@@ -227,19 +227,19 @@ if b_test_vvv2_display:
 # ------------------------------------------------------------------
 if b_test_convert_tbl2json:
     # # COMPLETE GENOME
-    # pass_annot_f = f"{test_dir}/res2.vadr.pass.tbl" # from vadr results
-    # fail_annot_f = f"{test_dir}/res2.vadr.fail.tbl" # from vadr results
-    # seq_stat_f   = f"{test_dir}/res2.vadr.seqstat"  # from vadr results
-    # json_annot_f = f"{test_dir}/res2.vadr.json"
-    ## bed_annot_f  = f"{test_dir}/res2.vadr.bed"
-    # bed_vardict_annot_f  = f"{test_dir}/res2.vadr.4vardict.bed"        
+    # pass_annot_f = f"{test_dir}/res2_vadr.pass.tbl" # from vadr results
+    # fail_annot_f = f"{test_dir}/res2_vadr.fail.tbl" # from vadr results
+    # seq_stat_f   = f"{test_dir}/res2_vadr.seqstat"  # from vadr results
+    # json_annot_f = f"{test_dir}/res2_vadr.json"
+    ## bed_annot_f  = f"{test_dir}/res2_vadr.bed"
+    # bed_vardict_annot_f  = f"{test_dir}/res2_vadr.4vardict.bed"        
     # CONTIGS
-    pass_annot_f         = f"{test_dir}/res.vadr.pass.tbl" # from vadr results
-    fail_annot_f         = f"{test_dir}/res.vadr.fail.tbl" # from vadr results
-    seq_stat_f           = f"{test_dir}/res.vadr.seqstat"  # from vadr results
-    json_annot_f         = f"{test_dir}/res.vadr.json"
-    # bed_annot_f          = f"{test_dir}/res.vadr.bed"
-    bed_vardict_annot_f  = f"{test_dir}/res.vadr.4vardict.bed"        
+    pass_annot_f         = f"{test_dir}/res_vadr.pass.tbl" # from vadr results
+    fail_annot_f         = f"{test_dir}/res_vadr.fail.tbl" # from vadr results
+    seq_stat_f           = f"{test_dir}/res_vadr.seqstat"  # from vadr results
+    json_annot_f         = f"{test_dir}/res_vadr.json"
+    # bed_annot_f          = f"{test_dir}/res_vadr.bed"
+    bed_vardict_annot_f  = f"{test_dir}/res_vadr.4vardict.bed"        
 
 if( (json_annot_f == '') or
    (not os.path.exists(json_annot_f)) ):
@@ -275,9 +275,9 @@ else:
 # in the final created picture
 # ------------------------------------------------------------------
 if b_test_correct_multicontig_vardict_vcf:
-    seq_stat_f           = f"{test_dir}/res.vadr.seqstat"  # from vadr results    
-    vardict_vcf_f        = f"{test_dir}/res.vardict.vcf"  # from vardict results            
-    correct_vcf_f        = f"{test_dir}/res.correct.vcf"  # corrected out results
+    seq_stat_f           = f"{test_dir}/res_vadr.seqstat"  # from vadr results    
+    vardict_vcf_f        = f"{test_dir}/res_vardict.vcf"  # from vardict results            
+    correct_vcf_f        = f"{test_dir}/res_correct.vcf"  # corrected out results
 
 
 if( (correct_vcf_f == '') or
@@ -308,15 +308,15 @@ else:
 # ------------------------------------------------------------------
 if b_test_convert_vcffile_to_readable:
     # # COMPLETE GENOME
-    # vardict_vcf_f = f"{test_dir}/res2.vardict.vcf"  # from vardict results
-    # correct_vcf_f = f"{test_dir}/res2.correct.vcf"  # corrected vardict results                
-    # json_annot_f  = f"{test_dir}/res2.vadr.json"
-    # snp_loc_f     =  f"{test_dir}/res2.snp.txt"
+    # vardict_vcf_f = f"{test_dir}/res2_vardict.vcf"  # from vardict results
+    # correct_vcf_f = f"{test_dir}/res2_correct.vcf"  # corrected vardict results                
+    # json_annot_f  = f"{test_dir}/res2_vadr.json"
+    # snp_loc_f     =  f"{test_dir}/res2_snp.txt"
     # CONTIGS
-    # vardict_vcf_f = f"{test_dir}/res.vardict.vcf"  # from vardict results
-    correct_vcf_f = f"{test_dir}/res.correct.vcf"                  
-    json_annot_f  = f"{test_dir}/res.vadr.json"
-    snp_loc_f     =  f"{test_dir}/res.snp.txt"
+    # vardict_vcf_f = f"{test_dir}/res_vardict.vcf"  # from vardict results
+    correct_vcf_f = f"{test_dir}/res_correct.vcf"                  
+    json_annot_f  = f"{test_dir}/res_vadr.json"
+    snp_loc_f     =  f"{test_dir}/res_snp.txt"
 
 if( (snp_loc_f == '') or
    (not os.path.exists(snp_loc_f)) ):
@@ -352,11 +352,11 @@ else:
 # ------------------------------------------------------------------
 if b_test_visualize_snp_v4:
     # # COMPLETE GENOME
-    # snp_loc_f =  f"{test_dir}/res2.snp.txt"
-    # png_var_f =  f"{test_dir}/res2.snp.png"
+    # snp_loc_f =  f"{test_dir}/res2_snp.txt"
+    # png_var_f =  f"{test_dir}/res2_snp.png"
     # CONTIGS
-    snp_loc_f =  f"{test_dir}/res.snp.txt"
-    png_var_f =  f"{test_dir}/res.snp.png"
+    snp_loc_f =  f"{test_dir}/res_snp.txt"
+    png_var_f =  f"{test_dir}/res_snp.png"
 
 if( (png_var_f == '') or
    (not os.path.exists(png_var_f)) ):

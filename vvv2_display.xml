@@ -4,7 +4,7 @@
         <requirement type="package" version="1.8.3">vardict-java</requirement>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-       $__tool_directory__/vvv2_display.py -p test_vvv2_display/res.vadr.pass.tbl -f test_vvv2_display/res.vard.fail.tbl -s test_vvv2_display/res.vadr.seq_stat -n '$input4' -r '$output1'
+       $__tool_directory__/vvv2_display.py -p test_vvv2_display/res_vadr.pass.tbl -f test_vvv2_display/res_vard.fail.tbl -s test_vvv2_display/res_vadr.seq_stat -n '$input4' -r '$output1'
     ]]></command>
     <inputs>
         <param type="data" name="input1" format="tbl" />
@@ -14,16 +14,16 @@
     </inputs>
     <outputs>
         <data name="output1" format="snp.png" />
-        <data name="output2" format="snp.txt" from_work_dir="test_vvv2_display/res.snp.txt" />
+        <data name="output2" format="snp.txt" from_work_dir="test_vvv2_display/res_snp.txt" />
     </outputs>
     <tests>
         <test>
-            <param name="input1" value="test_vvv2_display/res.vadr.pass.tbl"/>
-            <param name="input2" value="test_vvv2_display/res.vadr.fail.tbl"/>
-            <param name="input3" value="test_vvv2_display/res.vadr.seqstat"/>
-            <param name="input4" value="test_vvv2_display/res.vardict.vcf"/>
-            <output name="output1" file="test_vvv2_display/res.snp.png"/>
-            <output name="output2" file="test_vvv2_display/res.snp.txt"/>
+            <param name="input1" value="test_vvv2_display/res_vadr.pass.tbl"/>
+            <param name="input2" value="test_vvv2_display/res_vadr.fail.tbl"/>
+            <param name="input3" value="test_vvv2_display/res_vadr.seqstat"/>
+            <param name="input4" value="test_vvv2_display/res_vardict.vcf"/>
+            <output name="output1" file="test_vvv2_display/res_snp.png"/>
+            <output name="output2" file="test_vvv2_display/res_snp.txt"/>
         </test>
     </tests>
     <help><![CDATA[
