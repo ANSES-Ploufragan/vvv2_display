@@ -1,0 +1,67 @@
+<tool id="vvv2" name="Display SNP proportions and CDS of an assembly in png image" version="0.1.0" python_template_version="3.5">
+    <requirements>
+        <requirement type="package" version="1.4.1">vadr</requirement>
+        <requirement type="package" version="1.8.3">vardict-java</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+       $__tool_directory__/vvv2.py -p test_vv2/res.vadr.pass.tbl -f test_vvv2/res.vard.fail.tbl -s test_vvv2/res.vadr.seq_stat -n '$input4' -r '$output1'
+    ]]></command>
+    <inputs>
+        <param type="data" name="input1" format="tbl" />
+        <param type="data" name="input2" format="tbl" />
+        <param type="data" name="input3" format="seqstat" />
+        <param type="data" name="input4" format="vcf" />
+    </inputs>
+    <outputs>
+        <data name="output1" format="snp.png" />
+        <data name="output2" format="snp.txt" from_work_dir="test_vvv2/res.snp.txt" />
+    </outputs>
+    <tests>
+        <test>
+            <param name="input1" value="test_vvv2/res.vadr.pass.tbl"/>
+            <param name="input2" value="test_vvv2/res.vadr.fail.tbl"/>
+            <param name="input3" value="test_vvv2/res.vadr.seqstat"/>
+            <param name="input4" value="test_vvv2/res.vardict.vcf"/>
+            <output name="output1" file="test_vvv2/res.snp.png"/>
+            <output name="output2" file="test_vvv2/res.snp.txt"/>
+        </test>
+    </tests>
+    <help><![CDATA[
+[vvv2.py]
+Aim: Display of SNP proportions, annotations, for an assembly
+in:
+ - vardict variant calling output
+ - vadr assembly annotations
+out:
+ - png file (image of SNP proportion alongside the assembly with CDS positions)
+ - txt file with variant calling summary, location in CDS and surround DNA sequence.
+
+usage: vvv2.py [-h] [-p FILE] [-f FILE] [-s FILE] [-n FILE] [-r FILE]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -p FILE, --pass_tbl_f FILE
+                        in: tabular file of vadr annotations, with pass status
+  -f FILE, --fail_tbl_f FILE
+                        in: tabular file of vadr annotations, with fail status
+  -s FILE, --seq_stat_f FILE
+                        in: seq stat file of vadr annotator
+  -n FILE, --vcf_f FILE
+                        in: vcf variant file provided by vardict
+  -r FILE, --png_var_f FILE
+                        out: png file with variant proportions and annotations
+    ]]></help>
+    <citations>
+        <citation type="bibtex">
+@misc{githubvvv2,
+  author = {Touzain, Fabrice},
+  year = {2022},
+  title = {vvv2},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  url = {https://github.com/ANSES-Ploufragan/vvv2},
+	}</citation>
+	    <citations>
+      <citation type="doi">10.1016/j.virusres.2020.198201</citation>
+    </citations>
+</tool>
