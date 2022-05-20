@@ -1,29 +1,29 @@
-<tool id="vvv2_display" name="Display SNP proportions and CDS of an assembly in png image" version="v0.1.0-alpha" python_template_version="3.5">
+<tool id="vvv2_display" name="vvv2_display: Display SNP proportions and CDS of an assembly in png image" version="v0.1.0-alpha" python_template_version="3.5">
     <requirements>
         <requirement type="package" version="1.4.1">vadr</requirement>
         <requirement type="package" version="1.8.3">vardict-java</requirement>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-       $__tool_directory__/vvv2_display.py -p test_vvv2_display/res_vadr.pass.tbl -f test_vvv2_display/res_vard.fail.tbl -s test_vvv2_display/res_vadr.seq_stat -n '$input4' -r '$output1'
+       $__tool_directory__/vvv2_display.py -p test_vvv2_display/res_vadr_pass.tbl -f test_vvv2_display/res_vard_fail.tbl -s test_vvv2_display/res_vadr.seq_stat -n '$input4' -r '$output1'
     ]]></command>
     <inputs>
-        <param type="data" name="input1" format="tbl" />
-        <param type="data" name="input2" format="tbl" />
-        <param type="data" name="input3" format="seqstat" />
-        <param type="data" name="input4" format="vcf" />
+        <param type="data" name="vadr_fail_annotation" format="tabular" />
+        <param type="data" name="vadr_pass_annotation" format="tabular" />
+        <param type="data" name="seqstat" format="txt" />
+        <param type="data" name="vardict_vcf" format="vcf" />
     </inputs>
     <outputs>
-        <data name="output1" format="snp.png" />
-        <data name="output2" format="snp.txt" from_work_dir="test_vvv2_display/res_snp.txt" />
+        <data name="snp_img" format="png" />
+        <data name="snp_descr" format="txt" from_work_dir="test_vvv2_display/res.snp.txt" />
     </outputs>
     <tests>
         <test>
-            <param name="input1" value="test_vvv2_display/res_vadr.pass.tbl"/>
-            <param name="input2" value="test_vvv2_display/res_vadr.fail.tbl"/>
-            <param name="input3" value="test_vvv2_display/res_vadr.seqstat"/>
-            <param name="input4" value="test_vvv2_display/res_vardict.vcf"/>
-            <output name="output1" file="test_vvv2_display/res_snp.png"/>
-            <output name="output2" file="test_vvv2_display/res_snp.txt"/>
+            <param name="vadr_pass annotation" value="test_vvv2_display/res_vadr_pass.tbl"/>
+            <param name="vadr_fail annotation" value="test_vvv2_display/res_vadr_fail.tbl"/>
+            <param name="vadr_seqstat" value="test_vvv2_display/res_vadr.seqstat"/>
+            <param name="vardict_vcf" value="test_vvv2_display/res_vardict.vcf"/>
+            <output name="snp_img" file="test_vvv2_display/res_snp.png"/>
+            <output name="snp_descr" file="test_vvv2_display/res_snp.txt"/>
         </test>
     </tests>
     <help><![CDATA[
