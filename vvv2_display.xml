@@ -1,10 +1,13 @@
 <tool id="vvv2_display" name="vvv2_display: Display SNP proportions and CDS of an assembly in png image" version="v0.1.0-alpha" python_template_version="3.5">
-    <requirements>
+    <requirements><!--
+        only for tools used before, not for vv2_display itself
         <requirement type="package" version="1.4.1">vadr</requirement>
-        <requirement type="package" version="1.8.3">vardict-java</requirement>
+        <requirement type="package" version="1.8.3">vardict-java</requirement> -->
+      <requirement type="package" version="3.5.0">r-base</requirement>
+      <requirement type="package" version="v0.1.0-alpha">vvv2_display</requirement>	      
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-       $__tool_directory__/vvv2_display.py -p test_vvv2_display/res_vadr_pass.tbl -f test_vvv2_display/res_vard_fail.tbl -s test_vvv2_display/res_vadr.seq_stat -n '$input4' -r '$output1'
+       python3 $__tool_directory__/vvv2_display.py -f '$vadr_fail_annotation' -p '$vadr_pass_annotation' -s '$seqstat' -n '$vardict_vcf' -r '$snp_img'
     ]]></command>
     <inputs>
         <param type="data" name="vadr_fail_annotation" format="tabular" />
@@ -17,9 +20,9 @@
         <data name="snp_descr" format="txt" from_work_dir="test_vvv2_display/res.snp.txt" />
     </outputs>
     <tests>
-        <test>
+      <test>
+            <param name="vadr_fail annotation" value="test_vvv2_display/res_vadr_fail.tbl"/>	
             <param name="vadr_pass annotation" value="test_vvv2_display/res_vadr_pass.tbl"/>
-            <param name="vadr_fail annotation" value="test_vvv2_display/res_vadr_fail.tbl"/>
             <param name="vadr_seqstat" value="test_vvv2_display/res_vadr.seqstat"/>
             <param name="vardict_vcf" value="test_vvv2_display/res_vardict.vcf"/>
             <output name="snp_img" file="test_vvv2_display/res_snp.png"/>
