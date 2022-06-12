@@ -173,8 +173,8 @@ if b_test_vvv2_display:
     # --------------------------------------------------------------
     # COMPLETE GENOME
     # in files
-    pass_annot_f  = f"{test_dir}/res2_vadr.pass.tbl" # from vadr results
-    fail_annot_f  = f"{test_dir}/res2_vadr.fail.tbl" # from vadr results
+    pass_annot_f  = f"{test_dir}/res2_vadr_pass.tbl" # from vadr results
+    fail_annot_f  = f"{test_dir}/res2_vadr_fail.tbl" # from vadr results
     seq_stat_f    = f"{test_dir}/res2_vadr.seqstat"  # from vadr results
     vardict_vcf_f = f"{test_dir}/res2_vardict.vcf"  # from lofreq results    
     # tmp out files
@@ -197,8 +197,8 @@ if b_test_vvv2_display:
     # --------------------------------------------------------------
     # CONTIGS
     # in files
-    pass_annot_f  = f"{test_dir}/res_vadr.pass.tbl" # from vadr results
-    fail_annot_f  = f"{test_dir}/res_vadr.fail.tbl" # from vadr results
+    pass_annot_f  = f"{test_dir}/res_vadr_pass.tbl" # from vadr results
+    fail_annot_f  = f"{test_dir}/res_vadr_fail.tbl" # from vadr results
     seq_stat_f    = f"{test_dir}/res_vadr.seqstat"  # from vadr results
     vardict_vcf_f = f"{test_dir}/res_vardict.vcf"  # from lofreq results    
     # tmp out files
@@ -227,15 +227,15 @@ if b_test_vvv2_display:
 # ------------------------------------------------------------------
 if b_test_convert_tbl2json:
     # # COMPLETE GENOME
-    # pass_annot_f = f"{test_dir}/res2_vadr.pass.tbl" # from vadr results
-    # fail_annot_f = f"{test_dir}/res2_vadr.fail.tbl" # from vadr results
+    # pass_annot_f = f"{test_dir}/res2_vadr_pass.tbl" # from vadr results
+    # fail_annot_f = f"{test_dir}/res2_vadr_fail.tbl" # from vadr results
     # seq_stat_f   = f"{test_dir}/res2_vadr.seqstat"  # from vadr results
     # json_annot_f = f"{test_dir}/res2_vadr.json"
     ## bed_annot_f  = f"{test_dir}/res2_vadr.bed"
     # bed_vardict_annot_f  = f"{test_dir}/res2_vadr.4vardict.bed"        
     # CONTIGS
-    pass_annot_f         = f"{test_dir}/res_vadr.pass.tbl" # from vadr results
-    fail_annot_f         = f"{test_dir}/res_vadr.fail.tbl" # from vadr results
+    pass_annot_f         = f"{test_dir}/res_vadr_pass.tbl" # from vadr results
+    fail_annot_f         = f"{test_dir}/res_vadr_fail.tbl" # from vadr results
     seq_stat_f           = f"{test_dir}/res_vadr.seqstat"  # from vadr results
     json_annot_f         = f"{test_dir}/res_vadr.json"
     # bed_annot_f          = f"{test_dir}/res_vadr.bed"
