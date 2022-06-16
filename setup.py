@@ -1,3 +1,6 @@
+import sys
+import setuptools
+
 """A setuptools based setup module.
 
 See:
@@ -14,10 +17,13 @@ here = pathlib.Path(__file__).parent.resolve()
 # Get the long description from the README file
 long_description = (here / "README.md").read_text(encoding="utf-8")
 
+if ((sys.version_info < (3, 9)) and (sys.version_info >= (3, 10)):
+    sys.exit('Python>=3.9 is required by vvv2_display.')
+
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
 
-setup(
+setuptools.setup(
     # This is the name of your project. The first time you publish this
     # package, this name will be registered for you. It will determine how
     # users can install this project, e.g.:
