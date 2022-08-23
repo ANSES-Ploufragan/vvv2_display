@@ -17,7 +17,7 @@ here = pathlib.Path(__file__).parent.resolve()
 # Get the long description from the README file
 long_description = (here / "README.md").read_text(encoding="utf-8")
 
-if ((sys.version_info < (3, 9)) and (sys.version_info >= (3, 10)):
+if (((sys.version_info < (3, 9)) and (sys.version_info >= (3, 10))):
     sys.exit('Python>=3.9 is required by vvv2_display.')
 
 # Arguments marked as "Required" below must be included for upload to PyPI.
