@@ -17,7 +17,7 @@ here = pathlib.Path(__file__).parent.resolve()
 # Get the long description from the README file
 long_description = (here / "README.md").read_text(encoding="utf-8")
 
-if ((sys.version_info < (3, 9)) and (sys.version_info >= (3, 10))):
+if (((sys.version_info < (3, 9)) and (sys.version_info >= (3, 10))):
     sys.exit('Python>=3.9 is required by vvv2_display.')
 
 # Arguments marked as "Required" below must be included for upload to PyPI.
@@ -55,7 +55,7 @@ setuptools.setup(
     #
     # This field corresponds to the "Description" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#description-optional
-    long_description="Viral Variant Visualizer 2 display: creates png and txt files 
+    long_description="Viral Variant Visualizer 2 display: creates png and txt files describing variants in a viral genome" 
     # Denotes that our long_description is in Markdown; valid values are
     # text/plain, text/x-rst, and text/markdown
     #
