@@ -55,7 +55,7 @@ setuptools.setup(
     #
     # This field corresponds to the "Description" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#description-optional
-    long_description="Viral Variant Visualizer 2 display: creates png and txt files describing variants in a viral genome" 
+    long_description="Viral Variant Visualizer 2 display: creates png and txt files describing variants in a viral genome",
     # Denotes that our long_description is in Markdown; valid values are
     # text/plain, text/x-rst, and text/markdown
     #
