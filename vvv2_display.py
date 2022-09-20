@@ -327,7 +327,8 @@ if( (snp_loc_f == '') or
 # json annotation file deduced from vadr, later vigor4(5?)
 # json_annot_f = f"{ech}_gene_position_viral_consensus.json" 
 # snp_loc_f = f"{ech}_snp_location"
-p_script = f"{PYTHON_SCRIPTS}convert_vcffile_to_readablefile.py"
+# p_script = f"{PYTHON_SCRIPTS}convert_vcffile_to_readablefile.py" # use pyvcf
+p_script = f"{PYTHON_SCRIPTS}convert_vcffile_to_readablefile2.py" # use pysam
 threshold = "0.07"
 cmd = ' '.join([f"python3 {p_script}",
                 f"--vcfs {correct_vcf_f}",
