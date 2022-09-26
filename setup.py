@@ -1,4 +1,4 @@
-import sys
+import os, sys
 import setuptools
 
 """A setuptools based setup module.
@@ -11,12 +11,16 @@ https://github.com/pypa/sampleproject
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
 import pathlib
+from codecs import open
 
-here = pathlib.Path(__file__).parent.resolve()
+# here = os.path.abspath(os.path.dirname("/.local/share/r-miniconda/envs/vvv2_display_bioconda/conda-bld/vvv2_display_1663321551002/work/README.md"))
+# here = os.path.abspath(os.path.dirname(__file__))
+here = os.getenv('SRC_DIR')
 
 # Get the long description from the README file
-long_description = (here / "README.md").read_text(encoding="utf-8")
-
+with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
+    
 if ((sys.version_info < (3, 9)) and (sys.version_info >= (3, 10))):
     sys.exit('Python>=3.9 is required by vvv2_display.')
 
@@ -107,7 +111,7 @@ setuptools.setup(
     keywords="display, variant, virus, viral",  # Optional
     # When your source code is in a subdirectory under the project root, e.g.
     # `src/`, it is necessary to specify the `package_dir` argument.
-    package_dir={"": "src"},  # Optional
+    # package_dir={"": "src"},  # Optional
     # You can just specify package directories manually here if your project is
     # simple. Or you can use find_packages().
     #
@@ -117,19 +121,19 @@ setuptools.setup(
     #
     #   py_modules=["my_module"],
     #
-    packages=find_packages(where="src"),  # Required
+    packages=find_packages(where='src'),  # Required
     # Specify which Python versions you support. In contrast to the
     # 'Programming Language' classifiers above, 'pip install' will check this
     # and refuse to install the project if the version does not match. See
     # https://packaging.python.org/guides/distributing-packages-using-setuptools/#python-requires
-    python_requires=">=3.9, <3.10",
+    python_requires='>=3.9,<3.10',
     # This field lists other packages that your project depends on to run.
     # Any package you put here will be installed by pip when your project is
     # installed, so they must be valid existing projects.
     #
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/discussions/install-requires-vs-requirements/
-    install_requires=["r-ggplot2","pyvcf","numpy"],  # Optional
+    install_requires=["r-ggplot2==3.6.6","pysam==0.19.1","numpy==1.23.1"],  # Optional
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
     # syntax, for example:
