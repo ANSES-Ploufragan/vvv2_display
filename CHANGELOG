@@ -1,0 +1,8 @@
+0.1.1-alpha:
+	- pyvcf replaced by pysam to improve compatibility / long term maintening
+	- consequence: PYTHON_SCRIPTS/convert_vcffile_to_readablefile.py replaced by PYTHON_SCRIPTS/convert_vcffile_to_readablefile2.py
+	- vvv2.py renamed vvv2_display.py (because this program replace only the visualization part of vvv)
+
+
+0.1.0-alpha: first version
+
