@@ -23,7 +23,9 @@ def __main__():
     b_test_convert_vcffile_to_readable     = False # ok 2022 04 28 complete tc,
     b_test_visualize_snp_v4                = False # ok 2022 04 28 complete tc,
     b_test = False
-
+    dir_path = os.path.dirname(os.path.abspath(__file__)) # dir of current script
+    # allow to run tests from everywhere
+    
     prog_tag = '[' + os.path.basename(__file__) + ']'
 
     # --------------------------------------
@@ -56,8 +58,8 @@ def __main__():
     #########################################
     # directories fo sub programs
     #########################################
-    PYTHON_SCRIPTS = './PYTHON_SCRIPTS/'
-    R_SCRIPTS      = './R_SCRIPTS/'
+    PYTHON_SCRIPTS = f"{dir_path}/PYTHON_SCRIPTS/"
+    R_SCRIPTS      = f"{dir_path}/R_SCRIPTS/"
     #########################################
 
     parser = argparse.ArgumentParser()
@@ -106,7 +108,7 @@ def __main__():
 
     # -------------------------------------------
     # check arguments
-    b_test_vvv2_display                            = args.b_test_vvv2_display
+    b_test_vvv2_display                    = args.b_test_vvv2_display
     b_test_convert_tbl2json                = args.b_test_convert_tbl2json
     b_test_correct_multicontig_vardict_vcf = args.b_test_correct_multicontig_vardict_vcf
     b_test_convert_vcffile_to_readable     = args.b_test_convert_vcffile_to_readable
@@ -171,7 +173,7 @@ def __main__():
     # ------------------------------------------------------------------
     # TEST for vvv2_display
     # ------------------------------------------------------------------
-    test_dir = '../test_vvv2_display'
+    test_dir = f"{dir_path}/../test_vvv2_display"
     if b_test_vvv2_display:
         # --------------------------------------------------------------
         # COMPLETE GENOME
