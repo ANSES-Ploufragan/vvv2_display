@@ -185,7 +185,7 @@ def __main__():
         json_annot_f  = f"{test_dir}/res2_vadr.json"     # from convert_tbl2json.py
         # final out file
         png_var_f     = f"{test_dir}/res2_vvv2.png"     # from ...
-        cmd = ' '.join([f"python3 ${dir_path}/vvv2_display.py",
+        cmd = ' '.join([f"python3 {dir_path}/vvv2_display.py",
                     f"--pass_tbl_f {pass_annot_f}",
                     f"--fail_tbl_f {fail_annot_f}",
                     f"--seq_stat_f {seq_stat_f}",
@@ -209,7 +209,7 @@ def __main__():
         json_annot_f  = f"{test_dir}/res_vadr.json"     # from convert_tbl2json.py
         # final out file
         png_var_f    = f"{test_dir}/res_vvv2.png"     # from ...
-        cmd = ' '.join([f"python3 ${dir_path}/vvv2_display.py",
+        cmd = ' '.join([f"python3 {dir_path}/vvv2_display.py",
                     f"--pass_tbl_f {pass_annot_f}",
                     f"--fail_tbl_f {fail_annot_f}",
                     f"--seq_stat_f {seq_stat_f}",
