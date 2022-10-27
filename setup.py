@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os, sys
 import setuptools
 
@@ -14,22 +15,23 @@ import pathlib
 from codecs import open
 
 here = os.getenv('SRC_DIR')
+# src_dir = os.path.join(here, 'src/')
 
 # Get the long description from the README file
 with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
     
-if ((sys.version_info < (3, 9)) and (sys.version_info >= (3, 10))):
+if (sys.version_info < (3, 9)):
     sys.exit('Python>=3.9 is required by vvv2_display.')
 
 setuptools.setup(
     name="vvv2_display",  # Required
-    version="0.1.2",  # Required
+    version="0.1.5",  # Required
     description="Viral Variant Visualizer 2 display",  # Optional
     long_description=long_description,
-    long_description_content_type="text/plain",  # Optional (see note above)
+    long_description_content_type="text/markdown",  # Optional (see note above)
     url="https://github.com/ANSES-Ploufragan/vvv2_display",  # Optional
-    author="FTouzain",  # Optional
+    author="Fabrice Touzain",  # Optional
     author_email="fabrice.touzain@anses.fr",  # Optional
     # For a list of valid classifiers, see https://pypi.org/classifiers/
     classifiers=[  # Optional
@@ -37,7 +39,8 @@ setuptools.setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
+#        "Development Status :: 3 - Alpha",        
         # Indicate who your project is intended for
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Build Tools",
@@ -49,21 +52,52 @@ setuptools.setup(
         "Programming Language :: Python :: 3.9",
     ],
     keywords="display, variant, virus, viral",  # Optional
-    packages=setuptools.find_packages(),
-    # packages=find_packages(where='src'),  # Required
-    python_requires='>=3.9',
+    # packages=find_packages(
+    #     where='src',
+    #     include=["vvv2_display",
+    #              "PYTHON_SCRIPTS/*.py",
+    #              "R_SCRIPTS/*.R"]
+    # ),
+    packages=setuptools.find_packages(
+        where='src',
+         include=["vvv2_display",
+                  "convert_tbl2json.py",
+                  "convert_vcffile_to_readablefile2.py",
+                  "correct_multicontig_vardict_vcf.py",
+                  "visualize_coverage_depth.R",
+                  "visualize_snp_v4.R"
+         ]
+
+    ),
+    # package_dir = { 'vvv2_display' : 'src' },
+    python_requires=">=3.9",
     include_package_data=True,
-    install_requires=["r-ggplot2==3.6.6",
-                      "pysam==0.19.1",
-                      "numpy==1.23.1"],  # Optional
+    install_requires=[
+#        "pip>=22.2",
+#        "pip",
+        "python>=3.9",
+        "r-ggplot2==3.6.6",
+        "pysam==0.19.1",
+        "numpy==1.23.1"],  # Optional
+    # scripts=[
+    #     os.path.join(src_dir, "vvv2_display.py"),
+    #     os.path.join(src_dir, "PYTHON_SCRIPTS/convert_tbl2json.py"),
+    #     os.path.join(src_dir, "PYTHON_SCRIPTS/convert_vcffile_to_readablefile2.py"),
+    #     os.path.join(src_dir, "PYTHON_SCRIPTS/correct_multicontig_vardict_vcf.py"),
+    #     os.path.join(src_dir, "src/R_SCRIPTS/visualize_coverage_depth.R"),
+    #     os.path.join(src_dir, "src/R_SCRIPTS/visualize_snp_v4.R")
+    #     ],
     scripts=[
-        os.path.join(here, "vvv2_display.py"),
-        os.path.join(here, "PYTHON_SCRIPTS/convert_tbl2json.py"),
-        os.path.join(here, "PYTHON_SCRIPTS/convert_vcffile_to_readablefile2.py"),
-        os.path.join(here, "PYTHON_SCRIPTS/correct_multicontig_vardict_vcf.py")
+        "src/vvv2_display.py",
+        "src/convert_tbl2json.py",
+        "src/convert_vcffile_to_readablefile2.py",
+        "src/correct_multicontig_vardict_vcf.py",
+        "src/visualize_coverage_depth.R",
+        "src/visualize_snp_v4.R"
         ],
+    zip_safe=False,
     project_urls={  # Optional
         "Bug Reports": "https://github.com/ANSES-Ploufragan/vvv2_display/issues",
         "Source": "https://github.com/ANSES-Ploufragan/vvv2_display/",
-    },
+    }
 )
