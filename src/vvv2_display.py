@@ -186,7 +186,7 @@ def __main__():
         json_annot_f  = f"{test_dir}/res2_vadr.json"     # from convert_tbl2json.py
         # final out file
         png_var_f     = f"{test_dir}/res2_vvv2.png"     # from ...
-        cmd = ' '.join([f"python3 {dir_path}/vvv2_display.py",
+        cmd = ' '.join([f"{dir_path}/vvv2_display.py",
                     f"--pass_tbl_f {pass_annot_f}",
                     f"--fail_tbl_f {fail_annot_f}",
                     f"--seq_stat_f {seq_stat_f}",
@@ -210,7 +210,7 @@ def __main__():
         json_annot_f  = f"{test_dir}/res_vadr.json"     # from convert_tbl2json.py
         # final out file
         png_var_f    = f"{test_dir}/res_vvv2.png"     # from ...
-        cmd = ' '.join([f"python3 {dir_path}/vvv2_display.py",
+        cmd = ' '.join([f"{dir_path}/vvv2_display.py",
                     f"--pass_tbl_f {pass_annot_f}",
                     f"--fail_tbl_f {fail_annot_f}",
                     f"--seq_stat_f {seq_stat_f}",
@@ -256,7 +256,7 @@ def __main__():
        bed_vardict_annot_f = bed_vardict_annot_f.replace('.vcf', '.vardict.bed')
 
     p_script = f"{PYTHON_SCRIPTS}convert_tbl2json.py"
-    cmd = ' '.join([f"python3 {p_script}",
+    cmd = ' '.join([f"{p_script}",
                     f"--pass_annot_f {pass_annot_f}",
                     f"--fail_annot_f {fail_annot_f}",
                     f"--seq_stat_f {seq_stat_f}",
@@ -292,7 +292,7 @@ def __main__():
 
     p_script = f"{PYTHON_SCRIPTS}correct_multicontig_vardict_vcf.py"
     print(f"p_script:{p_script}")
-    cmd = ' '.join([f"python3 {p_script}",
+    cmd = ' '.join([f"{p_script}",
                     f"--seq_stat_f {seq_stat_f}",
                     f"--vardict_vcf_f {vardict_vcf_f}",
                     f"--correct_vcf_f {correct_vcf_f}"
@@ -335,7 +335,7 @@ def __main__():
     # p_script = f"{PYTHON_SCRIPTS}convert_vcffile_to_readablefile.py" # use pyvcf
     p_script = f"{PYTHON_SCRIPTS}convert_vcffile_to_readablefile2.py" # use pysam
     threshold = "0.07"
-    cmd = ' '.join([f"python3 {p_script}",
+    cmd = ' '.join([f"{p_script}",
                     f"--vcfs {correct_vcf_f}",
                     f"--json {json_annot_f}",
                     f"--out {snp_loc_f}",
