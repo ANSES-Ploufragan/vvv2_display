@@ -26,7 +26,7 @@ if (sys.version_info < (3, 9)):
 
 setuptools.setup(
     name="vvv2_display",  # Required
-    version="0.1.5",  # Required
+    version="0.1.6",  # Required
     description="Viral Variant Visualizer 2 display",  # Optional
     long_description=long_description,
     long_description_content_type="text/markdown",  # Optional (see note above)
@@ -52,12 +52,6 @@ setuptools.setup(
         "Programming Language :: Python :: 3.9",
     ],
     keywords="display, variant, virus, viral",  # Optional
-    # packages=find_packages(
-    #     where='src',
-    #     include=["vvv2_display",
-    #              "PYTHON_SCRIPTS/*.py",
-    #              "R_SCRIPTS/*.R"]
-    # ),
     packages=setuptools.find_packages(
         where='src',
          include=["vvv2_display",
@@ -69,24 +63,13 @@ setuptools.setup(
          ]
 
     ),
-    # package_dir = { 'vvv2_display' : 'src' },
     python_requires=">=3.9",
     include_package_data=True,
     install_requires=[
-#        "pip>=22.2",
-#        "pip",
         "python>=3.9",
         "r-ggplot2==3.6.6",
         "pysam==0.19.1",
         "numpy==1.23.1"],  # Optional
-    # scripts=[
-    #     os.path.join(src_dir, "vvv2_display.py"),
-    #     os.path.join(src_dir, "PYTHON_SCRIPTS/convert_tbl2json.py"),
-    #     os.path.join(src_dir, "PYTHON_SCRIPTS/convert_vcffile_to_readablefile2.py"),
-    #     os.path.join(src_dir, "PYTHON_SCRIPTS/correct_multicontig_vardict_vcf.py"),
-    #     os.path.join(src_dir, "src/R_SCRIPTS/visualize_coverage_depth.R"),
-    #     os.path.join(src_dir, "src/R_SCRIPTS/visualize_snp_v4.R")
-    #     ],
     scripts=[
         "src/vvv2_display.py",
         "src/convert_tbl2json.py",
