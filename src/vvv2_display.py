@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/home/touzain/mambaforge/envs/test_vvv2_display_install-0.1.6/bin/python
 # -*- coding: utf-8 -*-
 ###
 # USE PYTHON3
@@ -246,12 +246,10 @@ def __main__():
         # bed_annot_f          = f"{test_dir}/res_vadr.bed"
         bed_vardict_annot_f  = f"{test_dir}/res_vadr.4vardict.bed"        
 
-    if( (json_annot_f == '') or
-       (not os.path.exists(json_annot_f)) ):
+    if(json_annot_f == ''):
        json_annot_f = vardict_vcf_f
        json_annot_f = json_annot_f.replace('.vcf', '.json')
-    if( (bed_vardict_annot_f == '') or
-       (not os.path.exists(bed_vardict_annot_f)) ):
+    if(bed_vardict_annot_f == ''):
        bed_vardict_annot_f = vardict_vcf_f
        bed_vardict_annot_f = bed_vardict_annot_f.replace('.vcf', '.vardict.bed')
 
@@ -285,8 +283,7 @@ def __main__():
         correct_vcf_f        = f"{test_dir}/res_correct.vcf"  # corrected out results
 
 
-    if( (correct_vcf_f == '') or
-       (not os.path.exists(correct_vcf_f)) ):
+    if(correct_vcf_f == ''):
        correct_vcf_f = vardict_vcf_f
        correct_vcf_f = correct_vcf_f.replace('vardict.vcf', 'correct.vcf')
 
@@ -323,8 +320,7 @@ def __main__():
         json_annot_f  = f"{test_dir}/res_vadr.json"
         snp_loc_f     =  f"{test_dir}/res_snp.txt"
 
-    if( (snp_loc_f == '') or
-       (not os.path.exists(snp_loc_f)) ):
+    if(snp_loc_f == ''):
        snp_loc_f = vardict_vcf_f
        snp_loc_f = snp_loc_f.replace('vardict.vcf', 'snp.txt')
 
@@ -364,8 +360,7 @@ def __main__():
         snp_loc_f =  f"{test_dir}/res_snp.txt"
         png_var_f =  f"{test_dir}/res_snp.png"
 
-    if( (png_var_f == '') or
-       (not os.path.exists(png_var_f)) ):
+    if(png_var_f == ''):
        png_var_f = snp_loc_f
        png_var_f = png_var_f.replace('.txt', '.png')
 
