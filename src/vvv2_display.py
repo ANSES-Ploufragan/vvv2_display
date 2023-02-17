@@ -249,11 +249,11 @@ def __main__():
     if(json_annot_f == ''):
        json_annot_f = vardict_vcf_f
 #       json_annot_f = json_annot_f.replace('.vcf', '.json')
-       json_annot_f = re.sub('.[^.]+$', '.json', json_annot_f)       
+       json_annot_f = re.sub('\.[^\.]+$', '.json', json_annot_f)       
     if(bed_vardict_annot_f == ''):
        bed_vardict_annot_f = vardict_vcf_f
 #       bed_vardict_annot_f = bed_vardict_annot_f.replace('.vcf', '.vardict.bed')
-       bed_vardict_annot_f = re.sub('.[^.]+$', '.vardict.bed', bed_vardict_annot_f)
+       bed_vardict_annot_f = re.sub('\.[^\.]+$', '_vardict.bed', bed_vardict_annot_f)
        
     p_script = f"{PYTHON_SCRIPTS}convert_tbl2json.py"
     cmd = ' '.join([f"{p_script}",
@@ -288,7 +288,7 @@ def __main__():
     if(correct_vcf_f == ''):
        correct_vcf_f = vardict_vcf_f
 #       correct_vcf_f = correct_vcf_f.replace('vardict.vcf', '_correct.vcf')
-       correct_vcf_f = re.sub('.[^.]+$', '_correct.vcf', correct_vcf_f)
+       correct_vcf_f = re.sub('\.[^\.]+$', '_correct.vcf', correct_vcf_f)
        
     p_script = f"{PYTHON_SCRIPTS}correct_multicontig_vardict_vcf.py"
     print(f"p_script:{p_script}")
@@ -326,7 +326,7 @@ def __main__():
     if(snp_loc_f == ''):
        snp_loc_f = vardict_vcf_f
        # snp_loc_f = snp_loc_f.replace('.vcf', '_snp.txt')
-       snp_loc_f = re.sub('.[^.]+$', '_snp.txt', snp_loc_f)
+       snp_loc_f = re.sub('\.[^\.]+$', '_snp.txt', snp_loc_f)
       
     # vcf file from vardict
     # json annotation file deduced from vadr, later vigor4(5?)
@@ -367,7 +367,7 @@ def __main__():
     if(png_var_f == ''):
        png_var_f = snp_loc_f
        # png_var_f = png_var_f.replace('.txt', '.png')
-       png_var_f = re.sub('.[^.]+$', '.png', png_var_f)
+       png_var_f = re.sub('\.[^\.]+$', '.png', png_var_f)
        
     # env r-env.yaml
     r_script = f"{R_SCRIPTS}visualize_snp_v4.R"
