@@ -1,4 +1,4 @@
-#! usr/bin/env/python3
+#!/home/touzain/mambaforge/envs/test_vvv2_display-0.1.7/bin/python
 # -*- coding:utf-8 -*-
 # FT - last modification: September 19th 2022 to replace pyvcf by pysam
 # AF - last modification: August 21st 2018
@@ -17,13 +17,13 @@
 ## Modules ##
 #############
 
-import re                                                                        
 # import vcf ## replaced by
 from pysam import VariantFile
 import numpy
 import json
 import argparse
 import sys
+import shutil
 
 ###############
 ## Functions ##
@@ -136,7 +136,15 @@ else:
     
     # recover the snp position inside the vcf file
 #    file_vcf = open(args.vcfs, "r")         # for pyvcf deprecated
-    file_vcf = VariantFile(args.vcfs)    
+
+    try:
+        file_vcf = VariantFile(args.vcfs)
+    except ValueError:
+        print("No variant found")
+        shutil.copy(args.vcfs, args.out)
+        print(f"{args.out} file created")
+        sys.exit()
+        
 #    for record in vcf.Reader(file_vcf):     # use pyvcf deprecated
 #        snp_positions[record.POS-1] = True  # use pyvcf deprecated
     for record in file_vcf.fetch():
