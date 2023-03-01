@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/home/touzain/mambaforge/envs/test_vvv2_display-0.1.7/bin/python
 # -*- coding: utf-8 -*-
 ###
 # USE PYTHON3
@@ -77,6 +77,18 @@ def __main__():
                         metavar="FILE")
     parser.add_argument("-r", "--png_var_f", dest='png_var_f',
                         help="out: png file with variant proportions and annotations",
+                        metavar="FILE")
+    parser.add_argument("-t", "--snp_loc_f", dest='snp_loc_f',
+                        help="[optional] out: variant description for relevant positions, txt file (if not provided, file name deduced from png name)",
+                        metavar="FILE")  
+    parser.add_argument("-j", "--json_f", dest='json_annot_f',
+                        help="[Optional] out (tmp out file for galaxy compatibility, no need in other cases): vadr annotation converted to json",
+                        metavar="FILE")
+    parser.add_argument("-k", "--bed_f", dest='bed_vardict_annot_f',
+                        help="[Optional] out (tmp out file for galaxy compatibility, no need in other cases): vardict variants adapted to annotation, in bed format",
+                        metavar="FILE")
+    parser.add_argument("-l", "--cvcf_f", dest='correct_vcf_f',
+                        help="[Optional] out (tmp out file for galaxy compatibility, no need in other cases): vardict variants corrected for positions when several contigs, in vcf format",
                         metavar="FILE")
     parser.add_argument("-z", "--test_vvv2_display", dest='b_test_vvv2_display',
                         help="[Optional] run all tests",
@@ -165,7 +177,18 @@ def __main__():
         png_var_f = os.path.abspath(args.png_var_f)
     elif(not b_test):
         sys.exit("[Error] You must provide png_var_f name for output")
-
+    if args.snp_loc_f is not None:
+        snp_loc_f = os.path.abspath(args.snp_loc_f)
+    # ----------------------------------------------------------------
+    # optional arguments only for Galaxy compatibility
+    if args.json_annot_f is not None:
+        json_annot_f = os.path.abspath(args.json_annot_f)
+    if args.bed_vardict_annot_f is not None:
+        bed_vardict_annot_f = os.path.abspath(args.bed_vardict_annot_f)
+    if args.correct_vcf_f is not None:
+        correct_vcf_f = os.path.abspath(args.correct_vcf_f)
+    # ----------------------------------------------------------------
+    
     if args.b_verbose is not None:
         b_verbose = args.b_verbose
 
