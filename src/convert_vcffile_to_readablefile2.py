@@ -1,4 +1,4 @@
-#!/home/touzain/mambaforge/envs/test_vvv2_display-0.1.7/bin/python
+#!/usr/bin/env python
 # -*- coding:utf-8 -*-
 # FT - last modification: September 19th 2022 to replace pyvcf by pysam
 # AF - last modification: August 21st 2018
