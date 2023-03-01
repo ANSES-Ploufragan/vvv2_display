@@ -45,6 +45,6 @@ p10 = p9 + geom_line(aes(x = position, y = 0.5), color = "red")
 p11 = p10 + theme(plot.title = element_text(hjust=0.5))
 
 
-ggsave(args[3], plot = last_plot(), width = 20, dpi = 600) # save the graph
+ggsave(args[3], device = "png", plot = last_plot(), width = 20, dpi = 600) # save the graph
 
 # ~ end of script ~

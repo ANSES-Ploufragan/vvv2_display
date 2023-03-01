@@ -17,4 +17,4 @@ p1 = p + labs(list(title = m, x = "Base Position", y = "Number of Reads")) # add
 #p3 = p2 + geom_line( aes( x = coverage$V2, y = med, color = 2 ) ) # to trace the median line on the plot
 
 
-ggsave(args[2], plot = last_plot(), width = 20, dpi = 600) # save the plot
+ggsave(args[2], device = "png", plot = last_plot(), width = 20, dpi = 600) # save the plot
