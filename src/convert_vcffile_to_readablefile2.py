@@ -24,6 +24,7 @@ import json
 import argparse
 import sys
 import shutil
+import re
 
 ###############
 ## Functions ##
