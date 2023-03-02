@@ -146,7 +146,7 @@ def __main__():
         # print(f"b_test_convert_tbl2json:{b_test_convert_tbl2json}")    
 
     if ((not b_test)and
-        ((len(sys.argv) < 9) or (len(sys.argv) > 19))):
+        ((len(sys.argv) < 9) or (len(sys.argv) > 21))):
         print("\n".join([prog_tag,
                          "Aim: Display of SNP proportions, annotations, for an assembly",
                          "in:", 
