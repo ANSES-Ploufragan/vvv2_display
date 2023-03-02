@@ -7,7 +7,7 @@
       <requirement type="package" version="0.1.8">vvv2_display</requirement>	      
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-       vvv2_display.py -f '$vadr_fail_annotation' -p '$vadr_pass_annotation' -s '$seqstat' -n '$vardict_vcf' -r '$snp_img' -t '$snp_loc' -j '$json_annot' -k '$bed_annot' -l '$correct_vcf'
+       vvv2_display.py -f '$vadr_fail_annotation' -p '$vadr_pass_annotation' -s '$seqstat' -n '$vardict_vcf' -r '$snp_img' -t '$snp_loc' -u '$snp_loc_summary' -j '$json_annot' -k '$bed_annot' -l '$correct_vcf'
     ]]></command>
     <inputs>
         <param type="data" name="vadr_fail_annotation" format="tabular" />
@@ -26,8 +26,9 @@
            <discover_datasets pattern="(?P&lt;designation&gt;.+)_correct\.vcf" format="vcf" directory="." visible="true" />
 	 </data> -->
         <data name="snp_img" format="png" />
+        <data name="snp_loc_summary" format="txt" />
+	<!-- intermediate output files added for Galaxy compatibility -->
         <data name="snp_loc" format="txt" />
-	<!-- intermediate output files added for Galaxy compatibility -->	
         <data name="json_annot" format="json" />
         <data name="bed_annot" format="bed" />
         <data name="correct_vcf" format="vcf" />
@@ -40,9 +41,10 @@
             <param name="vadr_seqstat" value="test_vvv2_display/res_vadr.seqstat"/>
             <param name="vardict_vcf" value="test_vvv2_display/res_vardict.vcf"/>
             <output name="snp_img" file="test_vvv2_display/res_snp.png"/>	    
+            <output name="snp_loc_summary" file="test_vvv2_display/res_snp_summary.txt"/>
+	          <!-- intermediate output files -->
             <output name="snp_loc" file="test_vvv2_display/res_snp.txt"/>
-	    <!-- intermediate output files -->
-	    <output name="json_annot" file="test_vvv2_display/res_vadr.json"/>
+	          <output name="json_annot" file="test_vvv2_display/res_vadr.json"/>
             <output name="bed_annot" file="test_vvv2_display/res_vadr.4vardict.bed"/>
             <output name="correct_vcf" file="test_vvv2_display/res_correct.vcf"/>
 	    <!-- end intermediate output files -->	    
