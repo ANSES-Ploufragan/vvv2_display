@@ -117,7 +117,7 @@ parser.add_argument('--threshold', type = str, help='the threshold you use to cu
 args = parser.parse_args()
 
 ## check for the presence of all command line arguments ##
-if not args.vcfs or not args.json or not args.out or not arg.outs or not args.threshold:           
+if not args.vcfs or not args.json or not args.out or not args.outs or not args.threshold:           
     parser.print_help()
     sys.exit("""\nAn error occured while entering the arguments.
 Please, read the help section above.\n""")
