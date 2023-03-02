@@ -111,12 +111,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--vcfs', type = str, help='the vcf file to count')
 parser.add_argument('--json', type = str, help = "json gene position file")
 parser.add_argument('--out', type = str, help = "the output file")
+parser.add_argument('--outs', type = str, help = "the output summary file")
 parser.add_argument('--threshold', type = str, help='the threshold you use to cut the data', default = 0.1)
 
 args = parser.parse_args()
 
 ## check for the presence of all command line arguments ##
-if not args.vcfs or not args.json or not args.out or not args.threshold:           
+if not args.vcfs or not args.json or not args.out or not arg.outs or not args.threshold:           
     parser.print_help()
     sys.exit("""\nAn error occured while entering the arguments.
 Please, read the help section above.\n""")
@@ -232,7 +233,8 @@ else:
                 new_line = str("\t".join( (indice, position, ref, alt, freq, gene, homo) ))
                 summary_list.append(new_line + "\n")
 
-    with open(args.out + "_summary", "w") as filout:
+    # with open(args.out + "_summary", "w") as filout:
+    with open(args.outs, "w") as filout:
         filout.write("indice\tposition\tref\talt\tfreq\tgene\tlseq\trseq\tisHomo*\n")
         for line in summary_list:
             filout.write(line)
@@ -240,4 +242,5 @@ else:
 *NB: an homopolymer region is set to 'yes' if there is a succession of at least 3 identical nucleotides.
      it looks like a restrictive measure, but Ion Torrent sequencing is very bad on such region, so make sure you verify these variants.""")
     print(f"{args.out} file created")
+    print(f"{args.outs} file created")
 ## ~ end of script ~ ##
