@@ -45,6 +45,7 @@ def __main__():
     # bed_annot_f          = '' # bed  annotation file: out
     bed_vardict_annot_f  = '' # bed  annotation file for vardict: out
     snp_loc_f            = '' # text file for snp location
+    snp_loc_summary_f    = '' # text file for snp location summary
     # --------------------------------------
 
     # --------------------------------------
@@ -79,6 +80,9 @@ def __main__():
                         help="out: png file with variant proportions and annotations",
                         metavar="FILE")
     parser.add_argument("-t", "--snp_loc_f", dest='snp_loc_f',
+                        help="[optional] out: variant description for relevant positions, txt file (if not provided, file name deduced from png name)",
+                        metavar="FILE")  
+    parser.add_argument("-u", "--snp_loc_summary_f", dest='snp_loc_summary_f',
                         help="[optional] out: variant description for relevant positions, txt file (if not provided, file name deduced from png name)",
                         metavar="FILE")  
     parser.add_argument("-j", "--json_f", dest='json_annot_f',
@@ -179,6 +183,8 @@ def __main__():
         sys.exit("[Error] You must provide png_var_f name for output")
     if args.snp_loc_f is not None:
         snp_loc_f = os.path.abspath(args.snp_loc_f)
+    if args.snp_loc_summary_f is not None:
+        snp_loc_summary_f = os.path.abspath(args.snp_loc_summary_f)
     # ----------------------------------------------------------------
     # optional arguments only for Galaxy compatibility
     if args.json_annot_f is not None:
@@ -338,18 +344,22 @@ def __main__():
         # # COMPLETE GENOME
         # vardict_vcf_f = f"{test_dir}/res2_vardict.vcf"  # from vardict results
         # correct_vcf_f = f"{test_dir}/res2_correct.vcf"  # corrected vardict results                
-        # json_annot_f  = f"{test_dir}/res2_vadr.json"
-        # snp_loc_f     =  f"{test_dir}/res2_snp.txt"
+        # json_annot_f      = f"{test_dir}/res2_vadr.json"
+        # snp_loc_f         =  f"{test_dir}/res2_snp.txt"
+        # snp_loc_summary_f =  f"{test_dir}/res2_snp_summary.txt"
         # CONTIGS
         # vardict_vcf_f = f"{test_dir}/res_vardict.vcf"  # from vardict results
-        correct_vcf_f = f"{test_dir}/res_correct.vcf"                  
-        json_annot_f  = f"{test_dir}/res_vadr.json"
-        snp_loc_f     =  f"{test_dir}/res_snp.txt"
+        correct_vcf_f     = f"{test_dir}/res_correct.vcf"                  
+        json_annot_f      = f"{test_dir}/res_vadr.json"
+        snp_loc_f         =  f"{test_dir}/res_snp.txt"
+        snp_loc_summary_f =  f"{test_dir}/res_snp_summary.txt"
 
     if(snp_loc_f == ''):
        snp_loc_f = vardict_vcf_f
+       snp_loc_summary_f = vardict_vcf_f
        # snp_loc_f = snp_loc_f.replace('.vcf', '_snp.txt')
        snp_loc_f = re.sub('\.[^\.]+$', '_snp.txt', snp_loc_f)
+       snp_loc_summary_f = re.sub('\.[^\.]+$', '_snp_summary.txt', snp_loc_summary_f)
       
     # vcf file from vardict
     # json annotation file deduced from vadr, later vigor4(5?)
@@ -362,6 +372,7 @@ def __main__():
                     f"--vcfs {correct_vcf_f}",
                     f"--json {json_annot_f}",
                     f"--out {snp_loc_f}",
+                    f"--outs {snp_loc_summary_f}",
                     f"--threshold {threshold}"])
     print(f"cmd:{cmd}")
 
@@ -382,10 +393,12 @@ def __main__():
     if b_test_visualize_snp_v4:
         # # COMPLETE GENOME
         # snp_loc_f =  f"{test_dir}/res2_snp.txt"
+        # snp_loc_summary_f =  f"{test_dir}/res2_snp_summary.txt"
         # png_var_f =  f"{test_dir}/res2_snp.png"
         # CONTIGS
-        snp_loc_f =  f"{test_dir}/res_snp.txt"
-        png_var_f =  f"{test_dir}/res_snp.png"
+        snp_loc_f         =  f"{test_dir}/res_snp.txt"
+        snp_loc_summary_f =  f"{test_dir}/res_snp_summary.txt"
+        png_var_f         =  f"{test_dir}/res_snp.png"
 
     if(png_var_f == ''):
        png_var_f = snp_loc_f
