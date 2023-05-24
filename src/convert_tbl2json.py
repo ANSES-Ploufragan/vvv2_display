@@ -396,7 +396,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                 if re.search(r">Feature", line_fields[0]):                                        
                     b_additional = False
                     print(f"Treating {line_fields[0]} contig")
-                    m = re.search(r">Feature ([A-Za-z0-9\.]+)", line)
+                    m = re.search(r">Feature ([A-Za-z0-9_\.]+)", line)
                     contig = m.group(1)
                     # print(f"contig found:{contig} for line_fields 0:{line_fields[0]} in line {line}")
                     # get the index of current contig
