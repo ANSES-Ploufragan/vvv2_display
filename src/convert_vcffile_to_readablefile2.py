@@ -39,26 +39,24 @@ this gene.
     base_inf_allgenes = ''
     base_sup_allgenes = ''
     for key in dico_json:
-        print(f"dico_json key treated:{key}")
+        # print(f"dico_json key treated:{key}")
         if key != "virus_id" and key != "genomesize":
             base_inf , base_sup = dico_json[key][0] , dico_json[key][1]
             if (base_inf <= genomepos)and(genomepos <= base_sup):
-                print(f"base_inf:{base_inf} <= genomepos:{genomepos} <= base_sup:{base_sup}")
+                # print(f"base_inf:{base_inf} <= genomepos:{genomepos} <= base_sup:{base_sup}")
                 if gene == 'intergene':
                     gene = key
                     base_inf_allgenes = str(base_inf)
                     base_sup_allgenes = str(base_sup)
-                    print(f"record gene:{gene}, case1")
                 else:
                     gene = gene+','+key
                     base_inf_allgenes = base_inf_allgenes+','+str(base_inf)
                     base_sup_allgenes = base_sup_allgenes+','+str(base_sup)
-                    print(f"record gene:{gene}, case2")
             #     break
-            else:
-                print(f"NOT( base_inf:{base_inf} <= genomepos:{genomepos} <= base_sup:{base_sup} )")
+            # else:
+            #     print(f"NOT( base_inf:{base_inf} <= genomepos:{genomepos} <= base_sup:{base_sup} )")
             #     continue
-    print(f"return gene:{gene}\tbase_inf:{base_inf_allgenes}\tbase_sup:{base_sup_allgenes}")
+    # print(f"return gene:{gene}\tbase_inf:{base_inf_allgenes}\tbase_sup:{base_sup_allgenes}")
     return gene, base_inf_allgenes, base_sup_allgenes
 
 def write_line(temp_count, pos, gene, dico):
@@ -223,9 +221,7 @@ else:
         # print(f"genomeposition:{genomeposition}")
         for i in range(0,len(genomeposition)):
             pos = genomeposition[i]
-            print(f"pos:{pos} from genomeposition of i:{i}")
             gene_id, base_inf, base_sup = find_key(dico_json, pos)
-            print(f"write_line of pos:{pos} gene_id:{gene_id} case 1")
             line = write_line(temp_counts[i], pos, gene_id, dico)
             filout.write(line)
             if (a == 0) and gene_id != 'intergen':
