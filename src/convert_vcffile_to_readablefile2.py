@@ -31,20 +31,35 @@ import re
 ###############
 
 
-def find_key(dico_json, genomeposition):
+def find_key(dico_json, genomepos):
     """ This function retrieves the gene name and the start and end position of
 this gene.
     """
     gene = "intergene"
+    base_inf_allgenes = ''
+    base_sup_allgenes = ''
     for key in dico_json:
+        print(f"dico_json key treated:{key}")
         if key != "virus_id" and key != "genomesize":
             base_inf , base_sup = dico_json[key][0] , dico_json[key][1]
-            if base_inf <= genomeposition <= base_sup:
-                gene = key
-                break
+            if (base_inf <= genomepos)and(genomepos <= base_sup):
+                print(f"base_inf:{base_inf} <= genomepos:{genomepos} <= base_sup:{base_sup}")
+                if gene == 'intergene':
+                    gene = key
+                    base_inf_allgenes = str(base_inf)
+                    base_sup_allgenes = str(base_sup)
+                    print(f"record gene:{gene}, case1")
+                else:
+                    gene = gene+','+key
+                    base_inf_allgenes = base_inf_allgenes+','+str(base_inf)
+                    base_sup_allgenes = base_sup_allgenes+','+str(base_sup)
+                    print(f"record gene:{gene}, case2")
+            #     break
             else:
-                continue
-    return gene, base_inf, base_sup
+                print(f"NOT( base_inf:{base_inf} <= genomepos:{genomepos} <= base_sup:{base_sup} )")
+            #     continue
+    print(f"return gene:{gene}\tbase_inf:{base_inf_allgenes}\tbase_sup:{base_sup_allgenes}")
+    return gene, base_inf_allgenes, base_sup_allgenes
 
 def write_line(temp_count, pos, gene, dico):
     """ This function write the line that will be added in the final output file.
@@ -199,25 +214,21 @@ else:
     A = 0 # this flag is used in the write_line function in order to add indices to line where variants are upper than threshold
     with open(args.out, "w") as filout:
         summary_list = []
-        regex = '([0-9]+)\t1\t([A-Z\>\<]+)\t([A-Z\>\<]+)\t([0-9\.]+)\t[A-Z\>\<]+\t[A-Z\>\<]+\t([A-Z0-9a-z\-_ /]+)\t1\t([0-9]+)\t([A-Z]+\t[A-Z]+\t(no|yes))\n'
+        regex = '([0-9]+)\t1\t([A-Z\>\<]+)\t([A-Z\>\<]+)\t([0-9\.]+)\t[A-Z\>\<]+\t[A-Z\>\<]+\t([A-Z0-9a-z\-_\, /]+)\t1\t([0-9]+)\t([A-Z]+\t[A-Z]+\t(no|yes))\n'
         REGEX = re.compile(regex)    
         filout.write("position\tSNP\tref\talt\tvariant_percent\tadd_ref\tadd_alt\tgene_id\tsize_point\tindice\tlseq\trseq\tisHomo\n")
         a = 0 # flag to find the first genomic region after initialization of i
 
         # this part is requiered to write the correct name of the genomic region
+        # print(f"genomeposition:{genomeposition}")
         for i in range(0,len(genomeposition)):
             pos = genomeposition[i]
-            if a != 0:
-                if base_inf <= genomeposition[i] <= base_sup:
-                    line = write_line(temp_counts[i], pos, gene_id, dico)
-                else:
-                    gene_id, base_inf, base_sup = find_key(dico_json, genomeposition[i])
-                    line = write_line(temp_counts[i], pos, gene_id, dico)
-                filout.write(line)
-            else:
-                gene_id, base_inf, base_sup = find_key(dico_json, genomeposition[i])
-                line = write_line(temp_counts[i], pos, gene_id, dico)
-                filout.write(line)
+            print(f"pos:{pos} from genomeposition of i:{i}")
+            gene_id, base_inf, base_sup = find_key(dico_json, pos)
+            print(f"write_line of pos:{pos} gene_id:{gene_id} case 1")
+            line = write_line(temp_counts[i], pos, gene_id, dico)
+            filout.write(line)
+            if (a == 0) and gene_id != 'intergen':
                 a = 1
             
             # generate another file, which resume the variation
