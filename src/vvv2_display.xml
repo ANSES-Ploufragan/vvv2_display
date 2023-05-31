@@ -1,10 +1,10 @@
-<tool id="vvv2_display" name="vvv2_display: Display SNP proportions and CDS of an assembly in png image" version="0.1.8" python_template_version="3.9">
+<tool id="vvv2_display" name="vvv2_display: Display SNP proportions and CDS of an assembly in png image" version="0.1.9" python_template_version="3.9">
     <requirements><!--
         only for tools used before, not for vvv2_display itself
         <requirement type="package" version="1.4.1">vadr</requirement>
         <requirement type="package" version="1.8.3">vardict-java</requirement>
       <requirement type="package" version="3.5.0">r-base</requirement> -->
-      <requirement type="package" version="0.1.8">vvv2_display</requirement>	      
+      <requirement type="package" version="0.1.9">vvv2_display</requirement>	      
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
        vvv2_display.py -f '$vadr_fail_annotation' -p '$vadr_pass_annotation' -s '$seqstat' -n '$vardict_vcf' -r '$snp_img' -t '$snp_loc' -u '$snp_loc_summary' -j '$json_annot' -k '$bed_annot' -l '$correct_vcf'
