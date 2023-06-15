@@ -1,5 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#
+# This file is part of the vvv2_display distribution (https://github.com/ANSES-Ploufragan/vvv2_display).
+# Copyright (c) 2023 Fabrice Touzain.
+# 
+# This program is free software: you can redistribute it and/or modify  
+# it under the terms of the GNU General Public License as published by  
+# the Free Software Foundation, version 3.
+#
+# This program is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License 
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
 ###
 # USE PYTHON3
 # vvv2_display script: from vardict (variant calling) and vadr (annotator) results,
@@ -31,11 +47,11 @@ def __main__():
     # --------------------------------------
     # input files
     # --------------------------------------
-    pass_annot_f  = '' # in, pass tbl file from vadr
-    fail_annot_f  = '' # in, fail tbl file from vadr
-    seq_stat_f    = '' # in, seq stat file from vadr
-    vardict_vcf_f = '' # in, vcf file from VarDict
-    correct_vcf_f = '' # in, vcf file corrected for pos (when multicontigs)
+    pass_annot_f    = '' # in, pass tbl file from vadr
+    fail_annot_f    = '' # in, fail tbl file from vadr
+    seq_stat_f      = '' # in, seq stat file from vadr
+    vardict_vcf_f   = '' # in, vcf file from VarDict
+    correct_vcf_f   = '' # in, vcf file corrected for pos (when multicontigs)
     # --------------------------------------
 
     # --------------------------------------
@@ -46,6 +62,7 @@ def __main__():
     bed_vardict_annot_f  = '' # bed  annotation file for vardict: out
     snp_loc_f            = '' # text file for snp location
     snp_loc_summary_f    = '' # text file for snp location summary
+    contig_limits_f      = '' # in, txt file with contig limits positions    
     # --------------------------------------
 
     # --------------------------------------
@@ -94,6 +111,9 @@ def __main__():
     parser.add_argument("-l", "--cvcf_f", dest='correct_vcf_f',
                         help="[Optional] out (tmp out file for galaxy compatibility, no need in other cases): vardict variants corrected for positions when several contigs, in vcf format",
                         metavar="FILE")
+    parser.add_argument("-m", "--contig_limits_f", dest='contig_limits_f',
+                        help="[Optional] out (tmp out file for galaxy compatibility, no need in other cases): txt file of contig limits",
+                        metavar="FILE")
     parser.add_argument("-z", "--test_vvv2_display", dest='b_test_vvv2_display',
                         help="[Optional] run all tests",
                         action='store_true')
@@ -137,7 +157,7 @@ def __main__():
         b_test_visualize_snp_v4                = True
         b_test                                 = True
     else:
-        b_test = (b_test_vvv2_display                            or
+        b_test = (b_test_vvv2_display                    or
                   b_test_convert_tbl2json                or
                   b_test_correct_multicontig_vardict_vcf or
                   b_test_convert_vcffile_to_readable     or
@@ -146,7 +166,7 @@ def __main__():
         # print(f"b_test_convert_tbl2json:{b_test_convert_tbl2json}")    
 
     if ((not b_test)and
-        ((len(sys.argv) < 9) or (len(sys.argv) > 21))):
+        ((len(sys.argv) < 9) or (len(sys.argv) > 23))):
         print("\n".join([prog_tag,
                          "Aim: Display of SNP proportions, annotations, for an assembly",
                          "in:", 
@@ -193,6 +213,8 @@ def __main__():
         bed_vardict_annot_f = os.path.abspath(args.bed_vardict_annot_f)
     if args.correct_vcf_f is not None:
         correct_vcf_f = os.path.abspath(args.correct_vcf_f)
+    if args.contig_limits_f is not None:
+        contig_limits_f = os.path.abspath(args.contig_limits_f)
     # ----------------------------------------------------------------
     
     if args.b_verbose is not None:
@@ -213,6 +235,7 @@ def __main__():
         vardict_vcf_f = f"{test_dir}/res2_vardict.vcf"  # from lofreq results    
         # tmp out files
         json_annot_f  = f"{test_dir}/res2_vadr.json"     # from convert_tbl2json.py
+        contig_limits_f= f"{test_dir}/contig_limits.txt"
         # final out file
         png_var_f     = f"{test_dir}/res2_vvv2.png"     # from ...
         cmd = ' '.join([f"{dir_path}/vvv2_display.py",
@@ -220,10 +243,11 @@ def __main__():
                     f"--fail_tbl_f {fail_annot_f}",
                     f"--seq_stat_f {seq_stat_f}",
                     f"--vcf_f {vardict_vcf_f}",
+                    f"--contig_limits_f {contig_limits_f}",                 
                     f"--png_var_f {png_var_f}"
                     ])
         print(f"{prog_tag} START")    
-        print(f"cmd:{cmd}")
+        print(f"{prog_tag} cmd:{cmd}")
         os.system(cmd)
         print(f"{prog_tag} END")
         # --------------------------------------------------------------
@@ -236,7 +260,8 @@ def __main__():
         seq_stat_f    = f"{test_dir}/res_vadr.seqstat"  # from vadr results
         vardict_vcf_f = f"{test_dir}/res_vardict.vcf"  # from lofreq results    
         # tmp out files
-        json_annot_f  = f"{test_dir}/res_vadr.json"     # from convert_tbl2json.py
+        json_annot_f    = f"{test_dir}/res_vadr.json"     # from convert_tbl2json.
+        contig_limits_f = f"{test_dir}/contig_limits.txt"  # from lofreq results    py
         # final out file
         png_var_f    = f"{test_dir}/res_vvv2.png"     # from ...
         cmd = ' '.join([f"{dir_path}/vvv2_display.py",
@@ -244,10 +269,11 @@ def __main__():
                     f"--fail_tbl_f {fail_annot_f}",
                     f"--seq_stat_f {seq_stat_f}",
                     f"--vcf_f {vardict_vcf_f}",
+                    f"--contig_limits_f {contig_limits_f}",                        
                     f"--png_var_f {png_var_f}"
                     ])
         print(f"{prog_tag} START")    
-        print(f"cmd:{cmd}")
+        print(f"{prog_tag} cmd:{cmd}")
         os.system(cmd)
         print(f"{prog_tag} END")
         # --------------------------------------------------------------
@@ -293,11 +319,11 @@ def __main__():
     #                f"--bed_out_f {bed_annot_f}",
                     f"--bed_vardict_out_f {bed_vardict_annot_f}"                             
                     ])
-    print(f"cmd:{cmd}")
+    print(f"{prog_tag} cmd:{cmd}")
 
     if b_test_convert_tbl2json:
         print(f"{prog_tag} [test_convert_tbl2json] START")
-        print(f"cmd:{cmd}")
+        print(f"{prog_tag} cmd:{cmd}")
         os.system(cmd)    
         print(f"{prog_tag} [test_convert_tbl2json] END")
         sys.exit()
@@ -312,7 +338,7 @@ def __main__():
         seq_stat_f           = f"{test_dir}/res_vadr.seqstat"  # from vadr results    
         vardict_vcf_f        = f"{test_dir}/res_vardict.vcf"  # from vardict results            
         correct_vcf_f        = f"{test_dir}/res_correct.vcf"  # corrected out results
-
+        contig_limits_f      = f"{test_dir}/contig_limits.txt"  # contig limits
 
     if(correct_vcf_f == ''):
        correct_vcf_f = vardict_vcf_f
@@ -324,13 +350,14 @@ def __main__():
     cmd = ' '.join([f"{p_script}",
                     f"--seq_stat_f {seq_stat_f}",
                     f"--vardict_vcf_f {vardict_vcf_f}",
-                    f"--correct_vcf_f {correct_vcf_f}"
+                    f"--correct_vcf_f {correct_vcf_f}",
+                    f"--contig_limits_f {contig_limits_f}"                    
                     ])
-    print(f"cmd:{cmd}")
+    print(f"{prog_tag} cmd:{cmd}")
 
     if b_test_correct_multicontig_vardict_vcf:
         print(f"{prog_tag} [test_correct_multicontig_vardict_vcf] START")
-        print(f"cmd:{cmd}")
+        print(f"{prog_tag} cmd:{cmd}")
         os.system(cmd)    
         print(f"{prog_tag} [test_correct_multicontig_vardict_vcf] END")
         sys.exit()
@@ -374,11 +401,11 @@ def __main__():
                     f"--out {snp_loc_f}",
                     f"--outs {snp_loc_summary_f}",
                     f"--threshold {threshold}"])
-    print(f"cmd:{cmd}")
+    print(f"{prog_tag} cmd:{cmd}")
 
     if b_test_convert_vcffile_to_readable:
         print(f"{prog_tag} [test_convert_vcffile_to_readable] START")
-        print(f"cmd:{cmd}")
+        print(f"{prog_tag} cmd:{cmd}")
         os.system(cmd)    
         print(f"{prog_tag} [test_convert_vcffile_to_readable] END")
         sys.exit()
@@ -399,22 +426,22 @@ def __main__():
         snp_loc_f         =  f"{test_dir}/res_snp.txt"
         snp_loc_summary_f =  f"{test_dir}/res_snp_summary.txt"
         png_var_f         =  f"{test_dir}/res_snp.png"
-
+        contig_limits_f   =  f"{test_dir}/contig_limits.txt"
+        
     if(png_var_f == ''):
        png_var_f = snp_loc_f
-       # png_var_f = png_var_f.replace('.txt', '.png')
        png_var_f = re.sub('\.[^\.]+$', '.png', png_var_f)
        
     # env r-env.yaml
     r_script = f"{R_SCRIPTS}visualize_snp_v4.R"
     threshold = "0.07"
     # png_var_f = f"{ech}_graphic_variant.png"
-    cmd = f"R --vanilla --args {snp_loc_f} {threshold} {png_var_f} < {r_script}"
-    print(f"cmd:{cmd}")
+    cmd = f"R --vanilla --quiet --args {snp_loc_f} {contig_limits_f} {threshold} {png_var_f} < {r_script} > /dev/null"
+    print(f"{prog_tag} cmd:{cmd}")
 
     if b_test_visualize_snp_v4:
         print(f"{prog_tag} [test_visualize_snp_v4] START")
-        print(f"cmd:{cmd}")
+        print(f"{prog_tag} cmd:{cmd}")
         os.system(cmd)
         print(f"{prog_tag} [test_visualize_snp_v4] END")
     else:
