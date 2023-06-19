@@ -234,7 +234,7 @@ chrs  = []
 cpt_gene = 0
 
 # pattern to remove non alphanumeric character (ie: <> character befire start end positions of genes, cds, etc...)
-non_alphanum = re.compile("\W")
+non_alphanum = re.compile("\W") # [\'\(\)\W]")
 
 # for each annotation file created by vadr
 for annot_f in [pass_annot_f, fail_annot_f]:
@@ -312,8 +312,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             sys.exit(prog_tag+"[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
 
                         continue
-                    
-                    # means no additional info on gene, needs to record prev info of gene, then to retreat the line for CDS
+
                     elif line_fields[2] == 'CDS':
                         # record gene info
                         cpt_gene += 1
@@ -353,6 +352,25 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         curr_type = 'CDS'
                         gene_name = ''
                         continue
+
+                    # NEW
+                    elif line_fields[2] == 'mat_peptide':
+                        print(' '.join(['mat_peptide',
+                                       gene_start,
+                                       gene_end,
+                                       gene_name])
+                              )
+                        b_next_is_gene = False
+                        b_next_is_product = True                        
+                        
+                        # ask to treat current mat_peptide info
+                        cds_start = line_fields[0]
+                        cds_end = line_fields[1]
+                        cds_start = re.sub(non_alphanum, '', cds_start)
+                        cds_end   = re.sub(non_alphanum, '', cds_end)
+                        curr_type = 'mat_peptide'
+                        gene_name = ''
+                        continue
                     
                     else:
                         # print("No CDS field2 or gene field0, line "+str(frame.f_lineno))
@@ -388,7 +406,8 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         continue
                     
                 elif b_next_is_product:
-#                    print("NXT is PRODUCT "+str(b_next_is_product)+", line "+str(frame.f_lineno))
+                    if b_verbose:
+                        print(prog_tag + " NXT is PRODUCT "+str(b_next_is_product)+", line "+str(frame.f_lineno))
                     
                     if re.search(r'^product', line_fields[0]):
                         product = ' '.join(line_fields[0].split(' ')[1:]) + ' ' + ' '.join(line_fields[1:])
@@ -460,6 +479,8 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         sys.exit(prog_tag + "[Error] Case not encountered line "+ str(sys._getframe().f_lineno) )
                         
                 elif b_next_is_protein_id:
+                    if b_verbose:
+                        print(prog_tag + " NXT is PROTEIN "+str(b_next_is_protein_id)+", line "+str(frame.f_lineno))                    
                     if line_fields[0] == 'protein_id':
                         protein_id = line_fields[1]
                         tmp_name = protein_id
@@ -503,11 +524,62 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         product = ''
                         protein_id = ''
                         continue
+
+                    if line_fields[0] == 'ncRNA_class':
+                        protein_id = line_fields[1]
+                        tmp_name = protein_id
+                        b_next_is_protein_id = False
+
+                        # escape cotes, because misinterprated by R
+                        product    = re.sub(r"([\'])", '', product)
+                        protein_id = re.sub(r"([\'])", '', protein_id)
+                        # remove spaces at beginning and end
+                        product    = product.strip()
+                        protein_id = protein_id.strip()                        
+                        
+                        # store info
+                        chrs.append(contig)
+                        if b_include_protein_id and (product != ''):
+                            tmp_name = product + " " +protein_id
+                        elif product == '': # in some case, only protein_id is provided, we must keep in this case
+                            # even if b_include_protein_id is False
+                            tmp_name = protein_id
+                        else:
+                            tmp_name = product
+                        names.append(tmp_name)
+
+                        # print(' '.join([curr_type,
+                        #                 cds_start,
+                        #                 cds_end,
+                        #                 tmp_name ]))
+                            
+                        # types.append('cds')
+                        types.append('rna')                        
+                        starts.append(int(cds_start) + contig_pos_shift)
+                        ends.append(int(cds_end) + contig_pos_shift)
+                        starts_vardict.append(int(cds_start))
+                        ends_vardict.append(int(cds_end))
+                        print("\t".join([
+                            prog_tag,
+                            "RECORD: name:"+tmp_name,
+                            "type:rna",
+                            "starts:"+gene_start,
+                            "end:"+gene_end+", line "+str(frame.f_lineno)
+                        ]))
+                        product = ''
+                        protein_id = ''
+                        continue
+                    
                     elif re.search(r'^product', line_fields[0]):
                         product_str = ' '.join(line_fields[0].split(' ')[1:]) + ' ' + ' '.join(line_fields[1:])
                         product = product + ' ' + product_str
                         b_next_is_protein_id = True
                         b_next_is_product    = False
+                        print("\t".join([
+                            prog_tag,
+                            "TMP_PRODUCT: product:"+product,
+                            ", line "+str(frame.f_lineno)
+                        ]))
                         continue
                     elif line_fields[0] == 'exception':
                         # add info between brackets
@@ -540,6 +612,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                                 note]))
                                 
                             types.append('cds')
+                            # types.append(curr_type)                            
                         # -----------------------------
                         else: # otherwise, records classical misc_feature
 
@@ -548,7 +621,8 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                                 misc_feature_start,
                                                 misc_feature_end,
                                                 note]))
-                            types.append('misc_feature')
+                            # types.append('misc_feature')
+                            types.append(curr_type)                            
                                     
                         # store info
                         chrs.append(contig)
@@ -562,8 +636,8 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             prog_tag, 
                             "RECORD: name:"+note,
                             "type:"+types[-1],
-                            "starts:"+gene_start,
-                            "end:"+gene_end,
+                            "starts:"+misc_feature_start,
+                            "end:"+misc_feature_end,
                             "contig:"+contig+", line "+str(frame.f_lineno)
                         ]))
                         note = ''
@@ -693,18 +767,18 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             cds_start,
                             cds_end
                         ]))
-
-                elif line_fields[2] == 'mat_peptide':
+                        
+                elif line_fields[2] == 'ncRNA':
                     cds_start = line_fields[0]
                     cds_end   = line_fields[1]
                     cds_start = re.sub(non_alphanum, '', cds_start)
                     cds_end   = re.sub(non_alphanum, '', cds_end)
                     b_next_is_product = True
                     b_next_is_gene = False
-                    curr_type = 'mat_peptide'
+                    curr_type = 'rna' # 'CDS'
                     if b_verbose:
                         print("\t".join([
-                            "TMP_MAT_PEPTIDE:"+line_fields[2],
+                            "TMP_NC_RNA:"+line_fields[2],
                             cds_start,
                             cds_end
                         ]))
@@ -723,6 +797,38 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             misc_feature_end
                         ]))
 
+                elif line_fields[2] == 'mat_peptide':
+                    cds_start = line_fields[0]
+                    cds_end   = line_fields[1]
+                    cds_start = re.sub(non_alphanum, '', cds_start)
+                    cds_end   = re.sub(non_alphanum, '', cds_end)
+                    b_next_is_product = True
+                    b_next_is_gene = False
+                    curr_type = 'CDS'
+                    if b_verbose:
+                        print("\t".join([
+                            "TMP_MAT_PEPTIDE:"+line_fields[2],
+                            cds_start,
+                            cds_end
+                        ]))
+
+                elif line_fields[2] == 'stem_loop':
+                    misc_feature_start = line_fields[0]
+                    misc_feature_end   = line_fields[1]
+                    misc_feature_start = re.sub(non_alphanum, '', misc_feature_start)
+                    misc_feature_end   = re.sub(non_alphanum, '', misc_feature_end)
+
+                    b_next_is_product = False
+                    b_next_is_gene = False
+                    b_next_is_note = True                    
+                    curr_type = 'stem_loop'
+                    if b_verbose:
+                        print("\t".join([
+                            "TMP_STEM_LOOP:"+line_fields[2],
+                            misc_feature_start,
+                            misc_feature_end
+                        ]))
+                        
                 elif "Additional" in line_fields[0]:
                     b_additional = True
 
@@ -730,7 +836,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                     print(prog_tag + " Case not treated for line "+line+", line "+str(sys._getframe().f_lineno))
 
             except IndexError:
-                print("Exception IndexError for line "+line+", line "+str(sys._getframe().f_lineno))
+                print("Exception IndexError for line '"+line+"', line "+str(sys._getframe().f_lineno))
                 raise # means no other line
             except:
                 print("Exception for line "+line+", line "+str(sys._getframe().f_lineno))
@@ -794,7 +900,11 @@ chrs           = []
 types          = []
 
 for i in range(len(types_ori)):
-    if((types_ori[i] == "cds")or(types_ori[i] == "gene")):
+    if((types_ori[i] == "cds")or
+       (types_ori[i] == "gene")or
+       (types_ori[i] == "rna")or
+       (types_ori[i] == "stem_loop")       
+       ):
         genes_indices.append(i)
         starts.append(         starts_ori[ i ])
         ends.append(           ends_ori[ i ])
@@ -808,7 +918,7 @@ for i in range(len(types_ori)):
 # -------------------------------------------------------------
 # check gene prot record
 if b_check_gene_prot_rec:
-    print(prog_tag+ " check genes/prot records --------------")
+    print(prog_tag+ " check genes/prot/rna/stem_loop records --------------")
     for i in range(len(names)):
         print("name:"+names[i]+"\ttype:"+types[i]+" ["+str(starts[i])+", "+str(ends[i])+"]")
     print(prog_tag+ "---------------------------------------")
@@ -847,6 +957,30 @@ with open(json_annot_f, 'w+') as f:
             b_first_cds_found = True
     f.write("}")
 
+    b_first_cds_found = False
+    # for RNA stem_loops
+    f.write(", \"rnas\": {")
+    for i in range(len(names)):
+        if types[i] == 'rna':
+            if b_first_cds_found:
+                f.write(", ")
+
+            f.write("\""+names[i]+"\": ["+str(starts[i])+", "+str(ends[i])+"]")
+            b_first_cds_found = True
+    f.write("}")
+
+    b_first_cds_found = False
+    # for RNA stem_loops
+    f.write(", \"stem_loops\": {")
+    for i in range(len(names)):
+        if types[i] == 'stem_loop':
+            if b_first_cds_found:
+                f.write(", ")
+
+            f.write("\""+names[i]+"\": ["+str(starts[i])+", "+str(ends[i])+"]")
+            b_first_cds_found = True
+    f.write("}")
+    
     f.write("}")
 f.close()
 
