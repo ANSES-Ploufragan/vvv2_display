@@ -163,6 +163,8 @@ ssf.close()
 
 cumulated_shift = 0
 contig_start_pos = []
+# forst pos
+contig_start_pos.append(1)
 for i in range(len(contig_names)):
     if i == 0:
         contig_shifts[ contig_names[i] ] = 0
@@ -172,6 +174,8 @@ for i in range(len(contig_names)):
         contig_shifts[ contig_names[i] ] = cumulated_shift
         if b_verbose:
             print(prog_tag + ' '+ "record shift "+str(contig_shifts[ contig_names[i] ])+" for contig "+ contig_names[i])
+# last pos
+contig_start_pos.append(int(contig_lengths[-1]) + cumulated_shift)
 # ----------------------------------------------------------------------
 
 # ----------------------------------------------------------------------
