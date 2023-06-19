@@ -93,6 +93,17 @@ print(length(protcols))
 # print(density$protein_id)
 # print("\n\n")
 
+## --------------------------------
+## TODO stem_loops RNAs
+# print("rnas:")
+# print(density$rnas)
+# print("\n\n")
+
+# print("stem_loops:")
+# print(density$stem_loops)
+# print("\n\n")
+## --------------------------------
+
 # if(! is.null(contig_limits)){ # means 1 contig only
 #      print("contig_limits:")
 #      print(contig_limits)
@@ -101,9 +112,11 @@ print(length(protcols))
 
 # needed to have color labels NOT ORDERED and to choose colors
 protein_id_labels = unique(density$protein_id)
-
-
 density$protein_id_num = paste(  sprintf("%03d", match(density$protein_id, protein_id_labels) ), density$protein_id) 
+
+# # TODO stem_loop
+# stem_loops_labels = unique(density$stem_loops)
+# density$stem_loops_num = paste(  sprintf("%03d", match(density$stem_loops, stem_loops_labels) ), density$stem_loops) 
 
 # print("protein_id_num:")
 # print(density$protein_id_num)
@@ -129,6 +142,15 @@ if(! is.null(contig_limits)){ # means more than 1 contig
         p3bis = p3bis + geom_vline(xintercept=i,linetype="dotted") # add the contig limits (vertical dotted line)
 	}
 }
+
+# # TODO stem_loops
+# if(! is.null(stem_loops)){ # means at least one stem_loop
+#     for(i in stem_loops){
+#         p4bis = p4bis + geom_point(aes(x=position, y=-0.15, colour=density$stem_loops_num) # add the stem loops
+# 	}
+# }
+
+
 p4 = p3bis + labs(title = t) # add graph title
 p5 = p4 + xlab("Base Position") # add x axe title
 p6 = p5 + ylab("Variant Frequency") # add axes and graph titles
