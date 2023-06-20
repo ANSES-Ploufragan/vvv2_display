@@ -7,7 +7,7 @@
       <requirement type="package" version="0.1.10">vvv2_display</requirement>	      
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-       vvv2_display.py -f '$vadr_fail_annotation' -p '$vadr_pass_annotation' -s '$seqstat' -n '$vardict_vcf' -r '$snp_img' -t '$snp_loc' -u '$snp_loc_summary' -j '$json_annot' -k '$bed_annot' -l '$correct_vcf -m '$contig_limits'
+       vvv2_display.py -f '$vadr_fail_annotation' -p '$vadr_pass_annotation' -s '$seqstat' -n '$vardict_vcf' -r '$snp_img' -t '$snp_loc' -u '$snp_loc_summary' -j '$json_annot' -k '$bed_annot' -l '$correct_vcf' -m '$contig_limits'
     ]]></command>
     <inputs>
         <param type="data" name="vadr_fail_annotation" format="tabular" />
