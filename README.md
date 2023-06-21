@@ -33,6 +33,25 @@ Correct ```vadr``` annotation output .tbl file for contigs positions when the as
 - ```R_SCRIPTS/visualize_snp_v4.R```:
 Create a .png file showing variant proportions alongside the genome/assembly and CDS positions.
 
+# Installation
+
+Use conda environment:
+```
+conda create -n vvv2_display -y
+conda activate vvv2_display
+mamba/conda install -c ftouzain vvv2_display
+```
+Prefer mamba installation if completely new conda environments (faster). Do not mix mamba and conda.
+
+Description:
+```
+vvv2_display.py -h
+```
+
+Typical usage:
+```
+vvv2_display.py -p res_vadr_pass.tsv -f res_vadr_fail.tsv -s res_vadr_seqstat.txt -n res_vardict_all.vcf -m contig_limits.txt -r res_vvv2_display.png 
+```
 
 # Galaxy wrapper
 
