@@ -149,12 +149,9 @@ def write_line(temp_count, pos, gene, protein, dico):
             is_homo = is_homopolymer(lseq, rseq, ref, alt)
             if is_homo is True:
                 line = "\t".join( (str(pos), str(snp), ref, alt, freq, ref, alt, gene, protein, "1", str(A), lseq, rseq, "yes") ) + "\n"
-#                line = str(pos) + "\t"+ str(snp) + "\t" + ref +"\t"+ alt +"\t"+ freq +"\t"+ ref+ "\t" +alt + "\t" +gene+"\t1\t"+str(A)+"\t"+lseq+"\t"+rseq+"\tyes\n"
             else:
-#                line = str(pos) + "\t"+ str(snp) + "\t" + ref +"\t"+ alt +"\t"+ freq +"\t"+ ref+ "\t" +alt + "\t" +gene+"\t1\t"+str(A)+"\t"+lseq+"\t"+rseq+"\tno\n"
                 line = "\t".join( (str(pos), str(snp), ref, alt, freq, ref, alt, gene, protein, "1", str(A), lseq, rseq, "no") ) + "\n"
         else:
-#            line = str(pos) + "\t"+ str(snp) + "\t" + ref +"\t"+ alt +"\t"+ freq +"\tNA\tNA\t" +gene+"\t1\tNA\tNA\tNA\tNA\n"
             line = "\t".join( (str(pos), str(snp), ref, alt, freq, "NA\tNA", gene, protein, "1\tNA\tNA\tNA\tNA\n") )
     return line
 
@@ -287,7 +284,7 @@ else:
     A = 0 # this flag is used in the write_line function in order to add indices to line where variants are upper than threshold
     with open(args.out, "w") as filout:
         summary_list = []
-        regex = '([0-9]+)\t1\t([A-Z\>\<]+)\t([A-Z\>\<]+)\t([0-9\.]+)\t[A-Z\>\<]+\t[A-Z\>\<]+\t([A-Z0-9a-z\-_\, /]+)\t([A-Z0-9a-z\-_\, /]*)\t1\t([0-9]+)\t([A-Z]+\t[A-Z]+\t(no|yes))\n'
+        regex = '([0-9]+)\t1\t([A-Z\>\<]+)\t([A-Z\>\<]+)\t([0-9\.]+)\t[A-Z\>\<]+\t[A-Z\>\<]+\t([A-Z0-9a-z\-_\, /]+)\t([A-Z0-9a-z\-_\, /\]\[]*)\t1\t([0-9]+)\t([A-Z]+\t[A-Z]+\t(no|yes))\n'
         REGEX = re.compile(regex)    
         filout.write("position\tSNP\tref\talt\tvariant_percent\tadd_ref\tadd_alt\tgene_id\tprotein_id\tsize_point\tindice\tlseq\trseq\tisHomo\n")
         a = 0 # flag to find the first genomic region after initialization of i
