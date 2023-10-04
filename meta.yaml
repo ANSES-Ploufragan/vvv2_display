@@ -1,0 +1,46 @@
+{% set name = "vvv2_display" %}
+{% set version = "0.1.10" %}
+{% set sha256 = "8e2722b9af657bbc260fe085ec738d4cb6e2d846812a0f6e26f20009f8fce304" %}
+# {% set PYTHON = "python3.9" %}
+
+package:
+  name: {{ name }}
+  version: {{ version }}
+
+source:
+  # git_rev: "0.1.10-beta"
+  # git_url: "https://github.com/ANSES-Ploufragan/vvv2_display.git"
+  # sha256: {{ sha256 }}
+  path: /home/touzain/Documents/vvv2_display/
+  
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv "
+
+requirements:
+  host:
+    - pip
+    - python >=3.9
+    - setuptools >=57.4.0
+  run:
+    - pip
+    - python >=3.9
+    - r-ggplot2 >=3.3.6
+    - pysam >=0.19.1
+    - numpy >=1.23.3
+
+test:
+  commands:
+    # we need to get name of the repository where files of the package to execute are
+    - package_ex_dir="$SRC_DIR"
+    - secondString="work_moved_$PKG_NAME-$PKG_VERSION-${PKG_BUILD_STRING}_noarch/src"
+    - package_ex_dir="${package_ex_dir/test_tmp/$secondString}"
+    - python $package_ex_dir/vvv2_display.py -z
+
+about:
+  home: https://github.com/ANSES_Ploufragan/vvv2_display/
+  license: GPL3
+  license_file: LICENSE
+  summary: "Creates png image file with all [vardict] variants proportions alongside genome/assembly with annotations from [vadr]."
+  maintainer: FTouzain
