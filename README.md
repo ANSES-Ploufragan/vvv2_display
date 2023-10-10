@@ -8,7 +8,7 @@ Tools to create:
 Python/R scripts and Galaxy wrapper to use them.
 
 It uses the results of:
-- vadr 1.4.1 for annotation (of reference/assembly)
+- vadr >= 1.4.1 for annotation (of reference/assembly)
 - vardict-java 1.8.3 for variant calling (of BAM alignement using reference/assembly and reads)
 
 # Programs
