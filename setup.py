@@ -26,7 +26,7 @@ if (sys.version_info < (3, 9)):
 
 setuptools.setup(
     name="vvv2_display",  # Required
-    version="0.1.8",  # Required
+    version="0.1.10",  # Required
     description="Viral Variant Visualizer 2 display",  # Optional
     long_description=long_description,
     long_description_content_type="text/markdown",  # Optional (see note above)
@@ -39,7 +39,8 @@ setuptools.setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",        
+#        "Development Status :: 4 - Beta",
 #        "Development Status :: 3 - Alpha",        
         # Indicate who your project is intended for
         "Intended Audience :: Developers",
