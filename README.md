@@ -39,7 +39,7 @@ Use conda environment:
 ```
 conda create -n vvv2_display -y
 conda activate vvv2_display
-mamba/conda install -c ftouzain vvv2_display
+mamba/conda install -c bioconda vvv2_display
 ```
 Prefer mamba installation if completely new conda environments (faster). Do not mix mamba and conda.
 
