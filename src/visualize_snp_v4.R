@@ -28,6 +28,13 @@ if(inherits(contig_limits,"try-error"))
   
 threshold = as.numeric(args[3]) # define threshold
 
+outfile = args[4]
+
+# to prepare coverage depth graph above variant/annotation graph
+coverage_depth <- try( read.table(args[5], h=F, sep = "\t") ) # read the dataframe
+if(inherits(coverage_depth,"try-error"))
+  coverage_depth <- NULL
+
 t1 = as.character(threshold) # define threshold as a character
 t = paste("Nucleotide Variation - threshold = ", t1, sep = ' ')
 
@@ -113,10 +120,12 @@ genecols = append(genecols, complete_col_set)
 
 # needed to have color labels NOT ORDERED and to choose colors
 gene_id_labels = unique(density$gene_id)
-density$gene_id_num = paste(  sprintf("%03d", match(density$gene_id, gene_id_labels) ), ":", density$gene_id) 
+density$gene_id_num = paste(  sprintf("%02d", match(density$gene_id, gene_id_labels) ), ":", density$gene_id) 
 
 protein_id_labels = unique(density$protein_id)
 density$protein_id_num = paste(  sprintf("%03d", match(density$protein_id, protein_id_labels) ), ":",  density$protein_id) 
+
+# protein_id_ordered = fct_reorder(protein_id_labels, density$protein_id_num)
 
 # # TODO stem_loop
 # stem_loops_labels = unique(density$stem_loops)
@@ -160,8 +169,8 @@ p4 = p3bis + labs(title = t) # add graph title
 p5 = p4 + xlab("Base Position") # add x axe title
 p6 = p5 + ylab("Variant Frequency") # add axes and graph titles
 
-p6bis = p6 +guides(shape = guide_legend(order=1, direction="vertical", title="protein", legend.position="top"),
-                   color = guide_legend(order=2, direction="horizontal", title="gene", legend.position="top"))
+p6bis = p6 +guides(shape = guide_legend(order=1, direction="vertical", title="proteins (order: protein names)"),
+                   color = guide_legend(order=2, direction="horizontal", title="genes (order: gene names)"))
 		   
 # p7 = p6 + theme(legend.position = "bottom") # modify the legend position
 p8 = p6bis + ylim(-0.06,1.2) # modify the scale
@@ -172,6 +181,6 @@ p10 = p9 + geom_line(aes(x = position, y = 0.5), color = "red")
 p11 = p10 + theme(plot.title = element_text(hjust=0.5))
 
 
-ggsave(args[4], device = "png", plot = last_plot(), width = 20, dpi = 600) # save the graph
+ggsave(outfile, device = "png", plot = last_plot(), width = 20, dpi = 600) # save the graph
 
 # ~ end of script ~
