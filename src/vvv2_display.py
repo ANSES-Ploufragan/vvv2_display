@@ -44,6 +44,9 @@ def __main__():
     
     prog_tag = '[' + os.path.basename(__file__) + ']'
 
+    # to record if we display cov depth in graph or not (depends on provided intputs)
+    b_cov_depth_display = False
+
     # --------------------------------------
     # input files
     # --------------------------------------
@@ -96,6 +99,12 @@ def __main__():
     parser.add_argument("-r", "--png_var_f", dest='png_var_f',
                         help="out: png file with variant proportions and annotations",
                         metavar="FILE")
+    parser.add_argument("-o", "--cov_depth_f", dest='cov_depth_f',
+                        help="[optional] in: text file of coverage depths (given by samtools depth)",
+                        metavar="FILE")     
+    parser.add_argument("-e", "--cov_depth_corr_f", dest='cov_depth_corr_f',
+                        help="[optional] out: text file of coverage depths with cumulated position in case of several contigs, for display (tmp file, for galaxy compatibility)",
+                        metavar="FILE")                       
     parser.add_argument("-t", "--snp_loc_f", dest='snp_loc_f',
                         help="[optional] out: variant description for relevant positions, txt file (if not provided, file name deduced from png name)",
                         metavar="FILE")  
@@ -205,6 +214,9 @@ def __main__():
         snp_loc_f = os.path.abspath(args.snp_loc_f)
     if args.snp_loc_summary_f is not None:
         snp_loc_summary_f = os.path.abspath(args.snp_loc_summary_f)
+    if args.cov_depth_f is not None:
+        cov_depth_f = os.path.abspath(args.cov_depth_f)
+        b_cov_depth_display = True
     # ----------------------------------------------------------------
     # optional arguments only for Galaxy compatibility
     if args.json_annot_f is not None:
@@ -215,6 +227,8 @@ def __main__():
         correct_vcf_f = os.path.abspath(args.correct_vcf_f)
     if args.contig_limits_f is not None:
         contig_limits_f = os.path.abspath(args.contig_limits_f)
+    if args.cov_depth_corr_f is not None:
+        cov_depth_corr_f = os.path.abspath(args.cov_depth_corr_f)
     # ----------------------------------------------------------------
     
     if args.b_verbose is not None:
@@ -431,7 +445,17 @@ def __main__():
     if(png_var_f == ''):
        png_var_f = snp_loc_f
        png_var_f = re.sub('\.[^\.]+$', '.png', png_var_f)
-       
+    
+    # creates corrected cov depth file
+    if b_cov_depth_display:
+        cmd = cmd + " ".join([
+                " --cov_depth_f", cov_depth_f,
+                " --cov_depth_corr_f", cov_depth_corr_f,
+                " "
+        ]) 
+        print(prog_tag + " cmd:" + cmd)
+        os.system(cmd)
+
     # env r-env.yaml
     r_script = R_SCRIPTS + "visualize_snp_v4.R"
     threshold = "0.07"
@@ -440,8 +464,13 @@ def __main__():
                 snp_loc_f, 
                 contig_limits_f,
                 threshold,
-                png_var_f,
-                " < ", r_script, " > /dev/null"])
+                png_var_f])
+
+    # parameter to allow coverage depth display above variants/annotations
+    if b_cov_depth_display:
+        cmd = cmd + cov_depth_corr_f + " "
+    
+    cmd = cmd + " ".join([" < ", r_script, " > /dev/null"])
     print(prog_tag + " cmd:" + cmd)
 
     if b_test_visualize_snp_v4:
