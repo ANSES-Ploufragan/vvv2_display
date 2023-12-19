@@ -160,7 +160,7 @@ p6bis = p6 +guides(shape = guide_legend(order=1, direction="horizontal", title="
 		   
 # p7 = p6 + theme(legend.position = "bottom") # modify the legend position
 p8 = p6bis + ylim(-0.06,1.2) # modify the scale
-p9 = p8 + geom_text(aes(x = position, y = variant_percent + 0.01, label = indice, angle = 0)) # add indice to the grapĥ
+p9 = p8 + geom_text(aes(x = position, y = variant_percent + 0.03, label = indice, angle = 0)) # add indice to the grapĥ
 #p10 = p9 + geom_text(x = 0, y = threshold + 0.01, label = t) # add the threshold text
 #p11 = p10 + geom_line(aes(x = position, y = 0.5), color = "red") 
 p10 = p9 + geom_line(aes(x = position, y = 0.5), color = "red")
