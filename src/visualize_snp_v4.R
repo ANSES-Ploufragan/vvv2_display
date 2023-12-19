@@ -1,5 +1,6 @@
 #!/usr/bin/env Rscript
 #
+# FT; last modification December 19th 2023
 # AF; last modification February 16th 2019
 #
 # Description:  This script has been written in order to generate a graph
@@ -37,7 +38,7 @@ if(is.null(density)){ # means no snp found
 }
 
 # defined a wide color palet manually to ensure better visibility, the other colors defined later will not be so distinctive
-protcols=c('#99CC00','#CC9900','#FFCC33','#FF9900','#FF6600','#FF3300','#CC3300','#990033','#FF3366','#FF9999','#FFCCFF','#CC99CC','#996699','#993399','#660066','#990066','#660099','#CC00CC','#6600CC','#9966FF','#6633FF','#330099','#0033CC','#3366FF','#0033FF','#00CCFF','#006699','#00CC99','#009966','#33FFCC','#33CC99','#66FFCC','#33CCCC','#99FFFF','#66CC99','#339966','#99CC99','#99FF99','#66CC66','#66FF66','#669933','#336600','#00FF00','#66CC33','#CCFF66','#CCCC99','#FFFFCC','#FFCC99','#FFCCCC','#FF99CC','#CC99FF','#9999CC','#CCCCFF','#333333','#999999','#666666','#CCCCCC','#000000','#FF0000','#33D033','#CCD066','#CC00FF','#9900FF','#0099FF','#003333','#0099CC','#00FF99','#CCFF00')
+genecols=c('#99CC00','#CC9900','#FFCC33','#FF9900','#FF6600','#FF3300','#CC3300','#990033','#FF3366','#FF9999','#FFCCFF','#CC99CC','#996699','#993399','#660066','#990066','#660099','#CC00CC','#6600CC','#9966FF','#6633FF','#330099','#0033CC','#3366FF','#0033FF','#00CCFF','#006699','#00CC99','#009966','#33FFCC','#33CC99','#66FFCC','#33CCCC','#99FFFF','#66CC99','#339966','#99CC99','#99FF99','#66CC66','#66FF66','#669933','#336600','#00FF00','#66CC33','#CCFF66','#CCCC99','#FFFFCC','#FFCC99','#FFCCCC','#FF99CC','#CC99FF','#9999CC','#CCCCFF','#333333','#999999','#666666','#CCCCCC','#000000','#FF0000','#33D033','#CCD066','#CC00FF','#9900FF','#0099FF','#003333','#0099CC','#00FF99','#CCFF00')
 
 # ,'#','#','#','#','#','#','#','#','#','#','#','#',
 # '#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#',
@@ -45,44 +46,44 @@ protcols=c('#99CC00','#CC9900','#FFCC33','#FF9900','#FF6600','#FF3300','#CC3300'
 # '#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#','#')
 
 # check color redundancy
-protcols_unique = sort(unique(protcols))
+genecols_unique = sort(unique(genecols))
 print("max_col_number_unique:")
-print(length(protcols_unique))
+print(length(genecols_unique))
 
-if( length(protcols) != length(protcols_unique) ){
-    protcols = sort(protcols)
-    for( icol in 1:length(protcols_unique) ){
-       print("protcols_unique de ")
+if( length(genecols) != length(genecols_unique) ){
+    genecols = sort(genecols)
+    for( icol in 1:length(genecols_unique) ){
+       print("genecols_unique de ")
        print(icol)
        print(":")
-       print(protcols_unique[icol])
-       if( protcols_unique[icol] != protcols[icol] ){
-           redund_vals = protcols[icol]
+       print(genecols_unique[icol])
+       if( genecols_unique[icol] != genecols[icol] ){
+           redund_vals = genecols[icol]
     	   print("Color found several times:")
     	   print(redund_vals)
     	   stop()
 	}
     }
-    print("first values identical, added values in protcols:")
-    for( icol in length(protcols_unique)+1:length(protcols) ){
+    print("first values identical, added values in genecols:")
+    for( icol in length(genecols_unique)+1:length(genecols) ){
     	   print("Color found several times:")
-    	   print(protcols[icol])
+    	   print(genecols[icol])
     }
     stop()
 }
 
-# add missing colors of rainbow 4000 to protcols, to be sure to always have enough colors (mimmivirus =~ 3000 genes)
+# add missing colors of rainbow 4000 to genecols, to be sure to always have enough colors (mimmivirus =~ 3000 genes)
 complete_col_set=rainbow(n=10000)
-indexes_to_rm = match(protcols, complete_col_set)
+indexes_to_rm = match(genecols, complete_col_set)
 for(i in indexes_to_rm){
       complete_col_set[ -i ]
       }
-protcols = append(protcols, complete_col_set)
+genecols = append(genecols, complete_col_set)
 
 
-# check how many color we can manage
-print("max_col_number:")
-print(length(protcols))
+# # check how many color we can manage
+# print("max_col_number:")
+# print(length(genecols))
 
 
 # print("genes:")
@@ -111,6 +112,9 @@ print(length(protcols))
 # }
 
 # needed to have color labels NOT ORDERED and to choose colors
+gene_id_labels = unique(density$gene_id)
+density$gene_id_num = paste(  sprintf("%03d", match(density$gene_id, gene_id_labels) ), density$gene_id) 
+
 protein_id_labels = unique(density$protein_id)
 density$protein_id_num = paste(  sprintf("%03d", match(density$protein_id, protein_id_labels) ), density$protein_id) 
 
@@ -118,21 +122,24 @@ density$protein_id_num = paste(  sprintf("%03d", match(density$protein_id, prote
 # stem_loops_labels = unique(density$stem_loops)
 # density$stem_loops_num = paste(  sprintf("%03d", match(density$stem_loops, stem_loops_labels) ), density$stem_loops) 
 
-# print("protein_id_num:")
-# print(density$protein_id_num)
+# print("gene_id_num:")
+# print(density$gene_id_num)
 
-# print("protein_id_labels:")
-# print(protein_id_labels)
+print("gene_id_labels:")
+print(gene_id_labels)
 
-p1 = p + geom_point(aes(x = position, y = -0.05, colour = density$protein_id_num, shape = density$gene_id), size = 1, show.legend = F, shape = 15) # add the consensus points, and remove the legend "size" for proteins
+p1 = p + geom_point(aes(x = position, y = -0.05, colour = density$gene_id_num, shape = density$protein_id_num), size = 1, show.legend = F, shape = 15) # add the consensus points, and remove the legend "size" for proteins
 
 # needed to have more than 6 symbols for gene_id legend
-p1bis = p1 + scale_shape_manual(values=c(1:25))
+p1bis = p1 + scale_shape_manual(values=c(1:25,1:25))
 
 # use color more easily distinguishable
-p1ter = p1bis + scale_color_manual(values=protcols[1:length(protein_id_labels)])
+p1ter = p1bis + scale_color_manual(values=genecols[1:length(gene_id_labels)])
 
-p2 = p1ter + geom_point(aes(x = position, y = as.numeric(variant_percent), color = density$protein_id_num, shape = density$gene_id)) # add the variant points
+print("length of density protein_id:")
+print(length(density$protein_id_num))
+p2 = p1ter + geom_point(aes(x = position, y = as.numeric(variant_percent), color = density$gene_id_num, shape = density$protein_id_num)) # add the variant points
+# p2 = p1ter + geom_point(aes(x = position, y = as.numeric(variant_percent), color = density$gene_id_num, shape = density$gene_id)) # add the variant points
 
 p3 = p2 + geom_line(aes(x=position, y=threshold)) # add the threshold line
 
@@ -155,15 +162,15 @@ p4 = p3bis + labs(title = t) # add graph title
 p5 = p4 + xlab("Base Position") # add x axe title
 p6 = p5 + ylab("Variant Frequency") # add axes and graph titles
 
-p6bis = p6 +guides(shape = guide_legend(order=1, direction="horizontal", title="gene"),
-                   color = guide_legend(order=2, direction="vertical", title="protein"))
+p6bis = p6 +guides(shape = guide_legend(order=1, direction="vertical", title="protein"),
+                   color = guide_legend(order=2, direction="horizontal", title="gene"))
 		   
 # p7 = p6 + theme(legend.position = "bottom") # modify the legend position
 p8 = p6bis + ylim(-0.06,1.2) # modify the scale
 p9 = p8 + geom_text(aes(x = position, y = variant_percent + 0.03, label = indice, angle = 0)) # add indice to the grapĥ
 #p10 = p9 + geom_text(x = 0, y = threshold + 0.01, label = t) # add the threshold text
 #p11 = p10 + geom_line(aes(x = position, y = 0.5), color = "red") 
-p10 = p9 + geom_line(aes(x = position, y = 0.5), color = "red")
+p10 = p9 + geom_line(aes(x = position, y = 0.5), color = "red", legend.position="top")
 p11 = p10 + theme(plot.title = element_text(hjust=0.5))
 
 
