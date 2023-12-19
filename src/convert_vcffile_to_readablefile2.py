@@ -96,7 +96,7 @@ def find_key_proteins(dico_json, genomepos, gene_res):
     """ This function retrieves the protein name and the start and end position of
 this protein.
     """
-    protein = 'non coding RNA'
+    protein = 'non translated RNA'
     base_inf_allproteins = ''
     base_sup_allproteins = ''
     # print("find_key_proteins call pos ("+str(genomepos)+", "+gene_res+")")    
@@ -112,7 +112,7 @@ this protein.
                         protein = 'intergene'
                         base_inf_allproteins = str(base_inf)
                         base_sup_allproteins = str(base_sup)
-                    elif protein == 'non coding RNA':
+                    elif protein == 'non translated RNA':
                         protein = key
                         base_inf_allproteins = str(base_inf)
                         base_sup_allproteins = str(base_sup)
