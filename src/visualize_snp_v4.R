@@ -113,10 +113,10 @@ genecols = append(genecols, complete_col_set)
 
 # needed to have color labels NOT ORDERED and to choose colors
 gene_id_labels = unique(density$gene_id)
-density$gene_id_num = paste(  sprintf("%03d", match(density$gene_id, gene_id_labels) ), density$gene_id) 
+density$gene_id_num = paste(  sprintf("%03d", match(density$gene_id, gene_id_labels) ), ":", density$gene_id) 
 
 protein_id_labels = unique(density$protein_id)
-density$protein_id_num = paste(  sprintf("%03d", match(density$protein_id, protein_id_labels) ), density$protein_id) 
+density$protein_id_num = paste(  sprintf("%03d", match(density$protein_id, protein_id_labels) ), ":",  density$protein_id) 
 
 # # TODO stem_loop
 # stem_loops_labels = unique(density$stem_loops)
@@ -136,8 +136,6 @@ p1bis = p1 + scale_shape_manual(values=c(1:25,1:25))
 # use color more easily distinguishable
 p1ter = p1bis + scale_color_manual(values=genecols[1:length(gene_id_labels)])
 
-print("length of density protein_id:")
-print(length(density$protein_id_num))
 p2 = p1ter + geom_point(aes(x = position, y = as.numeric(variant_percent), color = density$gene_id_num, shape = density$protein_id_num)) # add the variant points
 # p2 = p1ter + geom_point(aes(x = position, y = as.numeric(variant_percent), color = density$gene_id_num, shape = density$gene_id)) # add the variant points
 
@@ -162,15 +160,15 @@ p4 = p3bis + labs(title = t) # add graph title
 p5 = p4 + xlab("Base Position") # add x axe title
 p6 = p5 + ylab("Variant Frequency") # add axes and graph titles
 
-p6bis = p6 +guides(shape = guide_legend(order=1, direction="vertical", title="protein"),
-                   color = guide_legend(order=2, direction="horizontal", title="gene"))
+p6bis = p6 +guides(shape = guide_legend(order=1, direction="vertical", title="protein", legend.position="top"),
+                   color = guide_legend(order=2, direction="horizontal", title="gene", legend.position="top"))
 		   
 # p7 = p6 + theme(legend.position = "bottom") # modify the legend position
 p8 = p6bis + ylim(-0.06,1.2) # modify the scale
 p9 = p8 + geom_text(aes(x = position, y = variant_percent + 0.03, label = indice, angle = 0)) # add indice to the grapĥ
 #p10 = p9 + geom_text(x = 0, y = threshold + 0.01, label = t) # add the threshold text
 #p11 = p10 + geom_line(aes(x = position, y = 0.5), color = "red") 
-p10 = p9 + geom_line(aes(x = position, y = 0.5), color = "red", legend.position="top")
+p10 = p9 + geom_line(aes(x = position, y = 0.5), color = "red")
 p11 = p10 + theme(plot.title = element_text(hjust=0.5))
 
 
