@@ -76,8 +76,8 @@ def __main__():
     #########################################
     # directories fo sub programs
     #########################################
-    PYTHON_SCRIPTS = f"{dir_path}/" # PYTHON_SCRIPTS/"
-    R_SCRIPTS      = f"{dir_path}/" # R_SCRIPTS/"
+    PYTHON_SCRIPTS = dir_path + "/" # PYTHON_SCRIPTS/"
+    R_SCRIPTS      = dir_path + "/" # R_SCRIPTS/"
     #########################################
 
     parser = argparse.ArgumentParser()
@@ -224,58 +224,58 @@ def __main__():
     # ------------------------------------------------------------------
     # TEST for vvv2_display
     # ------------------------------------------------------------------
-    test_dir = f"{dir_path}/../test_vvv2_display"
+    test_dir = dir_path + "/../test_vvv2_display"
     if b_test_vvv2_display:
         # --------------------------------------------------------------
         # COMPLETE GENOME
         # in files
-        pass_annot_f  = f"{test_dir}/res2_vadr_pass.tbl" # from vadr results
-        fail_annot_f  = f"{test_dir}/res2_vadr_fail.tbl" # from vadr results
-        seq_stat_f    = f"{test_dir}/res2_vadr.seqstat"  # from vadr results
-        vardict_vcf_f = f"{test_dir}/res2_vardict.vcf"  # from lofreq results    
+        pass_annot_f  = test_dir + "/res2_vadr_pass.tbl" # from vadr results
+        fail_annot_f  = test_dir + "/res2_vadr_fail.tbl" # from vadr results
+        seq_stat_f    = test_dir + "/res2_vadr.seqstat"  # from vadr results
+        vardict_vcf_f = test_dir + "/res2_vardict.vcf"  # from lofreq results    
         # tmp out files
-        json_annot_f  = f"{test_dir}/res2_vadr.json"     # from convert_tbl2json.py
-        contig_limits_f= f"{test_dir}/contig_limits.txt"
+        json_annot_f  = test_dir + "/res2_vadr.json"     # from convert_tbl2json.py
+        contig_limits_f= test_dir + "/contig_limits.txt"
         # final out file
-        png_var_f     = f"{test_dir}/res2_vvv2.png"     # from ...
-        cmd = ' '.join([f"{dir_path}/vvv2_display.py",
-                    f"--pass_tbl_f {pass_annot_f}",
-                    f"--fail_tbl_f {fail_annot_f}",
-                    f"--seq_stat_f {seq_stat_f}",
-                    f"--vcf_f {vardict_vcf_f}",
-                    f"--contig_limits_f {contig_limits_f}",                 
-                    f"--png_var_f {png_var_f}"
+        png_var_f     = test_dir + "/res2_vvv2.png"     # from ...
+        cmd = ' '.join([ dir_path + "/vvv2_display.py",
+                            "--pass_tbl_f", pass_annot_f,
+                            "--fail_tbl_f", fail_annot_f,
+                            "--seq_stat_f", seq_stat_f,
+                            "--vcf_f", vardict_vcf_f,
+                            "--contig_limits_f", contig_limits_f,                 
+                            "--png_var_f", png_var_f
                     ])
-        print(f"{prog_tag} START")    
-        print(f"{prog_tag} cmd:{cmd}")
+        print(prog_tag + " START")    
+        print(prog_tag + " cmd:" + cmd)
         os.system(cmd)
-        print(f"{prog_tag} END")
+        print(prog_tag + " END")
         # --------------------------------------------------------------
 
         # --------------------------------------------------------------
         # CONTIGS
         # in files
-        pass_annot_f  = f"{test_dir}/res_vadr_pass.tbl" # from vadr results
-        fail_annot_f  = f"{test_dir}/res_vadr_fail.tbl" # from vadr results
-        seq_stat_f    = f"{test_dir}/res_vadr.seqstat"  # from vadr results
-        vardict_vcf_f = f"{test_dir}/res_vardict.vcf"  # from lofreq results    
+        pass_annot_f  = test_dir + "/res_vadr_pass.tbl" # from vadr results
+        fail_annot_f  = test_dir + "/res_vadr_fail.tbl" # from vadr results
+        seq_stat_f    = test_dir + "/res_vadr.seqstat"  # from vadr results
+        vardict_vcf_f = test_dir + "/res_vardict.vcf"  # from lofreq results    
         # tmp out files
-        json_annot_f    = f"{test_dir}/res_vadr.json"     # from convert_tbl2json.
-        contig_limits_f = f"{test_dir}/contig_limits.txt"  # from lofreq results    py
+        json_annot_f    = test_dir + "/res_vadr.json"     # from convert_tbl2json.
+        contig_limits_f = test_dir + "/contig_limits.txt"  # from lofreq results    py
         # final out file
-        png_var_f    = f"{test_dir}/res_vvv2.png"     # from ...
-        cmd = ' '.join([f"{dir_path}/vvv2_display.py",
-                    f"--pass_tbl_f {pass_annot_f}",
-                    f"--fail_tbl_f {fail_annot_f}",
-                    f"--seq_stat_f {seq_stat_f}",
-                    f"--vcf_f {vardict_vcf_f}",
-                    f"--contig_limits_f {contig_limits_f}",                        
-                    f"--png_var_f {png_var_f}"
+        png_var_f    = test_dir + "/res_vvv2.png"     # from ...
+        cmd = ' '.join([ dir_path + "/vvv2_display.py",
+                    "--pass_tbl_f", pass_annot_f,
+                    "--fail_tbl_f", fail_annot_f,
+                    "--seq_stat_f", seq_stat_f,
+                    "--vcf_f", vardict_vcf_f,
+                    "--contig_limits_f", contig_limits_f,                        
+                    "--png_var_f", png_var_f
                     ])
-        print(f"{prog_tag} START")    
-        print(f"{prog_tag} cmd:{cmd}")
+        print(prog_tag + " START")    
+        print(prog_tag + " cmd:" + cmd)
         os.system(cmd)
-        print(f"{prog_tag} END")
+        print(prog_tag + " END")
         # --------------------------------------------------------------
 
         sys.exit()
@@ -287,19 +287,19 @@ def __main__():
     # ------------------------------------------------------------------
     if b_test_convert_tbl2json:
         # # COMPLETE GENOME
-        # pass_annot_f = f"{test_dir}/res2_vadr_pass.tbl" # from vadr results
-        # fail_annot_f = f"{test_dir}/res2_vadr_fail.tbl" # from vadr results
-        # seq_stat_f   = f"{test_dir}/res2_vadr.seqstat"  # from vadr results
-        # json_annot_f = f"{test_dir}/res2_vadr.json"
-        ## bed_annot_f  = f"{test_dir}/res2_vadr.bed"
-        # bed_vardict_annot_f  = f"{test_dir}/res2_vadr.4vardict.bed"        
+        # pass_annot_f = test_dir + "/res2_vadr_pass.tbl" # from vadr results
+        # fail_annot_f = test_dir + "/res2_vadr_fail.tbl" # from vadr results
+        # seq_stat_f   = test_dir + "/res2_vadr.seqstat"  # from vadr results
+        # json_annot_f = test_dir + "/res2_vadr.json"
+        ## bed_annot_f  = test_dir + "/res2_vadr.bed"
+        # bed_vardict_annot_f  = test_dir + "/res2_vadr.4vardict.bed"        
         # CONTIGS
-        pass_annot_f         = f"{test_dir}/res_vadr_pass.tbl" # from vadr results
-        fail_annot_f         = f"{test_dir}/res_vadr_fail.tbl" # from vadr results
-        seq_stat_f           = f"{test_dir}/res_vadr.seqstat"  # from vadr results
-        json_annot_f         = f"{test_dir}/res_vadr.json"
-        # bed_annot_f          = f"{test_dir}/res_vadr.bed"
-        bed_vardict_annot_f  = f"{test_dir}/res_vadr.4vardict.bed"        
+        pass_annot_f         = test_dir + "/res_vadr_pass.tbl" # from vadr results
+        fail_annot_f         = test_dir + "/res_vadr_fail.tbl" # from vadr results
+        seq_stat_f           = test_dir + "/res_vadr.seqstat"  # from vadr results
+        json_annot_f         = test_dir + "/res_vadr.json"
+        # bed_annot_f          = test_dir + "/res_vadr.bed"
+        bed_vardict_annot_f  = test_dir + "/res_vadr.4vardict.bed"        
 
     if(json_annot_f == ''):
        json_annot_f = vardict_vcf_f
@@ -310,22 +310,22 @@ def __main__():
 #       bed_vardict_annot_f = bed_vardict_annot_f.replace('.vcf', '.vardict.bed')
        bed_vardict_annot_f = re.sub('\.[^\.]+$', '_vardict.bed', bed_vardict_annot_f)
        
-    p_script = f"{PYTHON_SCRIPTS}convert_tbl2json.py"
-    cmd = ' '.join([f"{p_script}",
-                    f"--pass_annot_f {pass_annot_f}",
-                    f"--fail_annot_f {fail_annot_f}",
-                    f"--seq_stat_f {seq_stat_f}",
-                    f"--json_out_f {json_annot_f}",
-    #                f"--bed_out_f {bed_annot_f}",
-                    f"--bed_vardict_out_f {bed_vardict_annot_f}"                             
+    p_script = PYTHON_SCRIPTS + "convert_tbl2json.py"
+    cmd = ' '.join([ p_script,
+                    "--pass_annot_f", pass_annot_f,
+                    "--fail_annot_f", fail_annot_f,
+                    "--seq_stat_f", seq_stat_f,
+                    "--json_out_f", json_annot_f,
+    #               "--bed_out_f", bed_annot_f,
+                    "--bed_vardict_out_f", bed_vardict_annot_f                             
                     ])
-    print(f"{prog_tag} cmd:{cmd}")
+    print(prog_tag + " cmd:" + cmd)
 
     if b_test_convert_tbl2json:
-        print(f"{prog_tag} [test_convert_tbl2json] START")
-        print(f"{prog_tag} cmd:{cmd}")
+        print(prog_tag + " [test_convert_tbl2json] START")
+        print(prog_tag + " cmd:" + cmd)
         os.system(cmd)    
-        print(f"{prog_tag} [test_convert_tbl2json] END")
+        print(prog_tag + " [test_convert_tbl2json] END")
         sys.exit()
     else:
         os.system(cmd)    
@@ -335,31 +335,31 @@ def __main__():
     # in the final created picture
     # ------------------------------------------------------------------
     if b_test_correct_multicontig_vardict_vcf:
-        seq_stat_f           = f"{test_dir}/res_vadr.seqstat"  # from vadr results    
-        vardict_vcf_f        = f"{test_dir}/res_vardict.vcf"  # from vardict results            
-        correct_vcf_f        = f"{test_dir}/res_correct.vcf"  # corrected out results
-        contig_limits_f      = f"{test_dir}/contig_limits.txt"  # contig limits
+        seq_stat_f           = test_dir + "/res_vadr.seqstat"  # from vadr results    
+        vardict_vcf_f        = test_dir + "/res_vardict.vcf"  # from vardict results            
+        correct_vcf_f        = test_dir + "/res_correct.vcf"  # corrected out results
+        contig_limits_f      = test_dir + "/contig_limits.txt"  # contig limits
 
     if(correct_vcf_f == ''):
        correct_vcf_f = vardict_vcf_f
 #       correct_vcf_f = correct_vcf_f.replace('vardict.vcf', '_correct.vcf')
        correct_vcf_f = re.sub('\.[^\.]+$', '_correct.vcf', correct_vcf_f)
        
-    p_script = f"{PYTHON_SCRIPTS}correct_multicontig_vardict_vcf.py"
-    print(f"p_script:{p_script}")
-    cmd = ' '.join([f"{p_script}",
-                    f"--seq_stat_f {seq_stat_f}",
-                    f"--vardict_vcf_f {vardict_vcf_f}",
-                    f"--correct_vcf_f {correct_vcf_f}",
-                    f"--contig_limits_f {contig_limits_f}"                    
+    p_script = PYTHON_SCRIPTS + "correct_multicontig_vardict_vcf.py"
+    print("p_script:" + p_script)
+    cmd = ' '.join([p_script,
+                    "--seq_stat_f", seq_stat_f,
+                    "--vardict_vcf_f", vardict_vcf_f,
+                    "--correct_vcf_f", correct_vcf_f,
+                    "--contig_limits_f", contig_limits_f                    
                     ])
-    print(f"{prog_tag} cmd:{cmd}")
+    print(prog_tag + " cmd:" + cmd)
 
     if b_test_correct_multicontig_vardict_vcf:
-        print(f"{prog_tag} [test_correct_multicontig_vardict_vcf] START")
-        print(f"{prog_tag} cmd:{cmd}")
+        print(prog_tag + " [test_correct_multicontig_vardict_vcf] START")
+        print(prog_tag + " cmd:" + cmd)
         os.system(cmd)    
-        print(f"{prog_tag} [test_correct_multicontig_vardict_vcf] END")
+        print(prog_tag + " [test_correct_multicontig_vardict_vcf] END")
         sys.exit()
     else:
         os.system(cmd)
@@ -369,17 +369,17 @@ def __main__():
     # ------------------------------------------------------------------
     if b_test_convert_vcffile_to_readable:
         # # COMPLETE GENOME
-        # vardict_vcf_f = f"{test_dir}/res2_vardict.vcf"  # from vardict results
-        # correct_vcf_f = f"{test_dir}/res2_correct.vcf"  # corrected vardict results                
-        # json_annot_f      = f"{test_dir}/res2_vadr.json"
-        # snp_loc_f         =  f"{test_dir}/res2_snp.txt"
-        # snp_loc_summary_f =  f"{test_dir}/res2_snp_summary.txt"
+        # vardict_vcf_f = test_dir + "/res2_vardict.vcf"  # from vardict results
+        # correct_vcf_f = test_dir + "/res2_correct.vcf"  # corrected vardict results                
+        # json_annot_f      = test_dir + "/res2_vadr.json"
+        # snp_loc_f         =  test_dir + "/res2_snp.txt"
+        # snp_loc_summary_f =  test_dir + "/res2_snp_summary.txt"
         # CONTIGS
-        # vardict_vcf_f = f"{test_dir}/res_vardict.vcf"  # from vardict results
-        correct_vcf_f     = f"{test_dir}/res_correct.vcf"                  
-        json_annot_f      = f"{test_dir}/res_vadr.json"
-        snp_loc_f         =  f"{test_dir}/res_snp.txt"
-        snp_loc_summary_f =  f"{test_dir}/res_snp_summary.txt"
+        # vardict_vcf_f = test_dir + "/res_vardict.vcf"  # from vardict results
+        correct_vcf_f     = test_dir + "/res_correct.vcf"                  
+        json_annot_f      = test_dir + "/res_vadr.json"
+        snp_loc_f         =  test_dir + "/res_snp.txt"
+        snp_loc_summary_f =  test_dir + "/res_snp_summary.txt"
 
     if(snp_loc_f == ''):
        snp_loc_f = vardict_vcf_f
@@ -393,21 +393,21 @@ def __main__():
     # json_annot_f = f"{ech}_gene_position_viral_consensus.json" 
     # snp_loc_f = f"{ech}_snp_location"
     # p_script = f"{PYTHON_SCRIPTS}convert_vcffile_to_readablefile.py" # use pyvcf
-    p_script = f"{PYTHON_SCRIPTS}convert_vcffile_to_readablefile2.py" # use pysam
+    p_script = PYTHON_SCRIPTS + "convert_vcffile_to_readablefile2.py" # use pysam
     threshold = "0.07"
-    cmd = ' '.join([f"{p_script}",
-                    f"--vcfs {correct_vcf_f}",
-                    f"--json {json_annot_f}",
-                    f"--out {snp_loc_f}",
-                    f"--outs {snp_loc_summary_f}",
-                    f"--threshold {threshold}"])
-    print(f"{prog_tag} cmd:{cmd}")
+    cmd = ' '.join([p_script,
+                    "--vcfs", correct_vcf_f,
+                    "--json", json_annot_f,
+                    "--out", snp_loc_f,
+                    "--outs", snp_loc_summary_f,
+                    "--threshold", threshold])
+    print(prog_tag + " cmd:" + cmd)
 
     if b_test_convert_vcffile_to_readable:
-        print(f"{prog_tag} [test_convert_vcffile_to_readable] START")
-        print(f"{prog_tag} cmd:{cmd}")
+        print(prog_tag + " [test_convert_vcffile_to_readable] START")
+        print(prog_tag + " cmd:" + cmd)
         os.system(cmd)    
-        print(f"{prog_tag} [test_convert_vcffile_to_readable] END")
+        print(prog_tag + " [test_convert_vcffile_to_readable] END")
         sys.exit()
     else:
         os.system(cmd)    
@@ -419,35 +419,40 @@ def __main__():
     # ------------------------------------------------------------------
     if b_test_visualize_snp_v4:
         # # COMPLETE GENOME
-        # snp_loc_f =  f"{test_dir}/res2_snp.txt"
-        # snp_loc_summary_f =  f"{test_dir}/res2_snp_summary.txt"
-        # png_var_f =  f"{test_dir}/res2_snp.png"
+        # snp_loc_f =  test_dir + "/res2_snp.txt"
+        # snp_loc_summary_f =  test_dir + "/res2_snp_summary.txt"
+        # png_var_f =  test_dir + "/res2_snp.png"
         # CONTIGS
-        snp_loc_f         =  f"{test_dir}/res_snp.txt"
-        snp_loc_summary_f =  f"{test_dir}/res_snp_summary.txt"
-        png_var_f         =  f"{test_dir}/res_snp.png"
-        contig_limits_f   =  f"{test_dir}/contig_limits.txt"
+        snp_loc_f         =  test_dir + "/res_snp.txt"
+        snp_loc_summary_f =  test_dir + "/res_snp_summary.txt"
+        png_var_f         =  test_dir + "/res_snp.png"
+        contig_limits_f   =  test_dir + "/contig_limits.txt"
         
     if(png_var_f == ''):
        png_var_f = snp_loc_f
        png_var_f = re.sub('\.[^\.]+$', '.png', png_var_f)
        
     # env r-env.yaml
-    r_script = f"{R_SCRIPTS}visualize_snp_v4.R"
+    r_script = R_SCRIPTS + "visualize_snp_v4.R"
     threshold = "0.07"
     # png_var_f = f"{ech}_graphic_variant.png"
-    cmd = f"R --vanilla --quiet --args {snp_loc_f} {contig_limits_f} {threshold} {png_var_f} < {r_script} > /dev/null"
-    print(f"{prog_tag} cmd:{cmd}")
+    cmd = " ".join(["R --vanilla --quiet --args",
+                snp_loc_f, 
+                contig_limits_f,
+                threshold,
+                png_var_f,
+                " < ", r_script, " > /dev/null"])
+    print(prog_tag + " cmd:" + cmd)
 
     if b_test_visualize_snp_v4:
-        print(f"{prog_tag} [test_visualize_snp_v4] START")
-        print(f"{prog_tag} cmd:{cmd}")
+        print(prog_tag + " [test_visualize_snp_v4] START")
+        print(prog_tag + " cmd:" + cmd)
         os.system(cmd)
-        print(f"{prog_tag} [test_visualize_snp_v4] END")
+        print(prog_tag + " [test_visualize_snp_v4] END")
     else:
         os.system(cmd)    
     # ------------------------------------------------------------------
-    print(f"{png_var_f} file created")
+    print(png_var_f + " file created")
 
 ##### MAIN END
 if __name__=="__main__":__main__()
