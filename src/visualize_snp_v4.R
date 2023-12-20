@@ -16,6 +16,8 @@
 # install.packages("viridis")
 # library("viridis")
 library(ggplot2) # import the ggplot2 library
+library(gridExtra) # multi graph on the same figure
+
 args <- commandArgs(TRUE) # all arguments are character types
 
 density <- try( read.table(args[1], h=T, sep = "\t") ) # read the dataframe
@@ -38,10 +40,22 @@ if(inherits(coverage_depth,"try-error"))
 t1 = as.character(threshold) # define threshold as a character
 t = paste("Nucleotide Variation - threshold = ", t1, sep = ' ')
 
+if(! is.null(coverage_depth)){ # means covdepth provided, we prepare var for graph
+  maxi = max(coverage_depth$V2)
+  mini = min(coverage_depth$V2)
+  med = median(coverage_depth$V2)
+  m = paste("Coverage - median_coverage =", med, "[", mini, ":", maxi, "]", sep = " ")
+  cd = ggplot(coverage_depth, aes(x = V1, y = V2)) + geom_line(color = "black", size = 0.5)
+  #  + labs(list(title = m, x = "Base Position", y = "Number of Reads")
+  cd1 = cd + labs(title = m) # add graph title
+  cd2 = cd1 + xlab("Base Position") # add x axe title
+  cd3 = cd2 + ylab("Number of reads") # add axes and graph titles
+}
+
 if(is.null(density)){ # means no snp found
-  p = ggplot() # plot initialization
+    p = ggplot() # plot initialization
 }else{
-  p = ggplot(density) # plot initialization
+    p = ggplot(density) # plot initialization
 }
 
 # defined a wide color palet manually to ensure better visibility, the other colors defined later will not be so distinctive
@@ -169,8 +183,7 @@ p4 = p3bis + labs(title = t) # add graph title
 p5 = p4 + xlab("Base Position") # add x axe title
 p6 = p5 + ylab("Variant Frequency") # add axes and graph titles
 
-p6bis = p6 +guides(shape = guide_legend(order=1, direction="vertical", title="proteins (order: protein names)"),
-                   color = guide_legend(order=2, direction="horizontal", title="genes (order: gene names)"))
+p6bis = p6 +guides(shape = guide_legend(order=1, direction="vertical", title="proteins (order: protein names)"), color = guide_legend(order=2, direction="horizontal", title="genes (order: gene names)"))
 		   
 # p7 = p6 + theme(legend.position = "bottom") # modify the legend position
 p8 = p6bis + ylim(-0.06,1.2) # modify the scale
@@ -178,9 +191,13 @@ p9 = p8 + geom_text(aes(x = position, y = variant_percent + 0.03, label = indice
 #p10 = p9 + geom_text(x = 0, y = threshold + 0.01, label = t) # add the threshold text
 #p11 = p10 + geom_line(aes(x = position, y = 0.5), color = "red") 
 p10 = p9 + geom_line(aes(x = position, y = 0.5), color = "red")
-p11 = p10 + theme(plot.title = element_text(hjust=0.5))
+p11 = p10 + theme(plot.title = element_text(hjust=0.5),legend.position="bottom") # 
 
+grid.arrange(cd, p11, nrow=2
+ , widths = c(2, 2), heights = c(1.0, 3.0)
+)
+g <- arrangeGrob(cd3, p11)
 
-ggsave(outfile, device = "png", plot = last_plot(), width = 20, dpi = 600) # save the graph
-
+ggsave(outfile, device = "png", plot = g, width = 21, units="cm", height=30, dpi = 600) # save the graph
+# 1 inch = 2.54cm
 # ~ end of script ~
