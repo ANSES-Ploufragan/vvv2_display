@@ -10,4 +10,4 @@ dependencies:
   - ca-certificates
   - openssl
   - r-ggplot2=3.3.6
-
+  - r-gridextra
