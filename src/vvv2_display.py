@@ -37,6 +37,7 @@ def __main__():
     b_test_convert_tbl2json                = False # ok 2022 04 26 complete tc,
     b_test_correct_multicontig_vardict_vcf = False # ok 2022 04 29 partial tc
     b_test_convert_vcffile_to_readable     = False # ok 2022 04 28 complete tc,
+    b_test_correct_covdepth_f              = True # 2023 12 20 tc,
     b_test_visualize_snp_v4                = False # ok 2022 04 28 complete tc,
     b_test = False
     dir_path = os.path.dirname(os.path.abspath(__file__)) # dir of current script
@@ -55,6 +56,8 @@ def __main__():
     seq_stat_f      = '' # in, seq stat file from vadr
     vardict_vcf_f   = '' # in, vcf file from VarDict
     correct_vcf_f   = '' # in, vcf file corrected for pos (when multicontigs)
+    cov_depth_f     = '' # in, cov depth file provided by samtools depth -aa
+    cov_depth_corr_f= '' # in, cov depth corrected for pos (when pulticontigs)
     # --------------------------------------
 
     # --------------------------------------
@@ -138,6 +141,9 @@ def __main__():
     parser.add_argument("-d", "--test_visualize_snp_v4", dest='b_test_visualize_snp_v4',
                         help="[Optional] run test to visualize snp in a png",
                         action='store_true')
+    parser.add_argument("-g", "--test_correct_covdepth_f", dest='b_test_correct_covdepth_f',
+                        help="[Optional] run test to correct position in cov depth file",
+                        action='store_true')
     parser.add_argument("-v", "--verbose", dest='b_verbose',
                         help="[Optional] To have details on records when running",
                         action='store_true')
@@ -158,24 +164,27 @@ def __main__():
     b_test_correct_multicontig_vardict_vcf = args.b_test_correct_multicontig_vardict_vcf
     b_test_convert_vcffile_to_readable     = args.b_test_convert_vcffile_to_readable
     b_test_visualize_snp_v4                = args.b_test_visualize_snp_v4
+    b_test_correct_covdepth_f              = args.b_test_correct_covdepth_f
 
     if b_test_vvv2_display:
         b_test_convert_tbl2json                = True
         b_test_correct_multicontig_vardict_vcf = True
         b_test_convert_vcffile_to_readable     = True
         b_test_visualize_snp_v4                = True
+        b_test_correct_covdepth_f              = True
         b_test                                 = True
     else:
         b_test = (b_test_vvv2_display                    or
                   b_test_convert_tbl2json                or
                   b_test_correct_multicontig_vardict_vcf or
                   b_test_convert_vcffile_to_readable     or
+                  b_test_correct_covdepth_f              or
                   b_test_visualize_snp_v4)
         # print(f"b_test:{b_test}")
         # print(f"b_test_convert_tbl2json:{b_test_convert_tbl2json}")    
 
     if ((not b_test)and
-        ((len(sys.argv) < 9) or (len(sys.argv) > 23))):
+        ((len(sys.argv) < 9) or (len(sys.argv) > 25))):
         print("\n".join([prog_tag,
                          "Aim: Display of SNP proportions, annotations, for an assembly",
                          "in:", 
@@ -246,10 +255,12 @@ def __main__():
         pass_annot_f  = test_dir + "/res2_vadr_pass.tbl" # from vadr results
         fail_annot_f  = test_dir + "/res2_vadr_fail.tbl" # from vadr results
         seq_stat_f    = test_dir + "/res2_vadr.seqstat"  # from vadr results
-        vardict_vcf_f = test_dir + "/res2_vardict.vcf"  # from lofreq results    
+        vardict_vcf_f = test_dir + "/res2_vardict.vcf"   # from lofreq results  
+        cov_depth_f   = test_dir + "/res2_covdepth.txt"  # from samtools results  
         # tmp out files
         json_annot_f  = test_dir + "/res2_vadr.json"     # from convert_tbl2json.py
         contig_limits_f= test_dir + "/contig_limits.txt"
+        cov_depth_corr_f= test_dir + "/res2_covdepth_corr.txt"
         # final out file
         png_var_f     = test_dir + "/res2_vvv2.png"     # from ...
         cmd = ' '.join([ dir_path + "/vvv2_display.py",
@@ -257,7 +268,9 @@ def __main__():
                             "--fail_tbl_f", fail_annot_f,
                             "--seq_stat_f", seq_stat_f,
                             "--vcf_f", vardict_vcf_f,
-                            "--contig_limits_f", contig_limits_f,                 
+                            "--contig_limits_f", contig_limits_f,   
+                            "--cov_depth_f", cov_depth_f,  
+                            "--cov_depth_corr_f", cov_depth_corr_f,              
                             "--png_var_f", png_var_f
                     ])
         print(prog_tag + " START")    
@@ -283,7 +296,9 @@ def __main__():
                     "--fail_tbl_f", fail_annot_f,
                     "--seq_stat_f", seq_stat_f,
                     "--vcf_f", vardict_vcf_f,
-                    "--contig_limits_f", contig_limits_f,                        
+                    "--contig_limits_f", contig_limits_f,   
+                    "--cov_depth_f", cov_depth_f,                     
+                    "--cov_depth_corr_f", cov_depth_corr_f,              
                     "--png_var_f", png_var_f
                     ])
         print(prog_tag + " START")    
@@ -427,6 +442,25 @@ def __main__():
         os.system(cmd)    
     # ------------------------------------------------------------------
 
+    # creates corrected cov depth file
+    if b_cov_depth_display:
+        if b_test_correct_covdepth_f and (not b_test_vvv2_display):
+            cov_depth_f = test_dir + "/res_vvv2_covdepth.txt"
+            cov_depth_corr_f = test_dir + "/res_vvv2_covdepth_corrected.txt"
+        cmd = " ".join([
+                    PYTHON_SCRIPTS + "correct_covdepth_f.py",
+                    "--cov_depth_f", cov_depth_f,
+                    "--cov_depth_corr_f", cov_depth_corr_f
+                ]) 
+        if b_test_correct_covdepth_f and (not b_test_vvv2_display):
+            print(prog_tag + " [test_correct_covdepth_f] START")
+            print(prog_tag + " cmd:" + cmd)
+            os.system(cmd)    
+            print(prog_tag + " [test_correct_covdepth_f] END")
+            sys.exit()
+        else:
+            print(prog_tag + " cmd:" + cmd)
+            os.system(cmd)
 
     # ------------------------------------------------------------------
     # creates png graphic of variants from snp file and threshold
@@ -446,16 +480,6 @@ def __main__():
        png_var_f = snp_loc_f
        png_var_f = re.sub('\.[^\.]+$', '.png', png_var_f)
     
-    # creates corrected cov depth file
-    if b_cov_depth_display:
-        cmd = cmd + " ".join([
-                " --cov_depth_f", cov_depth_f,
-                " --cov_depth_corr_f", cov_depth_corr_f,
-                " "
-        ]) 
-        print(prog_tag + " cmd:" + cmd)
-        os.system(cmd)
-
     # env r-env.yaml
     r_script = R_SCRIPTS + "visualize_snp_v4.R"
     threshold = "0.07"
@@ -468,7 +492,7 @@ def __main__():
 
     # parameter to allow coverage depth display above variants/annotations
     if b_cov_depth_display:
-        cmd = cmd + cov_depth_corr_f + " "
+        cmd = cmd + " " + cov_depth_corr_f + " "
     
     cmd = cmd + " ".join([" < ", r_script, " > /dev/null"])
     print(prog_tag + " cmd:" + cmd)
