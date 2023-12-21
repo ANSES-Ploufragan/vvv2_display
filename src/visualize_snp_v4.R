@@ -17,6 +17,7 @@
 # library("viridis")
 library(ggplot2) # import the ggplot2 library
 library(gridExtra) # multi graph on the same figure
+library(cowplot)
 
 args <- commandArgs(TRUE) # all arguments are character types
 
@@ -38,20 +39,22 @@ if(inherits(coverage_depth,"try-error"))
   coverage_depth <- NULL
 
 t1 = as.character(threshold) # define threshold as a character
-t = paste("Nucleotide Variation - threshold = ", t1, sep = ' ')
+# t = paste("Nucleotide Variation - threshold = ", t1, sep = ' ')
 
 if(! is.null(coverage_depth)){ # means covdepth provided, we prepare var for graph
   maxi = max(coverage_depth$V2)
   mini = min(coverage_depth$V2)
   med = median(coverage_depth$V2)
   m = paste("Coverage - median_coverage =", med, "[", mini, ":", maxi, "]", sep = " ")
-  cd = ggplot(coverage_depth, aes(x = V1, y = V2)) + geom_line(color = "black", size = 0.5)
+  options(repr.plot.width = 5, repr.plot.height =1)
+  cd = ggplot(coverage_depth, aes(x = V1, y = V2)) + geom_line(color = "black", linewidth = 0.5)
   #  + labs(list(title = m, x = "Base Position", y = "Number of Reads")
   cd1 = cd + labs(title = m) # add graph title
-  cd2 = cd1 + xlab("Base Position") # add x axe title
-  cd3 = cd2 + ylab("Number of reads") # add axes and graph titles
+  cd2 = cd1 + xlab("") # add x axe title
+  cd3 = cd2 + ylab("Number of reads") # add axes and graph titles 
 }
 
+options(repr.plot.width = 5, repr.plot.height =5) 
 if(is.null(density)){ # means no snp found
     p = ggplot() # plot initialization
 }else{
@@ -151,7 +154,7 @@ density$protein_id_num = paste(  sprintf("%03d", match(density$protein_id, prote
 print("gene_id_labels:")
 print(gene_id_labels)
 
-p1 = p + geom_point(aes(x = position, y = -0.05, colour = density$gene_id_num, shape = density$protein_id_num), size = 1, show.legend = F, shape = 15) # add the consensus points, and remove the legend "size" for proteins
+p1 = p + geom_point(aes(x = position, y = -0.05, colour = density$gene_id_num, shape = density$protein_id_num), size = 1, show.legend = F, shape = 15) # add the consensus points, and remove the legend "linewidth" for proteins
 
 # needed to have more than 6 symbols for gene_id legend
 p1bis = p1 + scale_shape_manual(values=c(1:25,1:25))
@@ -179,25 +182,23 @@ if(! is.null(contig_limits)){ # means more than 1 contig
 # }
 
 
-p4 = p3bis + labs(title = t) # add graph title
-p5 = p4 + xlab("Base Position") # add x axe title
+# p4 = p3bis + labs(title = t) # add graph title
+p5 = p3bis + xlab("Base Position") # add x axe title
 p6 = p5 + ylab("Variant Frequency") # add axes and graph titles
 
-p6bis = p6 +guides(shape = guide_legend(order=1, direction="vertical", title="proteins (order: protein names)"), color = guide_legend(order=2, direction="horizontal", title="genes (order: gene names)"))
+p6bis = p6 +guides(shape = guide_legend(order=1, direction="vertical", title="proteins (order: protein names)", nrow=5), color = guide_legend(order=2, direction="horizontal", title="genes (order: gene names)"),nrow=3)
 		   
 # p7 = p6 + theme(legend.position = "bottom") # modify the legend position
 p8 = p6bis + ylim(-0.06,1.2) # modify the scale
-p9 = p8 + geom_text(aes(x = position, y = variant_percent + 0.03, label = indice, angle = 0)) # add indice to the grapĥ
+p9 = p8 + geom_text(aes(x = position, y = variant_percent + 0.03, label = indice, angle = 0)) # add indice to the graph
 #p10 = p9 + geom_text(x = 0, y = threshold + 0.01, label = t) # add the threshold text
 #p11 = p10 + geom_line(aes(x = position, y = 0.5), color = "red") 
 p10 = p9 + geom_line(aes(x = position, y = 0.5), color = "red")
-p11 = p10 + theme(plot.title = element_text(hjust=0.5),legend.position="bottom") # 
+minus_maxlength_over6 = - max(contig_limits) / 50
+p10bis = p10 + geom_text(aes(x = minus_maxlength_over6, y = 0.07, label = t1, angle = 0)) # add indice to the graph
+p11 = p10bis + theme(plot.title = element_text(hjust=0.5),legend.position="bottom") # 
 
-grid.arrange(cd, p11, nrow=2
- , widths = c(2, 2), heights = c(1.0, 3.0)
-)
-g <- arrangeGrob(cd3, p11)
+g <- plot_grid(cd3, p11, align = "v", nrow = 2, rel_heights = c(1/6, 5/6))
 
-ggsave(outfile, device = "png", plot = g, width = 21, units="cm", height=30, dpi = 600) # save the graph
-# 1 inch = 2.54cm
+ggsave(outfile, device = "png", plot = g, width = 21, units="cm", height=29.7, dpi = 600) # save the graph
 # ~ end of script ~
