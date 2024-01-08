@@ -70,7 +70,8 @@ setuptools.setup(
     install_requires=[
         "python>=3.9",
         "r-ggplot2==3.6.6",
-        "r-gridextra=2.3"
+        "r-gridextra==2.3",
+        "r-cowplot==1.1.1",
         "pysam==0.19.1",
         "numpy==1.23.1"],  # Optional
     scripts=[

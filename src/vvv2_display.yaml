@@ -11,3 +11,4 @@ dependencies:
   - openssl
   - r-ggplot2=3.3.6
   - r-gridextra
+  - r-cowplot
