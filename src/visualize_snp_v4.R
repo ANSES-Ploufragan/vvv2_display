@@ -187,16 +187,20 @@ p5 = p3bis + xlab("Base Position") # add x axe title
 p6 = p5 + ylab("Variant Frequency") # add axes and graph titles
 
 p6bis = p6 +guides(shape = guide_legend(order=1, direction="vertical", title="proteins (order: protein names)", nrow=5), color = guide_legend(order=2, direction="horizontal", title="genes (order: gene names)"),nrow=3)
-		   
-# p7 = p6 + theme(legend.position = "bottom") # modify the legend position
-p8 = p6bis + ylim(-0.06,1.2) # modify the scale
+
+# for legend text size
+# p7 = p6bis + theme(legend.position = "bottom") # modify the legend position
+p7 = p6bis + theme(legend.text = element_text(size=rel(0.5)), legend.title=element_text(size=rel(0.8))) # modify the legend position
+
+
+p8 = p7 + ylim(-0.06,1.2) # modify the scale
 p9 = p8 + geom_text(aes(x = position, y = variant_percent + 0.03, label = indice, angle = 0)) # add indice to the graph
 #p10 = p9 + geom_text(x = 0, y = threshold + 0.01, label = t) # add the threshold text
 #p11 = p10 + geom_line(aes(x = position, y = 0.5), color = "red") 
 p10 = p9 + geom_line(aes(x = position, y = 0.5), color = "red")
 minus_maxlength_over6 = - max(contig_limits) / 50
 p10bis = p10 + geom_text(aes(x = minus_maxlength_over6, y = 0.07, label = t1, angle = 0)) # add indice to the graph
-p11 = p10bis + theme(plot.title = element_text(hjust=0.5),legend.position="bottom") # 
+p11 = p10bis + theme(plot.title = element_text(hjust=0.5),legend.position="bottom") 
 
 g <- plot_grid(cd3, p11, align = "v", nrow = 2, rel_heights = c(1/6, 5/6))
 
