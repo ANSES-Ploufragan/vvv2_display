@@ -151,7 +151,7 @@ replacement <- function(x){
   replaced = str_replace_all(replaced, ":[[:alnum:] \\-]+:",":")     # replace :....: by :
   replaced = str_replace_all(replaced, ":[[:alnum:] \\-]+$","")      # remove last :....
   replaced = str_replace_all(replaced, "\\[[[:alnum:] \\-]+\\]","")  # remove [...]
-  replaced = str_replace_all(replaced, " (?:putative|growth) [[:alnum:] \\-]+","")  # remove useless annotations
+  replaced = str_replace_all(replaced, " (?:putative|growth)[[:alnum:] \\-]+","")  # remove useless annotations
   return( replaced )
 }
 
