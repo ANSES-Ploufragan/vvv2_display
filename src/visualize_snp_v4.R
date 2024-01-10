@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 #
-# FT; last modification December 19th 2023
+# FT; last modification January 10th 2024
 # AF; last modification February 16th 2019
 #
 # Description:  This script has been written in order to generate a graph
@@ -147,9 +147,11 @@ protein_id_labels = unique(density$protein_id)
 
 # truncate long legend
 replacement <- function(x){
-  replaced = str_replace_all(x, ":[[:alnum:] \\-]+,","")
-  replaced = str_replace_all(replaced, ":[[:alnum:] \\-]+:",":")
-  replaced = str_replace_all(replaced, ":[[:alnum:] \\-]+$","")
+  replaced = str_replace_all(x, ":[[:alnum:] \\-]+,",",")            # replace :...., by ,
+  replaced = str_replace_all(replaced, ":[[:alnum:] \\-]+:",":")     # replace :....: by :
+  replaced = str_replace_all(replaced, ":[[:alnum:] \\-]+$","")      # remove last :....
+  replaced = str_replace_all(replaced, "\\[[[:alnum:] \\-]+\\]","")  # remove [...]
+  replaced = str_replace_all(replaced, " (?:putative|growth) [[:alnum:] \\-]+","")  # remove useless annotations
   return( replaced )
 }
 
@@ -212,7 +214,7 @@ p6 = p5 + ylab("Variant Frequency") # add axes and graph titles
 p6bis = p6 +guides( shape = guide_legend(order=2, 
                                         direction="vertical", 
                                         title="proteins (order: protein names)", 
-                                        nrow=15
+                                        nrow=16
                                         ), 
                     color = guide_legend(order=1, 
                                           direction="vertical", 
@@ -223,19 +225,21 @@ p6bis = p6 +guides( shape = guide_legend(order=2,
 # modify the legend text sizes end position
 p7 = p6bis + theme( plot.title = element_text(hjust=0.5),
                     legend.position="bottom",
-                    legend.text = element_text(size=rel(0.5)), 
+                    legend.text = element_text(size=rel(0.6)), 
                     legend.title=element_text(size=rel(0.8)),
                     
                     ) # modify the legend position 
 
-p8 = p7 + ylim(-0.06,1.2) # modify the scale
-p9 = p8 + geom_text(aes(x = position, y = variant_percent + 0.03, label = indice, angle = 0)) # add indice to the graph
+p9 = p7 + geom_text(aes(x = position, y = variant_percent + 0.03, label = indice, angle = 0)) # add indice to the graph
 #p10 = p9 + geom_text(x = 0, y = threshold + 0.01, label = t) # add the threshold text
 #p11 = p10 + geom_line(aes(x = position, y = 0.5), color = "red") 
 p10 = p9 + geom_line(aes(x = position, y = 0.5), color = "red")
 minus_maxlength_over6 = - max(contig_limits) / 50
-p11 = p10 + geom_text(aes(x = minus_maxlength_over6, y = 0.07, label = t1, angle = 0)) # add indice to the graph
 
+# give scale and breaks of the y axis
+p11 = p10 + scale_y_continuous(limits=c(-0.06,1.1), labels = scales::percent, breaks=c(0.0, 0.07, 0.2, 0.4, 0.6, 0.8, 1.0))
+
+# gives proportions for covdepth graph (cd3) and variant graph (p11) in the grid plot
 g <- plot_grid(cd3, p11, align = "v", nrow = 2, rel_heights = c(1/6, 5/6))
 
 ggsave(outfile, device = "png", plot = g, width = width, units="cm", height=29.7, dpi = 600) # save the graph
