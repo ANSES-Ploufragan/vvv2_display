@@ -18,7 +18,8 @@
 library(ggplot2) # import the ggplot2 library
 library(gridExtra) # multi graph on the same figure
 library(cowplot)
-library(ggh4x) # to adjust legend width to the entire plot (and not go further hopefully)
+library(stringr)
+# library(ggh4x) # to adjust legend width to the entire plot (and not go further hopefully)
 
 args <- commandArgs(TRUE) # all arguments are character types
 
@@ -38,6 +39,8 @@ outfile = args[4]
 coverage_depth <- try( read.table(args[5], h=F, sep = "\t") ) # read the dataframe
 if(inherits(coverage_depth,"try-error"))
   coverage_depth <- NULL
+
+width <- unit(21, "cm")
 
 t1 = as.character(threshold) # define threshold as a character
 # t = paste("Nucleotide Variation - threshold = ", t1, sep = ' ')
@@ -141,6 +144,25 @@ gene_id_labels = unique(density$gene_id)
 density$gene_id_num = paste(  sprintf("%02d", match(density$gene_id, gene_id_labels) ), ":", density$gene_id) 
 
 protein_id_labels = unique(density$protein_id)
+
+# truncate long legend
+replacement <- function(x){
+  replaced = str_replace_all(x, ":[[:alnum:] \\-]+,","")
+  replaced = str_replace_all(replaced, ":[[:alnum:] \\-]+:",":")
+  replaced = str_replace_all(replaced, ":[[:alnum:] \\-]+$","")
+  return( replaced )
+}
+
+# protein_id_labels = lapply(protein_id_labels, FUN = function(x) str_replace_all(x, ":[A-Za-z0-9 ]+,",""))
+protein_id_labels = lapply(protein_id_labels, replacement)
+print("protein_id_labels shortened:")
+print(protein_id_labels)
+
+density$protein_id = lapply(density$protein_id, replacement)
+print("protein_id shortened:")
+print(density$protein_id)
+
+
 density$protein_id_num = paste(  sprintf("%03d", match(density$protein_id, protein_id_labels) ), ":",  density$protein_id) 
 
 # protein_id_ordered = fct_reorder(protein_id_labels, density$protein_id_num)
@@ -170,7 +192,7 @@ p3 = p2 + geom_line(aes(x=position, y=threshold)) # add the threshold line
 
 p3bis = p3			   
 if(! is.null(contig_limits)){ # means more than 1 contig
-    for(i in contig_limits){
+  for(i in contig_limits){
         p3bis = p3bis + geom_vline(xintercept=i,linetype="dotted") # add the contig limits (vertical dotted line)
 	}
 }
@@ -187,13 +209,13 @@ if(! is.null(contig_limits)){ # means more than 1 contig
 p5 = p3bis + xlab("Base Position") # add x axe title
 p6 = p5 + ylab("Variant Frequency") # add axes and graph titles
 
-p6bis = p6 +guides( shape = guide_legend(order=1, 
+p6bis = p6 +guides( shape = guide_legend(order=2, 
                                         direction="vertical", 
                                         title="proteins (order: protein names)", 
-                                        nrow=5
+                                        nrow=15
                                         ), 
-                    color = guide_legend(order=2, 
-                                          direction="horizontal", 
+                    color = guide_legend(order=1, 
+                                          direction="vertical", 
                                           title="genes (order: gene names)"),
                                           nrow=3
                                           )
@@ -201,12 +223,10 @@ p6bis = p6 +guides( shape = guide_legend(order=1,
 # modify the legend text sizes end position
 p7 = p6bis + theme( plot.title = element_text(hjust=0.5),
                     legend.position="bottom",
-                    # legend.spacing.x=unit(1,"cm"),
                     legend.text = element_text(size=rel(0.5)), 
                     legend.title=element_text(size=rel(0.8)),
                     
-                    ) # modify the legend position
-
+                    ) # modify the legend position 
 
 p8 = p7 + ylim(-0.06,1.2) # modify the scale
 p9 = p8 + geom_text(aes(x = position, y = variant_percent + 0.03, label = indice, angle = 0)) # add indice to the graph
@@ -218,5 +238,5 @@ p11 = p10 + geom_text(aes(x = minus_maxlength_over6, y = 0.07, label = t1, angle
 
 g <- plot_grid(cd3, p11, align = "v", nrow = 2, rel_heights = c(1/6, 5/6))
 
-ggsave(outfile, device = "png", plot = g, width = 21, units="cm", height=29.7, dpi = 600) # save the graph
+ggsave(outfile, device = "png", plot = g, width = width, units="cm", height=29.7, dpi = 600) # save the graph
 # ~ end of script ~
