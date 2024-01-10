@@ -12,4 +12,4 @@ dependencies:
   - r-ggplot2=3.3.6
   - r-gridextra=2.3
   - r-cowplot=1.1.1
-  - conda-forge::r-ggh4x
+  - conda-forge::r-stringr=1.5.1

@@ -72,7 +72,7 @@ setuptools.setup(
         "r-ggplot2==3.6.6",
         "r-gridextra==2.3",
         "r-cowplot==1.1.1",
-        "conda-forge::r-ggh4x",
+        "conda-forge::r-stringr=1.5.1",
         "pysam==0.19.1",
         "numpy==1.23.1"],  # Optional
     scripts=[
