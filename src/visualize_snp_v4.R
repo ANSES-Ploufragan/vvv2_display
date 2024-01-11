@@ -213,12 +213,12 @@ p6 = p5 + ylab("Variant Frequency") # add axes and graph titles
 
 p6bis = p6 +guides( shape = guide_legend(order=2, 
                                         direction="vertical", 
-                                        title="proteins (order: protein names)", 
+                                        title="proteins (order: protein positions)", 
                                         nrow=16
                                         ), 
                     color = guide_legend(order=1, 
                                           direction="vertical", 
-                                          title="genes (order: gene names)"),
+                                          title="genes (order: gene positions)"),
                                           nrow=3
                                           )
 
