@@ -21,7 +21,9 @@
 # vvv2_display script: from vardict (variant calling) and vadr (annotator) results,
 # creates a picture of variants alongside the detected viral genome
 ###
-import argparse, os, sys, warnings, re
+import argparse, os, sys, warnings, re, subprocess
+# hashlib: no, needs python 3.11 to have sha256 on files, trigger installation problème
+# we use ssytem sha256sum function instead
 from os import path
 import subprocess
 
@@ -37,7 +39,7 @@ def __main__():
     b_test_convert_tbl2json                = False # ok 2022 04 26 complete tc,
     b_test_correct_multicontig_vardict_vcf = False # ok 2022 04 29 partial tc
     b_test_convert_vcffile_to_readable     = False # ok 2022 04 28 complete tc,
-    b_test_correct_covdepth_f              = True # 2023 12 20 tc,
+    b_test_correct_covdepth_f              = False # ok 2024 01 20 tc,
     b_test_visualize_snp_v4                = False # ok 2022 04 28 complete tc,
     b_test = False
     dir_path = os.path.dirname(os.path.abspath(__file__)) # dir of current script
@@ -156,6 +158,7 @@ def __main__():
 
     # get absolute path in case of files
     args = parser.parse_args()
+    print(prog_tag + " arguments obtained, checking... line "+str(frame.f_lineno))
 
     # -------------------------------------------
     # check arguments
@@ -198,50 +201,67 @@ def __main__():
               " arguments, exit line "+str(frame.f_lineno))
         sys.exit(0)
 
-    # print('args:', args)
-    if args.pass_annot_f is not None:
-        pass_annot_f = os.path.abspath(args.pass_annot_f)
-    elif(not b_test):
-        sys.exit("[Error] You must provide pass_annot_f")
-    if args.fail_annot_f is not None:
-        fail_annot_f = os.path.abspath(args.fail_annot_f)
-    elif(not b_test):
-        sys.exit("[Error] You must provide fail_annot_f")
-    if args.seq_stat_f is not None:
-        seq_stat_f = os.path.abspath(args.seq_stat_f)
-    elif(not b_test):
-        sys.exit("[Error] You must provide seq_stat_f")
-    if args.vardict_vcf_f is not None:
-        vardict_vcf_f = os.path.abspath(args.vardict_vcf_f)
-    elif(not b_test):
-        sys.exit("[Error] You must provide vcf_f")
-    if args.png_var_f is not None:
-        png_var_f = os.path.abspath(args.png_var_f)
-    elif(not b_test):
-        sys.exit("[Error] You must provide png_var_f name for output")
-    if args.snp_loc_f is not None:
-        snp_loc_f = os.path.abspath(args.snp_loc_f)
-    if args.snp_loc_summary_f is not None:
-        snp_loc_summary_f = os.path.abspath(args.snp_loc_summary_f)
-    if args.cov_depth_f is not None:
-        cov_depth_f = os.path.abspath(args.cov_depth_f)
-        b_cov_depth_display = True
-    # ----------------------------------------------------------------
-    # optional arguments only for Galaxy compatibility
-    if args.json_annot_f is not None:
-        json_annot_f = os.path.abspath(args.json_annot_f)
-    if args.bed_vardict_annot_f is not None:
-        bed_vardict_annot_f = os.path.abspath(args.bed_vardict_annot_f)
-    if args.correct_vcf_f is not None:
-        correct_vcf_f = os.path.abspath(args.correct_vcf_f)
-    if args.contig_limits_f is not None:
-        contig_limits_f = os.path.abspath(args.contig_limits_f)
-    if args.cov_depth_corr_f is not None:
-        cov_depth_corr_f = os.path.abspath(args.cov_depth_corr_f)
-    # ----------------------------------------------------------------
-    
-    if args.b_verbose is not None:
-        b_verbose = args.b_verbose
+    if not b_test_vvv2_display:
+        # print('args:', args)
+        if args.pass_annot_f is not None:
+            pass_annot_f = os.path.abspath(args.pass_annot_f)
+        elif(not b_test):
+            sys.exit("[Error] You must provide pass_annot_f")
+        if args.fail_annot_f is not None:
+            fail_annot_f = os.path.abspath(args.fail_annot_f)
+        elif(not b_test):
+            sys.exit("[Error] You must provide fail_annot_f")
+        if args.seq_stat_f is not None:
+            seq_stat_f = os.path.abspath(args.seq_stat_f)
+        elif(not b_test):
+            sys.exit("[Error] You must provide seq_stat_f")
+        if args.vardict_vcf_f is not None:
+            vardict_vcf_f = os.path.abspath(args.vardict_vcf_f)
+        elif(not b_test):
+            sys.exit("[Error] You must provide vcf_f")
+        if args.png_var_f is not None:
+            png_var_f = os.path.abspath(args.png_var_f)
+        elif(not b_test):
+            sys.exit("[Error] You must provide png_var_f name for output")
+        if args.snp_loc_f is not None:
+            snp_loc_f = os.path.abspath(args.snp_loc_f)
+        if args.snp_loc_summary_f is not None:
+            snp_loc_summary_f = os.path.abspath(args.snp_loc_summary_f)
+                   
+        if( (args.cov_depth_f is not None) and (os.path.isfile(args.cov_depth_f)) ):
+            cov_depth_f = os.path.abspath(args.cov_depth_f)
+            b_cov_depth_display = True
+        else:
+            b_cov_depth_display = False
+        # ----------------------------------------------------------------
+        # optional arguments only for Galaxy compatibility
+        if args.json_annot_f is not None:
+            json_annot_f = os.path.abspath(args.json_annot_f)
+        if args.bed_vardict_annot_f is not None:
+            bed_vardict_annot_f = os.path.abspath(args.bed_vardict_annot_f)
+        if args.correct_vcf_f is not None:
+            correct_vcf_f = os.path.abspath(args.correct_vcf_f)
+
+
+        if args.contig_limits_f is None:
+            # if name of contig_limits file is not provided by user, deduce a name file with a part
+            # deduced from pass_annot_f using sha256 checksum
+            # to avoid bad interferences of serveral vvv2_display runs results  
+            
+            cmd = "/usr/bin/sha256sum "+pass_annot_f
+            # print(prog_tag + " cmd:"+cmd)
+            sha256_f = subprocess.getoutput(cmd).split()[0]
+            contig_limits_f = str(sha256_f) + '_contig_limits.txt'
+            # print(prog_tag + " contig_limits file name created:"+ contig_limits_f)
+        else:
+            contig_limits_f = os.path.abspath(args.contig_limits_f)
+        if args.cov_depth_corr_f is not None:
+            cov_depth_corr_f = os.path.abspath(args.cov_depth_corr_f)
+        # ----------------------------------------------------------------
+        
+        if args.b_verbose is not None:
+            b_verbose = args.b_verbose
+        print(prog_tag + " arguments checked... line "+str(frame.f_lineno))
 
 
     # ------------------------------------------------------------------
@@ -373,7 +393,7 @@ def __main__():
        correct_vcf_f = vardict_vcf_f
 #       correct_vcf_f = correct_vcf_f.replace('vardict.vcf', '_correct.vcf')
        correct_vcf_f = re.sub('\.[^\.]+$', '_correct.vcf', correct_vcf_f)
-       
+         
     p_script = PYTHON_SCRIPTS + "correct_multicontig_vardict_vcf.py"
     print("p_script:" + p_script)
     cmd = ' '.join([p_script,
@@ -391,6 +411,7 @@ def __main__():
         print(prog_tag + " [test_correct_multicontig_vardict_vcf] END")
         sys.exit()
     else:
+        print(prog_tag + " cmd:" + cmd)
         os.system(cmd)
 
     # ------------------------------------------------------------------
@@ -444,6 +465,7 @@ def __main__():
 
     # creates corrected cov depth file
     if b_cov_depth_display:
+        print("b_cov_depth_display:"+str(b_cov_depth_display)+ ", line " + str(frame.f_lineno))
         if b_test_correct_covdepth_f and (not b_test_vvv2_display):
             cov_depth_f = test_dir + "/res_vvv2_covdepth.txt"
             cov_depth_corr_f = test_dir + "/res_vvv2_covdepth_corrected.txt"
@@ -506,6 +528,10 @@ def __main__():
         os.system(cmd)    
     # ------------------------------------------------------------------
     print(png_var_f + " file created")
+    
+    # remove useless file
+    if os.path.isfile(contig_limits_f):
+        os.unlink(contig_limits_f)
 
 ##### MAIN END
 if __name__=="__main__":__main__()
