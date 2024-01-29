@@ -318,7 +318,7 @@ else:
             filout.write(line)
         filout.write("""
 *NB: an homopolymer region is set to 'yes' if there is a succession of at least 3 identical nucleotides.
-     it looks like a restrictive measure, but Ion Torrent sequencing is very bad on such region, so make sure you verify these variants.""")
+     it looks like a restrictive measure, but Ion Torrent and Nanopore sequencing are very bad on such region, so make sure you verify these variants.""")
     print(prog_tag + ' '+ args.out +" file created")
     print(prog_tag + ' '+ args.outs +" file created")
 ## ~ end of script ~ ##
