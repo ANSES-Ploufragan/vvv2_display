@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 #
-# FT; last modification January 10th 2024
+# FT; last modification January 29th 2024
 # AF; last modification February 16th 2019
 #
 # Description:  This script has been written in order to generate a graph
@@ -35,33 +35,44 @@ threshold = as.numeric(args[3]) # define threshold
 
 outfile = args[4]
 
-# to prepare coverage depth graph above variant/annotation graph
-coverage_depth <- try( read.table(args[5], h=F, sep = "\t") ) # read the dataframe
-if(inherits(coverage_depth,"try-error"))
-  coverage_depth <- NULL
+if( length(args) > 4 )
+{
+  b_covdepth <- TRUE
+  # to prepare coverage depth graph above variant/annotation graph
+  coverage_depth <- try( read.table(args[5], h=F, sep = "\t") ) # read the dataframe
+  if(inherits(coverage_depth,"try-error"))
+    coverage_depth <- NULL
+}else
+{ 
+  b_covdepth <- FALSE 
+}
 
 width <- unit(21, "cm")
 
 t1 = as.character(threshold) # define threshold as a character
 # t = paste("Nucleotide Variation - threshold = ", t1, sep = ' ')
 
-if(! is.null(coverage_depth)){ # means covdepth provided, we prepare var for graph
-  maxi = max(coverage_depth$V2)
-  mini = min(coverage_depth$V2)
-  med = median(coverage_depth$V2)
-  m = paste("Coverage - median_coverage =", med, "[", mini, ":", maxi, "]", sep = " ")
-  options(repr.plot.width = 5, repr.plot.height =1)
-  cd = ggplot(coverage_depth, aes(x = V1, y = V2)) + geom_line(color = "black", linewidth = 0.5)
-  #  + labs(list(title = m, x = "Base Position", y = "Number of Reads")
-  cd1 = cd + labs(title = m) # add graph title
-  cd2 = cd1 + xlab("") # add x axe title
-  cd3 = cd2 + ylab("Number of reads") # add axes and graph titles 
+if(b_covdepth){
+
+  if(! is.null(coverage_depth)){ # means covdepth provided, we prepare var for graph
+    maxi = max(coverage_depth$V2)
+    mini = min(coverage_depth$V2)
+    med = median(coverage_depth$V2)
+    m = paste("Coverage - median_coverage =", med, "[", mini, ":", maxi, "]", sep = " ")
+    options(repr.plot.width = 5, repr.plot.height =1)
+    cd = ggplot(coverage_depth, aes(x = V1, y = V2)) + geom_line(color = "black", linewidth = 0.5)
+    #  + labs(list(title = m, x = "Base Position", y = "Number of Reads")
+    cd1 = cd + labs(title = m) # add graph title
+    cd2 = cd1 + xlab("") # add x axe title
+    cd3 = cd2 + ylab("Number of reads") # add axes and graph titles 
+  }
 }
 
 options(repr.plot.width = 5, repr.plot.height =5) 
 if(is.null(density)){ # means no snp found
     p = ggplot() # plot initialization
-}else{
+}else
+{
     p = ggplot(density) # plot initialization
 }
 
@@ -239,8 +250,14 @@ minus_maxlength_over6 = - max(contig_limits) / 50
 # give scale and breaks of the y axis
 p11 = p10 + scale_y_continuous(limits=c(-0.06,1.1), labels = scales::percent, breaks=c(0.0, 0.07, 0.2, 0.4, 0.6, 0.8, 1.0))
 
-# gives proportions for covdepth graph (cd3) and variant graph (p11) in the grid plot
-g <- plot_grid(cd3, p11, align = "v", nrow = 2, rel_heights = c(1/6, 5/6))
+if( b_covdepth ){
+  # gives proportions for covdepth graph (cd3) and variant graph (p11) in the grid plot
+  g <- plot_grid(cd3, p11, align = "v", nrow = 2, rel_heights = c(1/6, 5/6))
+}else
+{
+  # gives proportions for covdepth graph (cd3) and variant graph (p11) in the grid plot
+  g <- plot(p11)
+}
 
 ggsave(outfile, device = "png", plot = g, width = width, units="cm", height=29.7, dpi = 600) # save the graph
 # ~ end of script ~
