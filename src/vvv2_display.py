@@ -433,9 +433,9 @@ def __main__():
 
     if(snp_loc_f == ''):
        snp_loc_f = vardict_vcf_f
-       snp_loc_summary_f = vardict_vcf_f
-       # snp_loc_f = snp_loc_f.replace('.vcf', '_snp.txt')
        snp_loc_f = re.sub('\.[^\.]+$', '_snp.txt', snp_loc_f)
+    if(snp_loc_summary_f == ''):   
+       snp_loc_summary_f = vardict_vcf_f
        snp_loc_summary_f = re.sub('\.[^\.]+$', '_snp_summary.txt', snp_loc_summary_f)
       
     # vcf file from vardict
