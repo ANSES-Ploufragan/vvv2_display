@@ -13,13 +13,12 @@
 ################################################################################
 # ~ start of script ~
 
-# install.packages("viridis")
-# library("viridis")
 library(ggplot2) # import the ggplot2 library
 library(gridExtra) # multi graph on the same figure
 library(cowplot)
 library(stringr)
-# library(ggh4x) # to adjust legend width to the entire plot (and not go further hopefully)
+library(jsonlite) # to read json
+b_verbose <- FALSE
 
 args <- commandArgs(TRUE) # all arguments are character types
 
@@ -33,13 +32,18 @@ if(inherits(contig_limits,"try-error"))
   
 threshold = as.numeric(args[3]) # define threshold
 
-outfile = args[4]
+# added 2024 02 27
+json_genes = read_json(args[4]) # json file with genes limits in "genes"->"name" [start,end]
+#str(json_genes$genes)
 
-if( length(args) > 4 )
+
+outfile = args[5]
+
+if( length(args) > 5 )
 {
   b_covdepth <- TRUE
   # to prepare coverage depth graph above variant/annotation graph
-  coverage_depth <- try( read.table(args[5], h=F, sep = "\t") ) # read the dataframe
+  coverage_depth <- try( read.table(args[6], h=F, sep = "\t") ) # read the dataframe
   if(inherits(coverage_depth,"try-error"))
     coverage_depth <- NULL
 }else
@@ -86,21 +90,26 @@ genecols=c('#99CC00','#CC9900','#FFCC33','#FF9900','#FF6600','#FF3300','#CC3300'
 
 # check color redundancy
 genecols_unique = sort(unique(genecols))
-print("max_col_number_unique:")
-print(length(genecols_unique))
+
+if( b_verbose ){
+  print("max_col_number_unique:")
+  print(length(genecols_unique))
+}
 
 if( length(genecols) != length(genecols_unique) ){
     genecols = sort(genecols)
     for( icol in 1:length(genecols_unique) ){
-       print("genecols_unique de ")
-       print(icol)
-       print(":")
-       print(genecols_unique[icol])
-       if( genecols_unique[icol] != genecols[icol] ){
-           redund_vals = genecols[icol]
-    	   print("Color found several times:")
-    	   print(redund_vals)
-    	   stop()
+      if( b_verbose ){
+        print("genecols_unique de ")
+        print(icol)
+        print(":")
+        print(genecols_unique[icol])
+      }
+      if( genecols_unique[icol] != genecols[icol] ){
+        redund_vals = genecols[icol]
+    	  print("Color found several times:")
+    	  print(redund_vals)
+    	  stop()
 	}
     }
     print("first values identical, added values in genecols:")
@@ -166,15 +175,18 @@ replacement <- function(x){
   return( replaced )
 }
 
+
 # protein_id_labels = lapply(protein_id_labels, FUN = function(x) str_replace_all(x, ":[A-Za-z0-9 ]+,",""))
 protein_id_labels = lapply(protein_id_labels, replacement)
-print("protein_id_labels shortened:")
-print(protein_id_labels)
-
+if( b_verbose ){
+  print("protein_id_labels shortened:")
+  print(protein_id_labels)
+}
 density$protein_id = lapply(density$protein_id, replacement)
-print("protein_id shortened:")
-print(density$protein_id)
-
+if( b_verbose ){
+  print("protein_id shortened:")
+  print(density$protein_id)
+}
 
 density$protein_id_num = paste(  sprintf("%03d", match(density$protein_id, protein_id_labels) ), ":",  density$protein_id) 
 
@@ -187,16 +199,60 @@ density$protein_id_num = paste(  sprintf("%03d", match(density$protein_id, prote
 # print("gene_id_num:")
 # print(density$gene_id_num)
 
-print("gene_id_labels:")
-print(gene_id_labels)
+if( b_verbose ){
+  print("gene_id_labels:")
+  print(gene_id_labels)
+}
 
-p1 = p + geom_point(aes(x = position, y = -0.05, colour = density$gene_id_num, shape = density$protein_id_num), size = 1, show.legend = F, shape = 15) # add the consensus points, and remove the legend "linewidth" for proteins
+# add the consensus points, and remove the legend "linewidth" for proteins
+p1 = p + geom_point(aes(x = position, y = -0.05, colour = density$gene_id_num, shape = density$protein_id_num), size = 1, show.legend = F, shape = 15) 
+# add consensus gene boxes 
+p1bis = p1
+
+gnames = names(json_genes$genes)
+y1 = -0.04
+y2 = -0.02
+
+nrange = c(1:length(names))
+df <- data.frame(
+  xmin = lapply(nrange, FUN=function(x) json_genes$genes[[x]][[1]] ), # gene_start
+  xmax = lapply(nrange, FUN=function(x) json_genes$genes[[x]][[2]] ),       # gene_end
+  ymin = lapply(nrange, FUN=function(x) -0.02 * (x %% 2) ),                 # lower box line
+  ymax = lapply(nrange, FUN=function(x) -0.02 * (1 + (x %% 2)) ),           # upper box line
+  color = rep("black", length(names)),
+  fill = rep("white", length(names)))
+
+# p1bis = p1 + geom_rect(data=df,
+#		                    mapping = aes(xmin = df$xmin, xmax = df$xmax,
+#			                  ymin = df$ymin, ymax = df$ymax, color=df$color, fill = df$fill))
+
+# ggplot(df) +
+  # sapply(df, FUN=function(xmin, xmax, ymin, ymax, color, fill) geom_rect(X, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill = fill))) 
+      
+
+# for( i in 1:length(json_genes$genes) ){
+
+#   # get the names of the lists in genes, here genes names
+#   gname = gnames[i]
+#   gstart = json_genes$genes[[i]][[1]]
+#   gend = json_genes$genes[[i]][[2]]
+#   if((i %% 2) == 0){ 
+#     y1 = -0.04
+#     y2 = -0.02  
+#   }else{
+#     y1 = -0.02
+#     y2 = 0.0
+#   }
+#   print(c('gene no:', i, gname, gstart, gend, y1, y2))
+#   p1bis = p1bis + geom_rect(aes(xmin = gstart, xmax = gend, ymin = y1, ymax = y2), color = "black", fill = "white", show.legend = F) 
+# } 
+
 
 # needed to have more than 6 symbols for gene_id legend
-p1bis = p1 + scale_shape_manual(values=c(1:25,1:25))
+p1ter = p1bis + scale_shape_manual(values=c(1:25,1:25))
 
 # use color more easily distinguishable
-p1ter = p1bis + scale_color_manual(values=genecols[1:length(gene_id_labels)])
+p1quad = p1ter + scale_color_manual(values=genecols[1:length(gene_id_labels)])
 
 p2 = p1ter + geom_point(aes(x = position, y = as.numeric(variant_percent), color = density$gene_id_num, shape = density$protein_id_num)) # add the variant points
 # p2 = p1ter + geom_point(aes(x = position, y = as.numeric(variant_percent), color = density$gene_id_num, shape = density$gene_id)) # add the variant points

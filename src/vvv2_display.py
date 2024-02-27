@@ -43,6 +43,8 @@ def __main__():
     b_test_visualize_snp_v4                = False # ok 2022 04 28 complete tc,
     b_test = False
     dir_path = os.path.dirname(os.path.abspath(__file__)) # dir of current script
+
+    b_verbose = True
     # allow to run tests from everywhere
     
     prog_tag = '[' + os.path.basename(__file__) + ']'
@@ -493,10 +495,11 @@ def __main__():
         # snp_loc_summary_f =  test_dir + "/res2_snp_summary.txt"
         # png_var_f =  test_dir + "/res2_snp.png"
         # CONTIGS
-        snp_loc_f         =  test_dir + "/res_snp.txt"
-        snp_loc_summary_f =  test_dir + "/res_snp_summary.txt"
-        png_var_f         =  test_dir + "/res_snp.png"
-        contig_limits_f   =  test_dir + "/contig_limits.txt"
+        snp_loc_f         = test_dir + "/res_snp.txt"
+        snp_loc_summary_f = test_dir + "/res_snp_summary.txt"
+        json_annot_f      = test_dir + "/res_vadr.json"
+        png_var_f         = test_dir + "/res_snp.png"
+        contig_limits_f   = test_dir + "/contig_limits.txt"
         
     if(png_var_f == ''):
        png_var_f = snp_loc_f
@@ -510,13 +513,17 @@ def __main__():
                 snp_loc_f, 
                 contig_limits_f,
                 threshold,
+                json_annot_f,
                 png_var_f])
 
     # parameter to allow coverage depth display above variants/annotations
     if b_cov_depth_display:
         cmd = cmd + " " + cov_depth_corr_f + " "
     
-    cmd = cmd + " ".join([" < ", r_script, " > /dev/null"])
+    if b_verbose:
+        cmd = cmd + " ".join([" < ", r_script, " > /dev/null"])
+    else:
+        cmd = cmd + " ".join([" < ", r_script])
     print(prog_tag + " cmd:" + cmd)
 
     if b_test_visualize_snp_v4:

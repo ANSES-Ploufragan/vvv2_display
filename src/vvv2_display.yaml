@@ -13,3 +13,5 @@ dependencies:
   - r-gridextra=2.3
   - r-cowplot=1.1.1
   - conda-forge::r-stringr=1.5.1
+  - conda-forge::r-jsonlite=1.8.8
+  
