@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 #
-# FT; last modification January 29th 2024
+# FT; last modification February 29th 2024
 # AF; last modification February 16th 2019
 #
 # Description:  This script has been written in order to generate a graph
@@ -205,48 +205,84 @@ if( b_verbose ){
 }
 
 # add the consensus points, and remove the legend "linewidth" for proteins
-p1 = p + geom_point(aes(x = position, y = -0.05, colour = density$gene_id_num, shape = density$protein_id_num), size = 1, show.legend = F, shape = 15) 
+p1 = p + geom_point(aes(x = position, y = -0.1, colour = density$gene_id_num, shape = density$protein_id_num), size = 1, show.legend = F, shape = 15) 
 # add consensus gene boxes 
 p1bis = p1
 
 gnames = names(json_genes$genes)
-y1 = -0.04
-y2 = -0.02
+ybase  = -0.04
+yshift = -0.00
+xshift = -0.03
+# minimal length of gene to consider to display name in gene boxes in the graph (bellow the absissia)
+min_glength = 600
 
-nrange = c(1:length(names))
-df <- data.frame(
-  xmin = lapply(nrange, FUN=function(x) json_genes$genes[[x]][[1]] ), # gene_start
-  xmax = lapply(nrange, FUN=function(x) json_genes$genes[[x]][[2]] ),       # gene_end
-  ymin = lapply(nrange, FUN=function(x) -0.02 * (x %% 2) ),                 # lower box line
-  ymax = lapply(nrange, FUN=function(x) -0.02 * (1 + (x %% 2)) ),           # upper box line
-  color = rep("black", length(names)),
-  fill = rep("white", length(names)))
+nrange = 1:length(gnames)
 
-# p1bis = p1 + geom_rect(data=df,
-#		                    mapping = aes(xmin = df$xmin, xmax = df$xmax,
-#			                  ymin = df$ymin, ymax = df$ymax, color=df$color, fill = df$fill))
+xmi=lapply(nrange, FUN=function(x){ json_genes$genes[[x]][[1]] } )
+xmi=as.numeric(unlist(xmi))
 
-# ggplot(df) +
-  # sapply(df, FUN=function(xmin, xmax, ymin, ymax, color, fill) geom_rect(X, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill = fill))) 
-      
+xma=lapply(nrange, FUN=function(x){ json_genes$genes[[x]][[2]] } )
+xma=as.numeric(unlist(xma))
 
-# for( i in 1:length(json_genes$genes) ){
+# average x to write text into
+xmm=lapply(nrange, FUN=function(x){ (xma[x] + xmi[x]) / 2 + xshift } )
+xmm=as.numeric(unlist(xmm))
 
-#   # get the names of the lists in genes, here genes names
-#   gname = gnames[i]
-#   gstart = json_genes$genes[[i]][[1]]
-#   gend = json_genes$genes[[i]][[2]]
-#   if((i %% 2) == 0){ 
-#     y1 = -0.04
-#     y2 = -0.02  
-#   }else{
-#     y1 = -0.02
-#     y2 = 0.0
-#   }
-#   print(c('gene no:', i, gname, gstart, gend, y1, y2))
-#   p1bis = p1bis + geom_rect(aes(xmin = gstart, xmax = gend, ymin = y1, ymax = y2), color = "black", fill = "white", show.legend = F) 
-# } 
+ymi=lapply(nrange, FUN=function(x){ ybase * (x %% 2) + yshift  } )
+ymi=as.numeric(unlist(ymi)) # c(-0.04, -0.04,-0.04, -0.04,-0.04, -0.04,-0.04, -0.04,-0.04, -0.04,-0.04, -0.04,-0.04)
 
+yma=lapply(nrange, FUN=function(x){ ybase * (1 + (x %% 2)) + yshift } ) 
+yma=as.numeric(unlist(yma)) # c(-0.02, -0.02,-0.02, -0.02,-0.02, -0.02,-0.02, -0.02,-0.02, -0.02,-0.02, -0.02,-0.02)
+
+# average y to write text into
+ymm=lapply(nrange, FUN=function(x){ (yma[x] + ymi[x]) / 2 + yshift } )
+ymm=as.numeric(unlist(ymm))
+
+gnames_label=lapply(nrange, FUN=function(x){ 
+                                    glabel = ""
+                                    if( (xma[x] - xmi[x]) > min_glength){
+                                      glabel=gnames[x]
+                                    }
+                                    glabel
+                              } 
+                      )
+# colrect=rep("black", length(gnames))
+# filrect=rep("white", length(gnames))
+
+df=data.frame(xmi,xma,ymi,yma) # ,colrect,filrect)
+
+print(gnames)
+print(gnames_label)
+print(json_genes$genes[[1]][[1]])
+class(json_genes$genes[[1]][[1]])
+print(nrange)
+print(xmi)
+print(xma)
+print(xmm)
+print(ymi)
+print(yma)
+print(ymm)
+# print(colrect)
+# print(filrect)
+
+class(xmi)
+class(ymi)
+# class(colrect)
+
+p1bis = p1 + geom_rect(data=df, mapping=aes(xmin=xmi, 
+                                xmax=xma, 
+                                ymin=ymi, 
+                                ymax=yma), 
+                                # color=colrect, 
+                                # fill=filrect), 
+                        color="black",
+                        fill="white",
+                        show.legend = FALSE,
+                        inherit.aes = FALSE) + geom_text(
+                                                  data = df,
+                                                  aes(x = xmm, y = ymm, label = gnames_label),
+                                                  size = 3, check_overlap = TRUE # vjust = 0, hjust = 0,
+       )
 
 # needed to have more than 6 symbols for gene_id legend
 p1ter = p1bis + scale_shape_manual(values=c(1:25,1:25))
@@ -304,7 +340,7 @@ p10 = p9 + geom_line(aes(x = position, y = 0.5), color = "red")
 minus_maxlength_over6 = - max(contig_limits) / 50
 
 # give scale and breaks of the y axis
-p11 = p10 + scale_y_continuous(limits=c(-0.06,1.1), labels = scales::percent, breaks=c(0.0, 0.07, 0.2, 0.4, 0.6, 0.8, 1.0))
+p11 = p10 + scale_y_continuous(limits=c(-0.1,1.1), labels = scales::percent, breaks=c(0.0, 0.07, 0.2, 0.4, 0.6, 0.8, 1.0))
 
 if( b_covdepth ){
   # gives proportions for covdepth graph (cd3) and variant graph (p11) in the grid plot
