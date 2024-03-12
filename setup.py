@@ -26,7 +26,7 @@ if (sys.version_info < (3, 9)):
 
 setuptools.setup(
     name="vvv2_display",  # Required
-    version="0.1.11",  # Required
+    version="0.2.0",  # Required
     description="Viral Variant Visualizer 2 display",  # Optional
     long_description=long_description,
     long_description_content_type="text/markdown",  # Optional (see note above)
@@ -73,6 +73,7 @@ setuptools.setup(
         "r-gridextra==2.3",
         "r-cowplot==1.1.1",
         "conda-forge::r-stringr=1.5.1",
+        "conda-forge::r-jsonlite=1.8.8",
         "pysam==0.19.1",
         "numpy==1.23.1"],  # Optional
     scripts=[
