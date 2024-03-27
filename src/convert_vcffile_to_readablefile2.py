@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License 
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
+# FT - correct regexp part for description parsing: simplified, now do not miss variant: March 27th 2024
 # FT - correct gene identif/name (position provided instead sometimes): June 15th 2023
 # FT - last modification: September 19th 2022 to replace pyvcf by pysam
 # AF - last modification: August 21st 2018
@@ -96,7 +97,7 @@ def find_key_proteins(dico_json, genomepos, gene_res):
     """ This function retrieves the protein name and the start and end position of
 this protein.
     """
-    protein = 'non coding RNA'
+    protein = 'untranslated RNA'
     base_inf_allproteins = ''
     base_sup_allproteins = ''
     # print("find_key_proteins call pos ("+str(genomepos)+", "+gene_res+")")    
@@ -112,7 +113,7 @@ this protein.
                         protein = 'intergene'
                         base_inf_allproteins = str(base_inf)
                         base_sup_allproteins = str(base_sup)
-                    elif protein == 'non coding RNA':
+                    elif protein == 'untranslated RNA':
                         protein = key
                         base_inf_allproteins = str(base_inf)
                         base_sup_allproteins = str(base_sup)
@@ -284,7 +285,7 @@ else:
     A = 0 # this flag is used in the write_line function in order to add indices to line where variants are upper than threshold
     with open(args.out, "w") as filout:
         summary_list = []
-        regex = '([0-9]+)\t1\t([A-Z\>\<]+)\t([A-Z\>\<]+)\t([0-9\.]+)\t[A-Z\>\<]+\t[A-Z\>\<]+\t([A-Z0-9a-z\-_\, /]+)\t([A-Z0-9a-z\-_\, /\]\[]*)\t1\t([0-9]+)\t([A-Z]+\t[A-Z]+\t(no|yes))\n'
+        regex = '([0-9]+)\t1\t([A-Z\>\<]+)\t([A-Z\>\<]+)\t([0-9\.]+)\t[A-Z\>\<]+\t[A-Z\>\<]+\t([A-Z0-9a-z\-_\, /]+)\t([^\t]*)\t1\t([0-9]+)\t([A-Z]+\t[A-Z]+\t(no|yes))\n'
         REGEX = re.compile(regex)    
         filout.write("position\tSNP\tref\talt\tvariant_percent\tadd_ref\tadd_alt\tgene_id\tprotein_id\tsize_point\tindice\tlseq\trseq\tisHomo\n")
         a = 0 # flag to find the first genomic region after initialization of i
@@ -318,7 +319,7 @@ else:
             filout.write(line)
         filout.write("""
 *NB: an homopolymer region is set to 'yes' if there is a succession of at least 3 identical nucleotides.
-     it looks like a restrictive measure, but Ion Torrent sequencing is very bad on such region, so make sure you verify these variants.""")
+     it looks like a restrictive measure, but Ion Torrent and Nanopore sequencing are very bad on such region, so make sure you verify these variants.""")
     print(prog_tag + ' '+ args.out +" file created")
     print(prog_tag + ' '+ args.outs +" file created")
 ## ~ end of script ~ ##

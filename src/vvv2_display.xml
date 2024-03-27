@@ -1,19 +1,16 @@
-<tool id="vvv2_display" name="vvv2_display: Display SNP proportions and CDS of an assembly in png image" version="0.1.10" python_template_version="3.9">
-    <requirements><!--
-        only for tools used before, not for vvv2_display itself
-        <requirement type="package" version="1.4.1">vadr</requirement>
-        <requirement type="package" version="1.8.3">vardict-java</requirement>
-      <requirement type="package" version="3.5.0">r-base</requirement> -->
-      <requirement type="package" version="0.1.10">vvv2_display</requirement>	      
+<tool id="vvv2_display" name="vvv2_display: Display SNP proportions and CDS of an assembly in png image" version="0.2.0" python_template_version="3.9">
+    <requirements>
+      <requirement type="package" version="0.2.0">vvv2_display</requirement>	      
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-       vvv2_display.py -f '$vadr_fail_annotation' -p '$vadr_pass_annotation' -s '$seqstat' -n '$vardict_vcf' -r '$snp_img' -t '$snp_loc' -u '$snp_loc_summary' -j '$json_annot' -k '$bed_annot' -l '$correct_vcf' -m '$contig_limits'
+       vvv2_display.py -f '$vadr_fail_annotation' -p '$vadr_pass_annotation' -s '$seqstat' -n '$vardict_vcf' -r '$snp_img' -o '$cov_depth' -e '$cov_depth_corr' -t '$snp_loc' -u '$snp_loc_summary' -j '$json_annot' -k '$bed_annot' -l '$correct_vcf' -m '$contig_limits'
     ]]></command>
     <inputs>
         <param type="data" name="vadr_fail_annotation" format="tabular" />
         <param type="data" name="vadr_pass_annotation" format="tabular" />
         <param type="data" name="seqstat" format="txt" />
         <param type="data" name="vardict_vcf" format="vcf" />
+        <param type="data" name="cov_depth" format="txt" />
     </inputs>
     <outputs>
 	<!-- <data name="json_annot" format="txt">
@@ -34,6 +31,7 @@
         <data name="correct_vcf" format="vcf" />
         <data name="contig_limits" format="txt" />
 	<!-- end intermediate output files added for Galaxy compatibility -->		
+        <data name="cov_depth_corr" format="txt" />
     </outputs>
     <tests>
       <test>
@@ -76,6 +74,8 @@ optional arguments:
                         in: vcf variant file provided by vardict
   -r FILE, --png_var_f FILE
                         out: png file with variant proportions and annotations
+  -o FILE, --cov_depth_f FILE
+                        [optional] in: text file of coverage depths (given by samtools depth)
     ]]></help>
     <citations>
         <citation type="bibtex">

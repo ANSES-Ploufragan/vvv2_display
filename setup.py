@@ -26,7 +26,7 @@ if (sys.version_info < (3, 9)):
 
 setuptools.setup(
     name="vvv2_display",  # Required
-    version="0.1.10",  # Required
+    version="0.2.0",  # Required
     description="Viral Variant Visualizer 2 display",  # Optional
     long_description=long_description,
     long_description_content_type="text/markdown",  # Optional (see note above)
@@ -59,6 +59,7 @@ setuptools.setup(
                   "convert_tbl2json.py",
                   "convert_vcffile_to_readablefile2.py",
                   "correct_multicontig_vardict_vcf.py",
+                  "correct_covdepth_f.py",
                   "visualize_coverage_depth.R",
                   "visualize_snp_v4.R"
          ]
@@ -68,14 +69,19 @@ setuptools.setup(
     include_package_data=True,
     install_requires=[
         "python>=3.9",
-        "r-ggplot2==3.6.6",
+        "r-ggplot2>=3.4.4",
+        "r-gridextra>=2.3",
+        "r-cowplot>=1.1.1",
+        "conda-forge::r-stringr>=1.5.1",
+        "conda-forge::r-jsonlite>=1.8.8",
         "pysam==0.19.1",
-        "numpy==1.23.1"],  # Optional
+        "numpy>=1.23.1"],  # Optional
     scripts=[
         "src/vvv2_display.py",
         "src/convert_tbl2json.py",
         "src/convert_vcffile_to_readablefile2.py",
         "src/correct_multicontig_vardict_vcf.py",
+        "correct_covdepth_f.py",
         "src/visualize_coverage_depth.R",
         "src/visualize_snp_v4.R"
         ],

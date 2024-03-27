@@ -3,7 +3,7 @@
 # Description
 
 Tools to create:
-- a .png image file describing all variants (obtained from vardict-java variant caller) alongside a genome/assembly (to provide) with their proportion (ordinates), with CDS descriptions (obtained from vadr annotator).
+- a .png image file describing all variants (obtained from vardict-java variant caller) alongside a genome/assembly (to provide) with their proportion (ordinates), with CDS descriptions (obtained from vadr annotator). At the top of the figure can be displayed the coverage depth repartition (if `-o cov_depth_f` option is provided).
 
 Python/R scripts and Galaxy wrapper to use them.
 
@@ -26,12 +26,13 @@ Convert ```vardict-java``` variant calling vcf file to human readable txt file
 - ```PYTHON_SCRIPTS/correct_multicontig_vardict_vcf.py```: 
 Correct ```vadr``` annotation output .tbl file for contigs positions when the assembly provided is composed of more than one contig.
 
-
 <!-- - ```R_SCRIPTS/visualize_coverage_depth.R```: -->
 <!-- Create a .png file showing coverage depth alongside the genome, from a bam alignment file. -->
 
 - ```R_SCRIPTS/visualize_snp_v4.R```:
-Create a .png file showing variant proportions alongside the genome/assembly and CDS positions.
+Create a .png file showing on the same png figure:
+  - coverage depth repartition alongside the genome/assembly (if `-o cov_depth_d` option provided)
+  - variant proportions alongside the genome/assembly and CDS positions.
 
 # Installation
 
@@ -50,8 +51,17 @@ vvv2_display.py -h
 
 Typical usage:
 ```
-vvv2_display.py -p res_vadr_pass.tsv -f res_vadr_fail.tsv -s res_vadr_seqstat.txt -n res_vardict_all.vcf -m contig_limits.txt -r res_vvv2_display.png 
+vvv2_display.py -p res_vadr_pass.tsv -f res_vadr_fail.tsv -s res_vadr_seqstat.txt -n res_vardict_all.vcf -r res_vvv2_display.png -o cov_depth_f.txt
 ```
+where:
+  - `res_vadr_pass.tsv` is the 'pass' file of vadr annotation program run on the genome/assembly
+  - `res_vadr_fail.tsv` is the 'fail' file of vadr annotation program
+  - `res_vadr_seqstat.txt` is the 'seqstat' file of vadr annotation program
+  - `res_vardict_all.vcf` is the result of vardict-java variant caller
+  - `res_vvv2_display.png` is the name of the main output file (will be created)
+  - `cov_depth_f.txt` is the coverage depth by position, provided by `samtools depth` run on the bam alignement file.
+
+> All other options are for Galaxy wrapper compatibility (these are intermediate temporary files that must appear as parameter for Galaxy wrapper but are not used in a usual command line call)
 
 # Galaxy wrapper
 
