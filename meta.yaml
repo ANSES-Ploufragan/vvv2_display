@@ -1,5 +1,5 @@
 {% set name = "vvv2_display" %}
-{% set version = "0.1.11" %}
+{% set version = "0.2.0" %}
 {% set sha256 = "8e2722b9af657bbc260fe085ec738d4cb6e2d846812a0f6e26f20009f8fce304" %}
 # {% set PYTHON = "python3.9" %}
 
@@ -8,7 +8,7 @@ package:
   version: {{ version }}
 
 source:
-  # git_rev: "0.1.11"
+  # git_rev: "0.2.0"
   git_url: https://github.com/ANSES-Ploufragan/vvv2_display.git
   sha256: {{ sha256 }}
   # path: /home/touzain/Documents/vvv2_display/
@@ -28,10 +28,11 @@ requirements:
   run:
     - pip
     - python >=3.9
-    - r-ggplot2 >=3.3.6
+    - r-ggplot2 >=3.4.4
     - r-gridextra >=2.3
     - r-cowplot >=1.1.1
     - conda-forge::r-stringr >=1.5.1
+    - conda-forge::r-jsonlite>=1.8.8
     - pysam >=0.19.1
     - numpy >=1.23.3
 
