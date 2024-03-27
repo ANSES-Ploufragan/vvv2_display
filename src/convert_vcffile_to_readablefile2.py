@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License 
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
+# FT - correct regexp part for description parsing: simplified, now do not miss variant: March 27th 2024
 # FT - correct gene identif/name (position provided instead sometimes): June 15th 2023
 # FT - last modification: September 19th 2022 to replace pyvcf by pysam
 # AF - last modification: August 21st 2018
