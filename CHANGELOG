@@ -1,12 +1,18 @@
+0.2.0:
+  - update dependencies versions
+  - correct bug in PYTHON_SCRIPTS/convert_vcffile_to_readablefile2.py that missed some variants in text summary file
+	- add boxes for genes under graph (to fit traditional display of viral genomes)
+	- add [optional] coverage depth display in final png (if no cov depth provided, part disabled) aligned of variant graph
+	  for positions
 0.1.11:
-        - display prot instead of genes and genes instead of prot
-        - add num in front of genes to ensure to keep apparition order
-        - replace fstrings in vvv2_display.py to allow better compatibility
-        - add src/correct_covdepth_f.py script to convert cov depth files of samtools depth so as to have cumulative positions for display
-        - prepare vvv2_display to coverage depth addition in input
-        - add new script to setup.py file and change version to 0.1.11
+  - display prot instead of genes and genes instead of prot
+  - add num in front of genes to ensure to keep apparition order
+  - replace fstrings in vvv2_display.py to allow better compatibility
+  - add src/correct_covdepth_f.py script to convert cov depth files of samtools depth so as to have cumulative positions for display
+  - prepare vvv2_display to coverage depth addition in input
+  - add new script to setup.py file and change version to 0.1.11
 0.1.10:
-        - now horizontal line colors are for proteins, dot shape is for genes. Added vertical dotted lines to show contig limits
+  - now horizontal line colors are for proteins, dot shape is for genes. Added vertical dotted lines to show contig limits
 	- correction in vadr parsing using different virus models
 	- tested on calicivirus, dengue, flavivirus, coronavirus, sarscov2, hcv, norovirus
 	- better parse stemp_loops
