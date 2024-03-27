@@ -284,7 +284,7 @@ else:
     A = 0 # this flag is used in the write_line function in order to add indices to line where variants are upper than threshold
     with open(args.out, "w") as filout:
         summary_list = []
-        regex = '([0-9]+)\t1\t([A-Z\>\<]+)\t([A-Z\>\<]+)\t([0-9\.]+)\t[A-Z\>\<]+\t[A-Z\>\<]+\t([A-Z0-9a-z\-_\, /]+)\t([A-Z0-9a-z\-_\, /\]\[]*)\t1\t([0-9]+)\t([A-Z]+\t[A-Z]+\t(no|yes))\n'
+        regex = '([0-9]+)\t1\t([A-Z\>\<]+)\t([A-Z\>\<]+)\t([0-9\.]+)\t[A-Z\>\<]+\t[A-Z\>\<]+\t([A-Z0-9a-z\-_\, /]+)\t([^\t]*)\t1\t([0-9]+)\t([A-Z]+\t[A-Z]+\t(no|yes))\n'
         REGEX = re.compile(regex)    
         filout.write("position\tSNP\tref\talt\tvariant_percent\tadd_ref\tadd_alt\tgene_id\tprotein_id\tsize_point\tindice\tlseq\trseq\tisHomo\n")
         a = 0 # flag to find the first genomic region after initialization of i
