@@ -38,13 +38,13 @@ def __main__():
     b_test_vvv2_display                    = False # ok 2022 05 05 complet, partial tc
     b_test_convert_tbl2json                = False # ok 2022 04 26 complete tc,
     b_test_correct_multicontig_vardict_vcf = False # ok 2022 04 29 partial tc
-    b_test_convert_vcffile_to_readable     = False # ok 2022 04 28 complete tc,
+    b_test_convert_vcffile_to_readable     = False # ok 2024 03 27 complete tc,
     b_test_correct_covdepth_f              = False # ok 2024 01 20 tc,
-    b_test_visualize_snp_v4                = False # ok 2022 04 28 complete tc,
+    b_test_visualize_snp_v4                = False # ok 2024 03 27 complete tc,
     b_test = False
     dir_path = os.path.dirname(os.path.abspath(__file__)) # dir of current script
 
-    b_verbose = True
+    b_verbose = False
     # allow to run tests from everywhere
     
     prog_tag = '[' + os.path.basename(__file__) + ']'
