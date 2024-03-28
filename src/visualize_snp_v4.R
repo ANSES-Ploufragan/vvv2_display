@@ -46,6 +46,8 @@ if( length(args) > 5 )
   coverage_depth <- try( read.table(args[6], h=F, sep = "\t") ) # read the dataframe
   if(inherits(coverage_depth,"try-error"))
     coverage_depth <- NULL
+    b_covdepth <- FALSE
+    print("No coverage data found, disable coverage depth display in final graph")
 }else
 { 
   b_covdepth <- FALSE 
