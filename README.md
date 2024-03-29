@@ -71,7 +71,8 @@ Example is obtained on Turkey Coronavirus sequencing data, with as reference, th
 
 ![img/res_vvv2.png](img/res_vvv2.png)
 
-> Vertical dash lines show contigs separations
+> Dotted vertical dash lines are contig boundaries.
+
 
 * tsv summary file:
 ```
