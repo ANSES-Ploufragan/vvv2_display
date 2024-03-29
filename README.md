@@ -63,6 +63,38 @@ where:
 
 > All other options are for Galaxy wrapper compatibility (these are intermediate temporary files that must appear as parameter for Galaxy wrapper but are not used in a usual command line call)
 
+# Output example
+
+Example is obtained on Turkey Coronavirus sequencing data, with as reference, the first draft assembly.
+
+* png file:
+
+![img/res_vvv2.png](img/res_vvv2.png)
+
+> Vertical dash lines show contigs separations
+
+* tsv summary file:
+```
+indice	position	ref	alt	freq	gene	prot	lseq	rseq	isHomo*
+1	6388	A	G	0.1429	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP3  putative papain-like protease	GTATTGTAGAAATTGTGATG	GTATGGTCATCAAAATACAT	no
+2	6622	A	G	0.0833	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP3  putative papain-like protease	GAAGAAAGCTGTTTTTCTTA	GGAAGCATTGAAATGTGAAC	no
+3	6838	A	G	0.1429	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP3  putative papain-like protease	AGTTTGTGACATTTTGTCTA	TATAATTTCTGTAGATACTG	no
+4	7014	R	A	0.8824	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP3  putative papain-like protease	TACCGTCATATGGTATAGAC	CTGATAAATTAACACCTCGT	no
+5	7833	G	A	0.0909	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP4	ATTGTTTTAATGGTGATAAT	ATGCACCTGGAGCTTTACCA	no
+6	8110	T	A	0.0833	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP4	AGAACTTATGTTTAATATGG	TAGTACATTCTTTACTGGTG	no
+7	9328	A	G	0.1034	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP5  putative 3C-like proteinase	TGCATTACACACTGGAACGG	CCTACATGGTGAGTTCTATG	no
+8	13404	A	C	0.1429	intergene	intergene	GTTAGTGGGAACATCCAATA	TTTAGTTGATCTTAGAACGT	no
+9	15255	A	T	0.0882	1ab	similar to ORF1ab polyprotein,similar to NSP13:GBSEP:putative helicase	CTGTGGTAATCATAAACCAA	GTTGTCAATACCGTTAGTAT	no
+10	15319	C	T	0.0769	1ab	similar to ORF1ab polyprotein,similar to NSP13:GBSEP:putative helicase	TACAGGGCTAATTGTGCTGG	AGCGAAAATGTTGATGATTT	no
+11	15326	A	G	0.08	1ab	similar to ORF1ab polyprotein,similar to NSP13:GBSEP:putative helicase	CTAATTGTGCTGGCAGCGAA	ATGTTGATGATTTTAATCAA	yes
+12	19937	G	A	0.0714	1ab	similar to ORF1ab polyprotein,similar to NSP16:GBSEP:putative 2-O-ribose methyltransferase	TAACAGAGACAAGTTGGCAC	AAAATTTATATGACATTGCA	no
+13	21092	T	C	0.0811	S	similar to spike protein	TTACGTGGTGATAACACTGG	GTTTCTTATGATTATCAGTG	no
+14	25794	TT	AA	0.0838	5b	5b protein	AGGATTAGATTGTGTTTACT	CTTAACAAAGCAGGACAAGC	no
+
+*NB: an homopolymer region is set to 'yes' if there is a succession of at least 3 identical nucleotides.
+     it looks like a restrictive measure, but Ion Torrent and Nanopore sequencing are very bad on such region, so make sure you verify these variants.
+```
+
 # Galaxy wrapper
 
 - ```vvv2_display.xml```:
