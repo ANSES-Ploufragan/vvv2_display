@@ -29,21 +29,25 @@ if(inherits(density,"try-error"))
 contig_limits <- try( read.table(args[2], h=F, sep = "\t") ) # read the dataframe
 if(inherits(contig_limits,"try-error"))
   contig_limits <- NULL
+
+contig_names <- try( read.table(args[3], h=F, sep = "\t") ) # read the dataframe
+if(inherits(contig_limits,"try-error"))
+  contig_names <- NULL
   
-threshold = as.numeric(args[3]) # define threshold
+threshold = as.numeric(args[4]) # define threshold
 
 # added 2024 02 27
-json_genes = read_json(args[4]) # json file with genes limits in "genes"->"name" [start,end]
+json_genes = read_json(args[5]) # json file with genes limits in "genes"->"name" [start,end]
 #str(json_genes$genes)
 
 
-outfile = args[5]
+outfile = args[6]
 
-if( length(args) > 5 )
+if( length(args) > 6 )
 {
   b_covdepth <- TRUE
   # to prepare coverage depth graph above variant/annotation graph
-  coverage_depth <- try( read.table(args[6], h=F, sep = "\t") ) # read the dataframe
+  coverage_depth <- try( read.table(args[7], h=F, sep = "\t") ) # read the dataframe
   if(inherits(coverage_depth,"try-error"))
     coverage_depth <- NULL
     #b_covdepth <- FALSE
@@ -301,6 +305,15 @@ p3bis = p3
 if(! is.null(contig_limits)){ # means more than 1 contig
   for(i in contig_limits){
         p3bis = p3bis + geom_vline(xintercept=i,linetype="dotted") # add the contig limits (vertical dotted line)
+	}
+  # average x to write text into
+  xmidname=lapply((contig_limits)[1:length(contig_limits)-1], FUN=function(x){ (contig_limits[x-1] + contig_limits[x]) / 2 } )
+  xmidname=as.numeric(unlist(xmidname))
+}
+if(! is.null(contig_names)){ # means more than 1 contig
+  for(ni in 0:(length(contig_names)-1)){
+    n = contig_names[ni]
+    p3bis = p3bis + geom_text(aes(x = xmidname[ni], y = 0.5, label = contig_names[ni], angle = 0)) # add name to the graph
 	}
 }
 

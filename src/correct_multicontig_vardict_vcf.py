@@ -39,6 +39,7 @@ seq_stat_f    = '' # in, seq stat file from vadr to deduce shift foreach contig 
 vardict_vcf_f = '' # in, vcf file of vardict, but with bad position for contigs except the first
 correct_vcf_f = '' # out same as previous but positions on contigs are shifted according to previous contigs
 contig_limits_f = '' # store positions of limits between contigs, to be used in visualize_snp...R
+contig_names_f = '' # store names of contigs, to be used in visualize_snp...R
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--seq_stat_f", dest='seq_stat_f',
@@ -52,6 +53,9 @@ parser.add_argument("-c", "--correct_vcf_f", dest='correct_vcf_f',
                     metavar="FILE")
 parser.add_argument("-l", "--contig_limits_f", dest='contig_limits_f',
                     help="[input] text file with limit positions between contigs",
+                    metavar="FILE")
+parser.add_argument("-n", "--contig_names_f", dest='contig_names_f',
+                    help="[input] text file contig names",
                     metavar="FILE")
 parser.add_argument("-z", "--test_all", dest='b_test_all',
                     help="[Optional] run all tests",
@@ -76,7 +80,7 @@ else:
     b_test = b_test_correct_multicontig_vardict_vcf
 
 if ((not b_test)and
-    ((len(sys.argv) < 6) or (len(sys.argv) > 10))):
+    ((len(sys.argv) < 8) or (len(sys.argv) > 12))):
     parser.print_help()
     print(prog_tag + "[Error] we found "+str(len(sys.argv)) +
           " arguments, exit line "+str(frame.f_lineno))
@@ -99,6 +103,10 @@ if args.contig_limits_f is not None:
     contig_limits_f = os.path.abspath(args.contig_limits_f)
 elif(not b_test):
     sys.exit(prog_tag  + "[Error] You must provide contig_limits_f")
+if args.contig_names_f is not None:
+    contig_names_f = os.path.abspath(args.contig_names_f)
+elif(not b_test):
+    sys.exit(prog_tag  + "[Error] You must provide contig_names_f")
 
 if args.b_verbose is not None:
     b_verbose = args.b_verbose
@@ -114,11 +122,13 @@ if b_test_correct_multicontig_vardict_vcf:
         vardict_vcf_f   = f"{test_dir}{resn}.vardict.vcf"
         correct_vcf_f   = f"{test_dir}{resn}.correct.vcf"
         contig_limits_f = f"{test_dir}{resn}.contig_limits.txt"        
+        contig_names_f  = f"{test_dir}{resn}.contig_names.txt"        
         seq_stat_f      = f"{test_dir}{resn}.vadr.seqstat"
         cmd = ' '.join(['./correct_multicontig_vardict_vcf.py',
                         f"-b {vardict_vcf_f}",
                         f"-c {correct_vcf_f}",
                         f"-l {contig_limits_f}",                        
+                        f"-n {contig_names_f}",                        
                         f"-s {seq_stat_f}"
                         ])
         if b_verbose:
@@ -176,6 +186,19 @@ for i in range(len(contig_names)):
             print(prog_tag + ' '+ "record shift "+str(contig_shifts[ contig_names[i] ])+" for contig "+ contig_names[i])
 # last pos
 contig_start_pos.append(int(contig_lengths[-1]) + cumulated_shift)
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+# write contig_names output file, used by visualise_snp...R to write contig names
+# on the graph
+# ----------------------------------------------------------------------
+print(prog_tag + " contig_names:"+str(contig_names))
+
+n = open(contig_names_f, 'w+')
+for name in contig_names:
+    n.write(name+"\n")
+print(prog_tag + ' '+ contig_names_f +" file created")
+n.close()
 # ----------------------------------------------------------------------
 
 # ----------------------------------------------------------------------
