@@ -349,7 +349,7 @@ if(! is.null(contig_names)){ # means more than 1 contig
   #   print(npos)
   #   p3bis = p3bis + geom_text(aes(x = npos, y = 1.1, label = n, angle = 0)) # add name to the graph
 	# }
-  cy = rep(1.1, length(contig_names) 
+  cy = rep(1.1, length(contig_names)) 
   dfc = data.frame(xmidname,cy,contig_names)
   p3bis = p3bis + geom_text(data=dfc, 
                             mapping=aes(
