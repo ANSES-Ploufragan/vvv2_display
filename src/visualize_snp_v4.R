@@ -274,23 +274,25 @@ gnames_label=lapply(nrange, FUN=function(x){
 
 df=data.frame(xmi,xma,ymi,yma) # ,colrect,filrect)
 
-print(gnames)
-print(gnames_label)
-print(json_genes$genes[[1]][[1]])
-class(json_genes$genes[[1]][[1]])
-print(nrange)
-print(xmi)
-print(xma)
-print(xmm)
-print(ymi)
-print(yma)
-print(ymm)
-# print(colrect)
-# print(filrect)
+if( b_verbose ){
+  print(gnames)
+  print(gnames_label)
+  print(json_genes$genes[[1]][[1]])
+  class(json_genes$genes[[1]][[1]])
+  print(nrange)
+  print(xmi)
+  print(xma)
+  print(xmm)
+  print(ymi)
+  print(yma)
+  print(ymm)
+  # print(colrect)
+  # print(filrect)
 
-class(xmi)
-class(ymi)
-# class(colrect)
+  class(xmi)
+  class(ymi)
+  # class(colrect)
+}
 
 p1bis = p1 + geom_rect(data=df, mapping=aes(xmin=xmi, 
                                 xmax=xma, 
@@ -325,21 +327,30 @@ if(! is.null(contig_limits)){ # means more than 1 contig
 	}
   # average x to write text into
   namerangei = 1:length(contig_limits)
-  print("contig_limits:")
-  print(contig_limits)
-   print("contig_limits de 1:")
-  print(contig_limits[1])
-   print("contig_limits de length de contig_limits:")
-  print(contig_limits[length(contig_limits)])
-  print("namerangei:")
-  print(namerangei)
+
+  if( b_verbose ){
+    print("contig_limits:")
+    print(contig_limits)
+    print("contig_limits de 1:")
+    print(contig_limits[1])
+    print("contig_limits de length de contig_limits:")
+    print(contig_limits[length(contig_limits)])
+    print("namerangei:")
+    print(namerangei)
+  }
+
   xmidname=lapply(namerangei, FUN=function(x){ as.integer((as.integer(contig_limits[x-1]) + as.integer(contig_limits[x])) / 2) } )
   xmidname=as.numeric(unlist(xmidname))
-  print("xmidname:")
-  print(xmidname)
+  
+  if( b_verbose ){
+    print("xmidname:")
+    print(xmidname)
+  }
 }
 if(! is.null(contig_names)){ # means more than 1 contig
-  print(contig_names)
+  if( b_verbose ){
+    print(contig_names)
+  }
   # for(ni in 1:(length(contig_names))){
   #   n = contig_names[ni]
   #   npos = xmidname[ni]
