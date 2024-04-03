@@ -27,13 +27,30 @@ if(inherits(density,"try-error"))
   density <- NULL
 
 contig_limits <- try( read.table(args[2], h=F, sep = "\t") ) # read the dataframe
-if(inherits(contig_limits,"try-error"))
+if(inherits(contig_limits,"try-error")){
   contig_limits <- NULL
-
-contig_names <- try( read.table(args[3], h=F, sep = "\t") ) # read the dataframe
-if(inherits(contig_limits,"try-error"))
-  contig_names <- NULL
+}else
+{
+  contig_limits <- contig_limits$V1
+}
   
+contig_names <- try( read.table(args[3], h=F, sep = "\t") ) # read the dataframe
+if(inherits(contig_limits,"try-error")){
+  contig_names <- NULL
+}else
+{
+  contig_names <- contig_names$V1
+
+  # if contig name is \d+, add 'contig ' in front of it 
+  replacement_contigname <- function(x){
+    replaced = gsub("^(\\d+)$","contig \\1",x)            # replace :...., by ,
+    return( replaced )
+  }
+  contig_names = lapply(contig_names, replacement_contigname)
+  
+  print(contig_names)
+}  
+
 threshold = as.numeric(args[4]) # define threshold
 
 # added 2024 02 27
@@ -307,14 +324,43 @@ if(! is.null(contig_limits)){ # means more than 1 contig
         p3bis = p3bis + geom_vline(xintercept=i,linetype="dotted") # add the contig limits (vertical dotted line)
 	}
   # average x to write text into
-  xmidname=lapply((contig_limits)[1:length(contig_limits)-1], FUN=function(x){ (contig_limits[x-1] + contig_limits[x]) / 2 } )
+  namerangei = 1:length(contig_limits)
+  print("contig_limits:")
+  print(contig_limits)
+   print("contig_limits de 1:")
+  print(contig_limits[1])
+   print("contig_limits de length de contig_limits:")
+  print(contig_limits[length(contig_limits)])
+  print("namerangei:")
+  print(namerangei)
+  xmidname=lapply(namerangei, FUN=function(x){ as.integer((as.integer(contig_limits[x-1]) + as.integer(contig_limits[x])) / 2) } )
   xmidname=as.numeric(unlist(xmidname))
+  print("xmidname:")
+  print(xmidname)
 }
 if(! is.null(contig_names)){ # means more than 1 contig
-  for(ni in 0:(length(contig_names)-1)){
-    n = contig_names[ni]
-    p3bis = p3bis + geom_text(aes(x = xmidname[ni], y = 0.5, label = contig_names[ni], angle = 0)) # add name to the graph
-	}
+  print(contig_names)
+  # for(ni in 1:(length(contig_names))){
+  #   n = contig_names[ni]
+  #   npos = xmidname[ni]
+  #   print("n:")
+  #   print(n)
+  #   print("npos:")
+  #   print(npos)
+  #   p3bis = p3bis + geom_text(aes(x = npos, y = 1.1, label = n, angle = 0)) # add name to the graph
+	# }
+  cy = rep(1.1, length(contig_names) 
+  dfc = data.frame(xmidname,cy,contig_names)
+  p3bis = p3bis + geom_text(data=dfc, 
+                            mapping=aes(
+                              x=xmidname, 
+                              y=cy, 
+                              label=contig_names),  
+                            color="black",
+                            size = 3, 
+                            check_overlap = TRUE
+                          )
+
 }
 
 # # TODO stem_loops
