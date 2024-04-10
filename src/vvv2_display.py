@@ -495,6 +495,13 @@ def __main__():
         if b_test_correct_covdepth_f and (not b_test_vvv2_display):
             cov_depth_f = test_dir + "/res_vvv2_covdepth.txt"
             cov_depth_corr_f = test_dir + "/res_vvv2_covdepth_corrected.txt"
+        elif cov_depth_corr_f == '':
+            # create a file name if not given, deducing it from cov_depth_f
+            cov_depth_corr_f = cov_depth_f
+            cov_depth_corr_f = re.sub('\.[^\.]+$', '_corrected.txt', cov_depth_corr_f)
+            # handle case with cov_depth_f without extension (file provided by user)
+            if cov_depth_corr_f == cov_depth_f:
+                cov_depth_corr_f = cov_depth_corr_f + '_corrected.txt'
         cmd = " ".join([
                     PYTHON_SCRIPTS + "correct_covdepth_f.py",
                     "--cov_depth_f", cov_depth_f,
