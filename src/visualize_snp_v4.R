@@ -27,23 +27,44 @@ if(inherits(density,"try-error"))
   density <- NULL
 
 contig_limits <- try( read.table(args[2], h=F, sep = "\t") ) # read the dataframe
-if(inherits(contig_limits,"try-error"))
+if(inherits(contig_limits,"try-error")){
   contig_limits <- NULL
+}else
+{
+  contig_limits <- contig_limits$V1
+}
   
-threshold = as.numeric(args[3]) # define threshold
+contig_names <- try( read.table(args[3], h=F, sep = "\t") ) # read the dataframe
+if(inherits(contig_limits,"try-error")){
+  contig_names <- NULL
+}else
+{
+  contig_names <- contig_names$V1
+
+  # if contig name is \d+, add 'contig ' in front of it 
+  replacement_contigname <- function(x){
+    replaced = gsub("^(\\d+)$","contig \\1",x)            # replace :...., by ,
+    return( replaced )
+  }
+  contig_names = lapply(contig_names, replacement_contigname)
+  
+  print(contig_names)
+}  
+
+threshold = as.numeric(args[4]) # define threshold
 
 # added 2024 02 27
-json_genes = read_json(args[4]) # json file with genes limits in "genes"->"name" [start,end]
+json_genes = read_json(args[5]) # json file with genes limits in "genes"->"name" [start,end]
 #str(json_genes$genes)
 
 
-outfile = args[5]
+outfile = args[6]
 
-if( length(args) > 5 )
+if( length(args) > 6 )
 {
   b_covdepth <- TRUE
   # to prepare coverage depth graph above variant/annotation graph
-  coverage_depth <- try( read.table(args[6], h=F, sep = "\t") ) # read the dataframe
+  coverage_depth <- try( read.table(args[7], h=F, sep = "\t") ) # read the dataframe
   if(inherits(coverage_depth,"try-error"))
     coverage_depth <- NULL
     #b_covdepth <- FALSE
@@ -253,23 +274,25 @@ gnames_label=lapply(nrange, FUN=function(x){
 
 df=data.frame(xmi,xma,ymi,yma) # ,colrect,filrect)
 
-print(gnames)
-print(gnames_label)
-print(json_genes$genes[[1]][[1]])
-class(json_genes$genes[[1]][[1]])
-print(nrange)
-print(xmi)
-print(xma)
-print(xmm)
-print(ymi)
-print(yma)
-print(ymm)
-# print(colrect)
-# print(filrect)
+if( b_verbose ){
+  print(gnames)
+  print(gnames_label)
+  print(json_genes$genes[[1]][[1]])
+  class(json_genes$genes[[1]][[1]])
+  print(nrange)
+  print(xmi)
+  print(xma)
+  print(xmm)
+  print(ymi)
+  print(yma)
+  print(ymm)
+  # print(colrect)
+  # print(filrect)
 
-class(xmi)
-class(ymi)
-# class(colrect)
+  class(xmi)
+  class(ymi)
+  # class(colrect)
+}
 
 p1bis = p1 + geom_rect(data=df, mapping=aes(xmin=xmi, 
                                 xmax=xma, 
@@ -302,6 +325,53 @@ if(! is.null(contig_limits)){ # means more than 1 contig
   for(i in contig_limits){
         p3bis = p3bis + geom_vline(xintercept=i,linetype="dotted") # add the contig limits (vertical dotted line)
 	}
+  # average x to write text into
+  namerangei = 1:length(contig_limits)
+
+  if( b_verbose ){
+    print("contig_limits:")
+    print(contig_limits)
+    print("contig_limits de 1:")
+    print(contig_limits[1])
+    print("contig_limits de length de contig_limits:")
+    print(contig_limits[length(contig_limits)])
+    print("namerangei:")
+    print(namerangei)
+  }
+
+  xmidname=lapply(namerangei, FUN=function(x){ as.integer((as.integer(contig_limits[x-1]) + as.integer(contig_limits[x])) / 2) } )
+  xmidname=as.numeric(unlist(xmidname))
+  
+  if( b_verbose ){
+    print("xmidname:")
+    print(xmidname)
+  }
+}
+if(! is.null(contig_names)){ # means more than 1 contig
+  if( b_verbose ){
+    print(contig_names)
+  }
+  # for(ni in 1:(length(contig_names))){
+  #   n = contig_names[ni]
+  #   npos = xmidname[ni]
+  #   print("n:")
+  #   print(n)
+  #   print("npos:")
+  #   print(npos)
+  #   p3bis = p3bis + geom_text(aes(x = npos, y = 1.1, label = n, angle = 0)) # add name to the graph
+	# }
+  cy = rep(1.1, length(contig_names)) 
+  dfc = data.frame(xmidname,cy,contig_names)
+  p3bis = p3bis + geom_text(data=dfc, 
+                            mapping=aes(
+                              x=xmidname, 
+                              y=cy, 
+                              label=contig_names),  
+                            color="black",
+                            size = 3, 
+                            check_overlap = TRUE
+                          )
+
 }
 
 # # TODO stem_loops

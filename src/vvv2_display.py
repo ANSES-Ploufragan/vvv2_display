@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of the vvv2_display distribution (https://github.com/ANSES-Ploufragan/vvv2_display).
-# Copyright (c) 2023 Fabrice Touzain.
+# Copyright (c) 2024 Fabrice Touzain.
 # 
 # This program is free software: you can redistribute it and/or modify  
 # it under the terms of the GNU General Public License as published by  
@@ -73,6 +73,7 @@ def __main__():
     snp_loc_f            = '' # text file for snp location
     snp_loc_summary_f    = '' # text file for snp location summary
     contig_limits_f      = '' # in, txt file with contig limits positions    
+    contig_names_f       = '' # in, txt file with contig names    
     # --------------------------------------
 
     # --------------------------------------
@@ -129,6 +130,9 @@ def __main__():
                         metavar="FILE")
     parser.add_argument("-m", "--contig_limits_f", dest='contig_limits_f',
                         help="[Optional] out (tmp out file for galaxy compatibility, no need in other cases): txt file of contig limits",
+                        metavar="FILE")
+    parser.add_argument("-N", "--contig_names_f", dest='contig_names_f',
+                        help="[Optional] out (tmp out file for galaxy compatibility, no need in other cases): txt file of contig names",
                         metavar="FILE")
     parser.add_argument("-z", "--test_vvv2_display", dest='b_test_vvv2_display',
                         help="[Optional] run all tests",
@@ -257,6 +261,20 @@ def __main__():
             # print(prog_tag + " contig_limits file name created:"+ contig_limits_f)
         else:
             contig_limits_f = os.path.abspath(args.contig_limits_f)
+
+        if args.contig_names_f is None:
+            # if name of contig_names file is not provided by user, deduce a name file with a part
+            # deduced from pass_annot_f using sha256 checksum
+            # to avoid bad interferences of serveral vvv2_display runs results  
+            
+            cmd = "/usr/bin/sha256sum "+pass_annot_f
+            # print(prog_tag + " cmd:"+cmd)
+            sha256_f = subprocess.getoutput(cmd).split()[0]
+            contig_names_f = str(sha256_f) + '_contig_names.txt'
+            # print(prog_tag + " contig_names file name created:"+ contig_names_f)
+        else:
+            contig_names_f = os.path.abspath(args.contig_names_f)
+        
         if args.cov_depth_corr_f is not None:
             cov_depth_corr_f = os.path.abspath(args.cov_depth_corr_f)
         # ----------------------------------------------------------------
@@ -282,6 +300,7 @@ def __main__():
         # tmp out files
         json_annot_f  = test_dir + "/res2_vadr.json"     # from convert_tbl2json.py
         contig_limits_f= test_dir + "/contig_limits.txt"
+        contig_names_f = test_dir + "/contig_names.txt"
         cov_depth_corr_f= test_dir + "/res2_covdepth_corr.txt"
         # final out file
         png_var_f     = test_dir + "/res2_vvv2.png"     # from ...
@@ -291,6 +310,7 @@ def __main__():
                             "--seq_stat_f", seq_stat_f,
                             "--vcf_f", vardict_vcf_f,
                             "--contig_limits_f", contig_limits_f,   
+                            "--contig_names_f", contig_names_f,   
                             "--cov_depth_f", cov_depth_f,  
                             "--cov_depth_corr_f", cov_depth_corr_f,              
                             "--png_var_f", png_var_f
@@ -310,7 +330,8 @@ def __main__():
         vardict_vcf_f = test_dir + "/res_vardict.vcf"  # from lofreq results    
         # tmp out files
         json_annot_f    = test_dir + "/res_vadr.json"     # from convert_tbl2json.
-        contig_limits_f = test_dir + "/contig_limits.txt"  # from lofreq results    py
+        contig_limits_f = test_dir + "/contig_limits.txt" 
+        contig_names_f = test_dir + "/contig_names.txt"  
         # final out file
         png_var_f    = test_dir + "/res_vvv2.png"     # from ...
         cmd = ' '.join([ dir_path + "/vvv2_display.py",
@@ -319,6 +340,7 @@ def __main__():
                     "--seq_stat_f", seq_stat_f,
                     "--vcf_f", vardict_vcf_f,
                     "--contig_limits_f", contig_limits_f,   
+                    "--contig_names_f", contig_names_f,   
                     "--cov_depth_f", cov_depth_f,                     
                     "--cov_depth_corr_f", cov_depth_corr_f,              
                     "--png_var_f", png_var_f
@@ -390,6 +412,7 @@ def __main__():
         vardict_vcf_f        = test_dir + "/res_vardict.vcf"  # from vardict results            
         correct_vcf_f        = test_dir + "/res_correct.vcf"  # corrected out results
         contig_limits_f      = test_dir + "/contig_limits.txt"  # contig limits
+        contig_names_f       = test_dir + "/contig_names.txt"  # contig names
 
     if(correct_vcf_f == ''):
        correct_vcf_f = vardict_vcf_f
@@ -402,7 +425,8 @@ def __main__():
                     "--seq_stat_f", seq_stat_f,
                     "--vardict_vcf_f", vardict_vcf_f,
                     "--correct_vcf_f", correct_vcf_f,
-                    "--contig_limits_f", contig_limits_f                    
+                    "--contig_limits_f", contig_limits_f,
+                    "--contig_names_f", contig_names_f
                     ])
     print(prog_tag + " cmd:" + cmd)
 
@@ -471,6 +495,13 @@ def __main__():
         if b_test_correct_covdepth_f and (not b_test_vvv2_display):
             cov_depth_f = test_dir + "/res_vvv2_covdepth.txt"
             cov_depth_corr_f = test_dir + "/res_vvv2_covdepth_corrected.txt"
+        elif cov_depth_corr_f == '':
+            # create a file name if not given, deducing it from cov_depth_f
+            cov_depth_corr_f = cov_depth_f
+            cov_depth_corr_f = re.sub('\.[^\.]+$', '_corrected.txt', cov_depth_corr_f)
+            # handle case with cov_depth_f without extension (file provided by user)
+            if cov_depth_corr_f == cov_depth_f:
+                cov_depth_corr_f = cov_depth_corr_f + '_corrected.txt'
         cmd = " ".join([
                     PYTHON_SCRIPTS + "correct_covdepth_f.py",
                     "--cov_depth_f", cov_depth_f,
@@ -500,6 +531,7 @@ def __main__():
         json_annot_f      = test_dir + "/res_vadr.json"
         png_var_f         = test_dir + "/res_snp.png"
         contig_limits_f   = test_dir + "/contig_limits.txt"
+        contig_names_f    = test_dir + "/contig_names.txt"
         
     if(png_var_f == ''):
        png_var_f = snp_loc_f
@@ -512,6 +544,7 @@ def __main__():
     cmd = " ".join(["R --vanilla --quiet --args",
                 snp_loc_f, 
                 contig_limits_f,
+                contig_names_f,
                 threshold,
                 json_annot_f,
                 png_var_f])
@@ -539,6 +572,8 @@ def __main__():
     # remove useless file
     if os.path.isfile(contig_limits_f):
         os.unlink(contig_limits_f)
+    if os.path.isfile(contig_names_f):
+        os.unlink(contig_names_f)
 
 ##### MAIN END
 if __name__=="__main__":__main__()
