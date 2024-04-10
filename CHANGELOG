@@ -1,6 +1,8 @@
-0.2.0:
+0.2.1:
+  - correct bug when user does not provide cov_depth_corr_f file
   - update dependencies versions
   - correct bug in PYTHON_SCRIPTS/convert_vcffile_to_readablefile2.py that missed some variants in text summary file
+0.2.0:
 	- add boxes for genes under graph (to fit traditional display of viral genomes)
 	- add [optional] coverage depth display in final png (if no cov depth provided, part disabled) aligned of variant graph
 	  for positions
