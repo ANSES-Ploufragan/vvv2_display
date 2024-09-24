@@ -372,6 +372,67 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         gene_name = ''
                         continue
                     
+                    # section added 2024 09 24, when 2 gene section are following each other
+                    # without any other description
+                    elif line_fields[2] == 'gene':
+
+                        # record gene info
+                        cpt_gene += 1
+                        gene_name = 'gene_'+str(cpt_gene)
+
+                        # # record gene info: correct previous recorded gene name (gene_n)
+                        # if re.search(r'^gene_', gene_name) or gene_name == '': 
+                        #     gene_name = ' '.join(line_fields[1:])
+                        # elif gene_name == '':
+                        #     gene_name = ' '.join(line_fields[1:])
+                        # else:
+                        #     gene_name = gene_name + ' ' + ' '.join(line_fields[1:])
+
+                        # print(' '.join(['gene',
+                        #                gene_start,
+                        #                gene_end,
+                        #                gene_name]))
+
+                       # store info
+                        chrs.append(contig)
+                        names.append(gene_name)
+                        types.append('gene')
+                        starts.append(int(gene_start) + contig_pos_shift)
+                        ends.append(int(gene_end) + contig_pos_shift)
+                        starts_vardict.append(int(gene_start))
+                        ends_vardict.append(int(gene_end))
+                        print("\t".join([
+                            prog_tag,
+                            "RECORD: name:" + gene_name,
+                            "type:gene",
+                            "starts:"+gene_start,
+                            "end:"+gene_end,
+                            "contig:"+contig+", line "+str(frame.f_lineno)
+                        ]))
+
+                        gene_start = line_fields[0]
+                        gene_end   = line_fields[1]
+                        gene_start = re.sub(non_alphanum, '', gene_start)
+                        gene_end   = re.sub(non_alphanum, '', gene_end)
+                        
+                        if b_verbose:
+                            print("\t".join([
+                                "TMP_GENE:"+line_fields[2],
+                                gene_start,
+                                gene_end,
+                                "for line "+str(line_fields)
+                            ]))
+
+                        b_next_is_gene = False                            
+                        b_next_is_product = False
+                        curr_type = 'gene'
+                        gene_name = ''
+
+                        if len(names) != len(types):
+                            sys.exit(prog_tag+"[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
+
+                        continue
+
                     else:
                         # print("No CDS field2 or gene field0, line "+str(frame.f_lineno))
                         gene_name = line_fields[1]
@@ -448,8 +509,6 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         #                gene_end,
                         #                gene_name]))
                         
-                        b_next_is_gene = False
-
                         print("\t".join([
                             prog_tag, 
                             "CORRECT: name:" + gene_name,
@@ -642,6 +701,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         ]))
                         note = ''
                         b_next_is_note = False
+                        b_next_is_gene = True # added 2024 09 19
                         
                         if len(names) != len(types):
                             sys.exit("names and types not with the same number of elements, line "+str(len(types)))
@@ -738,6 +798,51 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                     if contig_index != 0:
                         contig_pos_shift += int(contig_lengths[contig_index - 1])
                     
+                # added 2024 09 24: now need to replace name of previous record, testing if start end are the same
+                # otherwise record as set here
+                elif line_fields[0] == 'gene':
+
+                        
+                        # record gene info: correct previous recorded gene name (gene_n)
+                        if re.search(r'^gene_', gene_name) or gene_name == '': 
+                            gene_name = ' '.join(line_fields[1:])
+                        elif gene_name == '':
+                            gene_name = ' '.join(line_fields[1:])
+                        else:
+                            gene_name = gene_name + ' ' + ' '.join(line_fields[1:])
+
+                        # print(' '.join(['gene',
+                        #                gene_start,
+                        #                gene_end,
+                        #                gene_name]))
+
+                       # store info
+                        chrs.append(contig)
+                        names.append(gene_name)
+                        types.append('gene')
+                        starts.append(int(gene_start) + contig_pos_shift)
+                        ends.append(int(gene_end) + contig_pos_shift)
+                        starts_vardict.append(int(gene_start))
+                        ends_vardict.append(int(gene_end))
+                        print("\t".join([
+                            prog_tag,
+                            "RECORD: name:" + gene_name,
+                            "type:gene",
+                            "starts:"+gene_start,
+                            "end:"+gene_end,
+                            "contig:"+contig+", line "+str(frame.f_lineno)
+                        ]))
+
+                        b_next_is_gene = False                            
+                        b_next_is_product = False
+                        curr_type = 'gene'
+                        gene_name = ''
+
+                        if len(names) != len(types):
+                            sys.exit(prog_tag+"[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
+
+                        continue
+
                 elif line_fields[2] == 'gene':
                     gene_start = line_fields[0]
                     gene_end   = line_fields[1]
