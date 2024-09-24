@@ -289,37 +289,37 @@ def __main__():
     # ------------------------------------------------------------------
     test_dir = dir_path + "/../test_vvv2_display"
     if b_test_vvv2_display:
-        # --------------------------------------------------------------
-        # COMPLETE GENOME
-        # in files
-        pass_annot_f  = test_dir + "/res2_vadr_pass.tbl" # from vadr results
-        fail_annot_f  = test_dir + "/res2_vadr_fail.tbl" # from vadr results
-        seq_stat_f    = test_dir + "/res2_vadr.seqstat"  # from vadr results
-        vardict_vcf_f = test_dir + "/res2_vardict.vcf"   # from lofreq results  
+        # # --------------------------------------------------------------
+        # # COMPLETE GENOME
+        # # in files
+        # pass_annot_f  = test_dir + "/res2_vadr_pass.tbl" # from vadr results
+        # fail_annot_f  = test_dir + "/res2_vadr_fail.tbl" # from vadr results
+        # seq_stat_f    = test_dir + "/res2_vadr.seqstat"  # from vadr results
+        # vardict_vcf_f = test_dir + "/res2_vardict.vcf"   # from lofreq results  
         cov_depth_f   = test_dir + "/res2_covdepth.txt"  # from samtools results  
-        # tmp out files
-        json_annot_f  = test_dir + "/res2_vadr.json"     # from convert_tbl2json.py
-        contig_limits_f= test_dir + "/contig_limits.txt"
-        contig_names_f = test_dir + "/contig_names.txt"
+        # # tmp out files
+        # json_annot_f  = test_dir + "/res2_vadr.json"     # from convert_tbl2json.py
+        # contig_limits_f= test_dir + "/contig_limits.txt"
+        # contig_names_f = test_dir + "/contig_names.txt"
         cov_depth_corr_f= test_dir + "/res2_covdepth_corr.txt"
-        # final out file
-        png_var_f     = test_dir + "/res2_vvv2.png"     # from ...
-        cmd = ' '.join([ dir_path + "/vvv2_display.py",
-                            "--pass_tbl_f", pass_annot_f,
-                            "--fail_tbl_f", fail_annot_f,
-                            "--seq_stat_f", seq_stat_f,
-                            "--vcf_f", vardict_vcf_f,
-                            "--contig_limits_f", contig_limits_f,   
-                            "--contig_names_f", contig_names_f,   
-                            "--cov_depth_f", cov_depth_f,  
-                            "--cov_depth_corr_f", cov_depth_corr_f,              
-                            "--png_var_f", png_var_f
-                    ])
-        print(prog_tag + " START")    
-        print(prog_tag + " cmd:" + cmd)
-        os.system(cmd)
-        print(prog_tag + " END")
-        # --------------------------------------------------------------
+        # # final out file
+        # png_var_f     = test_dir + "/res2_vvv2.png"     # from ...
+        # cmd = ' '.join([ dir_path + "/vvv2_display.py",
+        #                     "--pass_tbl_f", pass_annot_f,
+        #                     "--fail_tbl_f", fail_annot_f,
+        #                     "--seq_stat_f", seq_stat_f,
+        #                     "--vcf_f", vardict_vcf_f,
+        #                     "--contig_limits_f", contig_limits_f,   
+        #                     "--contig_names_f", contig_names_f,   
+        #                     "--cov_depth_f", cov_depth_f,  
+        #                     "--cov_depth_corr_f", cov_depth_corr_f,              
+        #                     "--png_var_f", png_var_f
+        #             ])
+        # print(prog_tag + " START")    
+        # print(prog_tag + " cmd:" + cmd)
+        # os.system(cmd)
+        # print(prog_tag + " END")
+        # # --------------------------------------------------------------
 
         # --------------------------------------------------------------
         # CONTIGS
