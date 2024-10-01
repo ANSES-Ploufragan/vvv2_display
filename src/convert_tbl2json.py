@@ -320,6 +320,12 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         cpt_gene += 1
                         gene_name = 'gene_'+str(cpt_gene)
                         
+                        # added 2024 10 01, getting info on the line is more sure, previous gene info not always available
+                        gene_start = line_fields[0]
+                        gene_end = line_fields[1]
+                        gene_start = re.sub(non_alphanum, '', gene_start)
+                        gene_end   = re.sub(non_alphanum, '', gene_end)
+
                         # print("CDS for line "+line)
 
                         print(' '.join(['gene',
@@ -346,11 +352,15 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         if len(names) != len(types):
                             sys.exit(prog_tag + "[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
                         
-                        # ask to treat current CDS info
-                        cds_start = line_fields[0]
-                        cds_end = line_fields[1]
-                        cds_start = re.sub(non_alphanum, '', cds_start)
-                        cds_end   = re.sub(non_alphanum, '', cds_end)
+                        # # ask to treat current CDS info
+                        # cds_start = line_fields[0]
+                        # cds_end = line_fields[1]
+                        # cds_start = re.sub(non_alphanum, '', cds_start)
+                        # cds_end   = re.sub(non_alphanum, '', cds_end)
+
+                        cds_start = gene_start
+                        cds_end = gene_end
+                        
                         b_next_is_product = True
                         curr_type = 'CDS'
                         gene_name = ''
