@@ -18,7 +18,7 @@ library(gridExtra) # multi graph on the same figure
 library(cowplot)
 library(stringr)
 library(jsonlite) # to read json
-b_verbose <- FALSE
+b_verbose <- TRUE # FALSE
 
 args <- commandArgs(TRUE) # all arguments are character types
 
@@ -55,8 +55,15 @@ threshold = as.numeric(args[4]) # define threshold
 
 # added 2024 02 27
 json_genes = read_json(args[5]) # json file with genes limits in "genes"->"name" [start,end]
-#str(json_genes$genes)
+if( b_verbose ){
+  print("json genes:")
+  str(json_genes$genes)
+}
 
+if( b_verbose ){
+  print("json proteins:")
+  str(json_genes$proteins)
+}
 
 outfile = args[6]
 
@@ -196,7 +203,17 @@ genecols = append(genecols, complete_col_set)
 gene_id_labels = unique(density$gene_id)
 density$gene_id_num = paste(  sprintf("%02d", match(density$gene_id, gene_id_labels) ), ":", density$gene_id) 
 
+# if( b_verbose ){
+#   print("protein_id_labels BEFORE removing duplicates:")
+#   print(density$protein_id)
+# }
+
 protein_id_labels = unique(density$protein_id)
+
+# if( b_verbose ){
+#   print("protein_id_labels BEFORE shortening:")
+#   print(protein_id_labels)
+# }
 
 # truncate long legend
 replacement <- function(x){
@@ -205,6 +222,11 @@ replacement <- function(x){
   replaced = str_replace_all(replaced, ":[[:alnum:] \\-]+$","")      # remove last :....
   replaced = str_replace_all(replaced, "\\[[[:alnum:] \\-]+\\]","")  # remove [...]
   replaced = str_replace_all(replaced, " (?:putative|growth)[[:alnum:] \\-]+","")  # remove useless annotations
+  replaced = str_replace_all(replaced, "similar to","~")  # remove useless annotations
+  replaced = str_replace_all(replaced, "polyprotein","polyprot")  # remove useless annotations
+  replaced = str_replace_all(replaced, "membrane","memb.")  # remove useless annotations
+  replaced = str_replace_all(replaced, "envelope","env.")  # remove useless annotations
+  replaced = str_replace_all(replaced, "protein","prot.")  # remove useless annotations
   return( replaced )
 }
 
@@ -212,14 +234,14 @@ replacement <- function(x){
 # protein_id_labels = lapply(protein_id_labels, FUN = function(x) str_replace_all(x, ":[A-Za-z0-9 ]+,",""))
 protein_id_labels = lapply(protein_id_labels, replacement)
 if( b_verbose ){
-  print("protein_id_labels shortened:")
+  print("protein_id_labels SHORTENED:")
   print(protein_id_labels)
 }
 density$protein_id = lapply(density$protein_id, replacement)
-if( b_verbose ){
-  print("protein_id shortened:")
-  print(density$protein_id)
-}
+# if( b_verbose ){
+#   print("protein_id shortened:")
+#   print(density$protein_id)
+# }
 
 density$protein_id_num = paste(  sprintf("%03d", match(density$protein_id, protein_id_labels) ), ":",  density$protein_id) 
 
@@ -242,6 +264,8 @@ p1 = p + geom_point(aes(x = position, y = -0.1, colour = density$gene_id_num, sh
 # add consensus gene boxes 
 p1bis = p1
 
+# -------------------------------------------------------------------------------
+# for gene boxes display
 gnames = names(json_genes$genes)
 ybase  = -0.04
 yshift = -0.00
@@ -281,6 +305,7 @@ gnames_label=lapply(nrange, FUN=function(x){
                       )
 # colrect=rep("black", length(gnames))
 # filrect=rep("white", length(gnames))
+# -------------------------------------------------------------------------------
 
 df=data.frame(xmi,xma,ymi,yma) # ,colrect,filrect)
 
