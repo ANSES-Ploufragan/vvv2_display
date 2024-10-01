@@ -1,3 +1,7 @@
+0.2.2:
+  - handle various annotation contexts not taken into account until now
+  - handle two following gene without annotation in netween.
+  - shorten protein names for graphics in R script
 0.2.1:
   - correct bug when user does not provide cov_depth_corr_f file
   - update dependencies versions
