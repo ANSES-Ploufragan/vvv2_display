@@ -476,6 +476,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                     elif (line_fields[2] == 'misc_feature'):
                         misc_feature_start = re.sub(non_alphanum, '', line_fields[0])
                         misc_feature_end   = re.sub(non_alphanum, '', line_fields[1])
+                        b_next_is_gene     = False # added 2024 10 01
                         b_next_is_note     = True
                         b_next_is_product  = False
                         print("\t".join([
@@ -826,7 +827,8 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                     else: # means new start stop for misc_features
                         misc_feature_start = line_fields[0]
                         misc_feature_end = line_fields[1]
-                        b_next_is_note = False                        
+                        # b_next_is_note = False                        
+                        b_next_is_note = True # changed 2024 10 01                        
                         # sys.exit("NOTE STOP")
                         continue
 
@@ -1079,6 +1081,12 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             misc_feature_start,
                             misc_feature_end
                         ]))
+                    print("\t".join([
+                        "TMP_MISC_FEATURE:"+line_fields[2],
+                        misc_feature_start,
+                        misc_feature_end
+                    ]))
+
 
                 elif line_fields[2] == 'mat_peptide':
                     cds_start = line_fields[0]
