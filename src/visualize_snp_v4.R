@@ -18,7 +18,7 @@ library(gridExtra) # multi graph on the same figure
 library(cowplot)
 library(stringr)
 library(jsonlite) # to read json
-b_verbose <- TRUE # FALSE
+b_verbose <- FALSE
 
 args <- commandArgs(TRUE) # all arguments are character types
 
