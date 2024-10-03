@@ -239,6 +239,12 @@ non_alphanum = re.compile("\W") # [\'\(\)\W]")
 # for each annotation file created by vadr
 for annot_f in [pass_annot_f, fail_annot_f]:
 
+    # initialize at the beginning of the file to avoid to keep variables of previous file (vadr pass when reading fail)
+    b_next_is_gene = False
+    b_next_is_product = False
+    b_next_is_protein_id = False
+    b_next_is_note =  False
+
     # read annotation file
     print(prog_tag + " read "+annot_f+" file")
     with open(annot_f) as paf:
@@ -314,41 +320,91 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             sys.exit(prog_tag+"[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
 
                         continue
+                    
+                    elif re.search(r'^>Feature', line_fields[0]):
+                        b_additional = False
+                        m = re.search(r">Feature (\S+)", line)
+                        contig = m.group(1)
+                        print(prog_tag + " Treating contig "+contig)
+
+                        # get the index of current contig
+                        contig_index = contig_names.index(contig)
+                        # if not the first contig, we must shift all start end position recorded according
+                        # to the sum of all previous found contigs
+                        if contig_index != 0:
+                            contig_pos_shift += int(contig_lengths[contig_index - 1])
+                        continue
 
                     elif line_fields[2] == 'CDS':
-                        # record gene info
-                        cpt_gene += 1
-                        gene_name = 'gene_'+str(cpt_gene)
-                        
+
                         # added 2024 10 01, getting info on the line is more sure, previous gene info not always available
-                        gene_start = line_fields[0]
-                        gene_end = line_fields[1]
-                        gene_start = re.sub(non_alphanum, '', gene_start)
-                        gene_end   = re.sub(non_alphanum, '', gene_end)
+                        if gene_start == '': # get gene pos only if not already buffered
+                            gene_start = re.sub(non_alphanum, '', line_fields[0])
+                            gene_end   = re.sub(non_alphanum, '', line_fields[1])
+                        cds_start = re.sub(non_alphanum, '', line_fields[0])
+                        cds_end   = re.sub(non_alphanum, '', line_fields[1])
 
-                        # print("CDS for line "+line)
+                        # ----------------------------------------------------------
+                        # check if previous gene is the same with a better name
+                        last_gene_index = None
+                        if(len(starts) > 0):
+                            for i in reversed( range(len(starts)) ):
+                                if types[i] == 'gene':
+                                    last_gene_index = i
+                                    break
 
-                        print(' '.join(['gene',
-                                       gene_start,
-                                       gene_end,
-                                       gene_name])
-                              )
-                        b_next_is_gene = False
+                        if( (last_gene_index is not None) and 
+                            (starts[last_gene_index] == int(gene_start) + contig_pos_shift ) and # same start pos
+                            (ends[last_gene_index]   == int(gene_end  ) + contig_pos_shift ) # same start pos
+                        ):
+                            if not re.match('gene_', gene_name):
+                                if re.match('gene_', names[last_gene_index]):
+                                    # if so, we replace previously recorded name by current one
+                                    names[i] = gene_name
+                                elif re.match('similar to ', names[last_gene_index]):
+                                    # if so, we replace previously recorded name by current one
+                                    names[i] = gene_name + ' ' + names[last_gene_index]
 
-                        # store info
-                        chrs.append(contig)
-                        names.append(gene_name)
-                        types.append('gene')
-                        starts.append(int(gene_start) + contig_pos_shift)
-                        ends.append(int(gene_end) + contig_pos_shift)
-                        starts_vardict.append(int(gene_start))
-                        ends_vardict.append(int(gene_end))
-                        print("\t".join([prog_tag,
-                                         "RECORD: name:"+gene_name,
-                                         "type:gene",
-                                         "starts:"+gene_start,
-                                         "end:"+gene_end,
-                                         "contig:"+contig+ ", line "+str(frame.f_lineno)]))
+                            # if so, no need to record again
+                            print("\t".join([
+                                prog_tag,
+                                "PASS (already RECORDED with "+names[last_gene_index]+")",
+                                "type:gene",
+                                "starts:"+gene_start,
+                                "end:"+gene_end,
+                                "contig:"+contig+", line "+str(frame.f_lineno)
+                            ]))                       
+                                
+                        else:
+                            # ----------------------------------------------------------
+                            # record gene info
+                            cpt_gene += 1
+                            gene_name = 'gene_'+str(cpt_gene)
+                    
+
+                            # print("CDS for line "+line)
+
+                            print(' '.join(['gene',
+                                           gene_start,
+                                           gene_end,
+                                           gene_name])
+                                )
+                            
+                            # store info
+                            chrs.append(contig)
+                            names.append(gene_name)
+                            types.append('gene')
+                            starts.append(int(gene_start) + contig_pos_shift)
+                            ends.append(int(gene_end) + contig_pos_shift)
+                            starts_vardict.append(int(gene_start))
+                            ends_vardict.append(int(gene_end))
+                            print("\t".join([prog_tag,
+                                             "RECORD: name:"+gene_name,
+                                             "type:gene",
+                                             "starts:"+gene_start,
+                                             "end:"+gene_end,
+                                            "contig:"+contig+ ", line "+str(frame.f_lineno)]))
+                            
                         if len(names) != len(types):
                             sys.exit(prog_tag + "[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
                         
@@ -358,12 +414,12 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         # cds_start = re.sub(non_alphanum, '', cds_start)
                         # cds_end   = re.sub(non_alphanum, '', cds_end)
 
-                        cds_start = gene_start
-                        cds_end = gene_end
-                        
+                        b_next_is_gene = False
                         b_next_is_product = True
                         curr_type = 'CDS'
                         gene_name = ''
+                        gene_start = ''
+                        gene_end = ''
                         continue
 
                     # NEW
@@ -657,10 +713,13 @@ for annot_f in [pass_annot_f, fail_annot_f]:
 
                     # added 2024 09 26 handle "Additional information", no gene record afterthat, only possible corrections
                     # on start/stop info
-                    elif re.search(r"^Additional", line_fields[0]) :
-                        b_next_gene = False
-                        b_next_is_product = False
-                        b_additional = True
+                    elif re.match(r"^Additional", line_fields[0]) :
+                        b_next_gene          = False
+                        b_next_is_note       = False
+                        b_next_is_product    = False
+                        b_next_is_protein_id = False 
+                        b_additional         = True
+                        print("Additional section detected")
                         continue
                     elif not b_additional:
 
@@ -805,8 +864,8 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             prog_tag,
                             "RECORD: name:"+tmp_name,
                             "type:cds",
-                            "starts:"+gene_start,
-                            "end:"+gene_end+", line "+str(frame.f_lineno)
+                            "starts:"+cds_start,
+                            "end:"+cds_end+", line "+str(frame.f_lineno)
                         ]))
                         product = ''
                         protein_id = ''
@@ -1047,17 +1106,17 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                     # to the sum of all previous found contigs
                     if contig_index != 0:
                         contig_pos_shift += int(contig_lengths[contig_index - 1])
-                    
+                    continue
+
                 # added 2024 09 24: now need to replace name of previous record, testing if start end are the same
                 # otherwise record as set here
                 elif line_fields[0] == 'gene':
 
                         
                         # record gene info: correct previous recorded gene name (gene_n)
-                        if re.search(r'^gene_', gene_name) or gene_name == '': 
+                        if re.match(r'^gene_', gene_name) or gene_name == '': 
                             gene_name = ' '.join(line_fields[1:])
-                        # elif gene_name == '':
-                        #     gene_name = ' '.join(line_fields[1:])
+                            print("gene_name set to "+gene_name+", line "+str(frame.f_lineno))
                             
                         # ----------------------------------------------------------
                         # check if previous gene is the same with a better name
@@ -1076,12 +1135,14 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                     if re.match('gene_', names[last_gene_index]):
                                         # if so, we replace previously recorded name by current one
                                         names[last_gene_index] = gene_name
+                                        print("previous gene_name renamed to "+gene_name+", line "+str(frame.f_lineno))
                                     # elif names[last_gene_index] == '':
                                     #     # if so, we replace previously missing name by current one
                                     #     names[last_gene_index] = gene_name
                                     elif re.match('similar to ', names[last_gene_index]):
                                         # if so, we replace previously recorded name by current one
                                         names[last_gene_index] = gene_name + ' ' + names[last_gene_index]
+                                        print("previous gene_name renamed to "+gene_name+", line "+str(frame.f_lineno))
 
                                 # if so, no need to record again
                                 print("\t".join([
@@ -1244,7 +1305,11 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         ]))
                         
                 elif "Additional" in line_fields[0]:
-                    b_additional = True
+                    b_additional         = True
+                    b_next_is_gene       = False
+                    b_next_is_note       = False
+                    b_next_is_product    = False
+                    b_next_is_protein_id = False 
 
                 else:
                     print(prog_tag + " Case not treated for line "+line+", line "+str(sys._getframe().f_lineno))
