@@ -245,11 +245,9 @@ else:
     # print("genomeposition:"+str(genomeposition)+", line "+str(frame.f_lineno))
 
     # look for 3 groups: SNP_position , REF , ALT
-    regex1 = r'[a-zA-Z0-9\._]+[\t]([0-9]+)[\t][a-zA-Z0-9\._-]+[\t]([ATCGKMSWRYBDHVN\.]+)'\
-'\t(([ATCGKMSWRYBDHVN\,\.]+)||<DUP>||<DEL>||<INV>||<INS>||<FUS>)\t[0-9]+\t[A-Za-z0-9\.\;\,]+\tSAMPLE='
+    regex1 = r'[a-zA-Z0-9\._]+[\t]([0-9]+)[\t][a-zA-Z0-9\._-]+[\t]([ATCGKMSWRYBDHVN\.]+)\t(([ATCGKMSWRYBDHVN\,\.]+)||<DUP>||<DEL>||<INV>||<INS>||<FUS>)\t[0-9]+\t[A-Za-z0-9\.\;\,]+\tSAMPLE='
     # look for 1 group: Variant frequency
-    regex2 = r'[0-9\/\,\.]+:[0-9\/\,\.]+:[0-9\/\,\.]+:[0-9\/\,\.]+:'\
-'([0-9\/\,\.]+):[0-9\/\,\.]+:[0-9\.\/\,\.%]+'
+    regex2 = r'[0-9\/\,\.]+:[0-9\/\,\.]+:[0-9\/\,\.]+:[0-9\/\,\.]+:([0-9\/\,\.]+):[0-9\/\,\.]+:[0-9\.\/\,\.%]+'
 
     ## regex compilation
     reg1 , reg2 = re.compile(regex1) , re.compile(regex2)

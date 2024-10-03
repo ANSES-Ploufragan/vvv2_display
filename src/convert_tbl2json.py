@@ -234,7 +234,7 @@ chrs  = []
 cpt_gene = 0
 
 # pattern to remove non alphanumeric character (ie: <> character befire start end positions of genes, cds, etc...)
-non_alphanum = re.compile("\W") # [\'\(\)\W]")
+non_alphanum = re.compile(r"\W") # [\'\(\)\W]")
 
 # for each annotation file created by vadr
 for annot_f in [pass_annot_f, fail_annot_f]:
