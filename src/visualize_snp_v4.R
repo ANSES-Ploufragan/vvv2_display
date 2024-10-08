@@ -227,6 +227,13 @@ replacement <- function(x){
   replaced = str_replace_all(replaced, "membrane","memb.")  # remove useless annotations
   replaced = str_replace_all(replaced, "envelope","env.")  # remove useless annotations
   replaced = str_replace_all(replaced, "protein","prot.")  # remove useless annotations
+  replaced = str_replace_all(replaced, "coronavirus","coro.")  # remove useless annotations
+  replaced = str_replace_all(replaced, " product,",",")  # remove useless annotations
+  replaced = gsub(" hydrophobic domain [0-9]+", "", replaced)  # remove useless annotations
+  replaced = str_replace_all(replaced, "polymerase","polym.")  # remove useless annotations
+  replaced = str_replace_all(replaced, "dependent","dep.")  # remove useless annotations
+  replaced = str_replace_all(replaced, "frameshift","fr.shift")  # remove useless annotations
+  replaced = gsub(" metal binding [A-Za-z/]+","", replaced)  # remove useless annotations
   return( replaced )
 }
 
