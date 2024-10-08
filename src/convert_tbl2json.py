@@ -337,10 +337,10 @@ for annot_f in [pass_annot_f, fail_annot_f]:
 
                     elif line_fields[2] == 'CDS':
 
-                        # added 2024 10 01, getting info on the line is more sure, previous gene info not always available
-                        if gene_start == '': # get gene pos only if not already buffered
-                            gene_start = re.sub(non_alphanum, '', line_fields[0])
-                            gene_end   = re.sub(non_alphanum, '', line_fields[1])
+                        # # added 2024 10 01, getting info on the line is more sure, previous gene info not always available
+                        # if gene_start == '': # get gene pos only if not already buffered
+                        #     gene_start = re.sub(non_alphanum, '', line_fields[0])
+                        #     gene_end   = re.sub(non_alphanum, '', line_fields[1])
                         cds_start = re.sub(non_alphanum, '', line_fields[0])
                         cds_end   = re.sub(non_alphanum, '', line_fields[1])
 
@@ -354,6 +354,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                     break
 
                         if( (last_gene_index is not None) and 
+                            (gene_start != "") and
                             (starts[last_gene_index] == int(gene_start) + contig_pos_shift ) and # same start pos
                             (ends[last_gene_index]   == int(gene_end  ) + contig_pos_shift ) # same start pos
                         ):
@@ -377,43 +378,39 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                 
                         else:
                             # ----------------------------------------------------------
-                            # record gene info
-                            cpt_gene += 1
-                            gene_name = 'gene_'+str(cpt_gene)
-                    
+                            # record gene info only if found previously
+                            if gene_start != '':
+                                cpt_gene += 1
+                                gene_name = 'gene_'+str(cpt_gene)
+                                #    types.append('gene')
 
-                            # print("CDS for line "+line)
+                                # print("CDS for line "+line)
 
-                            print(' '.join(['gene',
-                                           gene_start,
-                                           gene_end,
-                                           gene_name])
-                                )
-                            
-                            # store info
-                            chrs.append(contig)
-                            names.append(gene_name)
-                            types.append('gene')
-                            starts.append(int(gene_start) + contig_pos_shift)
-                            ends.append(int(gene_end) + contig_pos_shift)
-                            starts_vardict.append(int(gene_start))
-                            ends_vardict.append(int(gene_end))
-                            print("\t".join([prog_tag,
-                                             "RECORD: name:"+gene_name,
-                                             "type:gene",
-                                             "starts:"+gene_start,
-                                             "end:"+gene_end,
-                                            "contig:"+contig+ ", line "+str(frame.f_lineno)]))
+                                print(' '.join(['gene',
+                                                gene_start,
+                                                gene_end,
+                                                gene_name])
+                                    )
+                                
+                                # store info of previous line \d+ \d+, gene
+                                chrs.append(contig)
+                                names.append(gene_name)
+                                types.append('gene')
+                                # types.append('cds') # changed 2024 10 08
+                                starts.append(int(gene_start) + contig_pos_shift)
+                                ends.append(int(gene_end) + contig_pos_shift)
+                                starts_vardict.append(int(gene_start))
+                                ends_vardict.append(int(gene_end))
+                                print("\t".join([prog_tag,
+                                                "RECORD: name:"+gene_name,
+                                                "type:"+types[len(types)-1],
+                                                "starts:"+gene_start,
+                                                "end:"+gene_end,
+                                                "contig:"+contig+ ", line "+str(frame.f_lineno)]))
                             
                         if len(names) != len(types):
                             sys.exit(prog_tag + "[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
                         
-                        # # ask to treat current CDS info
-                        # cds_start = line_fields[0]
-                        # cds_end = line_fields[1]
-                        # cds_start = re.sub(non_alphanum, '', cds_start)
-                        # cds_end   = re.sub(non_alphanum, '', cds_end)
-
                         b_next_is_gene = False
                         b_next_is_product = True
                         curr_type = 'CDS'
@@ -839,39 +836,78 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         product    = product.strip()
                         protein_id = protein_id.strip()                        
                         
-                        # store info
-                        chrs.append(contig)
-                        if b_include_protein_id and (product != ''):
-                            tmp_name = product + " " +protein_id
-                        elif product == '': # in some case, only protein_id is provided, we must keep in this case
-                            # even if b_include_protein_id is False
-                            tmp_name = protein_id
-                        else:
-                            tmp_name = product
-                        names.append(tmp_name)
+                        # check if cds already recorded
+                        # if yes, keep more relevant name, do not add new cds
+                                               # ----------------------------------------------------------
+                        # check if previous gene is the same with a better name
+                        last_cds_index = None
+                        if(len(starts) > 0):
+                            for i in reversed( range(len(starts)) ):
+                                if types[i] == 'cds':
+                                    last_cds_index = i
+                                    break
 
-                        # print(' '.join([curr_type,
-                        #                 cds_start,
-                        #                 cds_end,
-                        #                 tmp_name ]))
-                            
-                        types.append('cds')
-                        starts.append(int(cds_start) + contig_pos_shift)
-                        ends.append(int(cds_end) + contig_pos_shift)
-                        starts_vardict.append(int(cds_start))
-                        ends_vardict.append(int(cds_end))
-                        print("\t".join([
-                            prog_tag,
-                            "RECORD: name:"+tmp_name,
-                            "type:cds",
-                            "starts:"+cds_start,
-                            "end:"+cds_end+", line "+str(frame.f_lineno)
-                        ]))
-                        product = ''
-                        protein_id = ''
-                        b_next_is_protein_id = False    
-                        b_next_is_gene = True # added 2024 10 01                    
-                        continue
+                        if( (last_cds_index is not None) and 
+                            (starts[last_cds_index] == int(cds_start) + contig_pos_shift ) and # same start pos
+                            (ends[last_cds_index]   == int(cds_end  ) + contig_pos_shift ) # same start pos
+                        ):
+                            if not re.match('gene_', product):
+                                if re.match('gene_', names[last_cds_index]):
+                                    # if so, we replace previously recorded name by current one
+                                    names[i] = product
+                                elif re.match('similar to ', names[last_cds_index]):
+                                    # if so, we replace previously recorded name by current one
+                                    names[i] = product + ' ' + names[last_cds_index]
+
+                            # if so, no need to record again
+                            print("\t".join([
+                                prog_tag,
+                                "PASS (already RECORDED with "+names[last_cds_index]+")",
+                                "type:cds",
+                                "starts:"+cds_start,
+                                "end:"+cds_end,
+                                "contig:"+contig+", line "+str(frame.f_lineno)
+                            ]))                       
+                            product = ''
+                            protein_id = ''
+                            b_next_is_protein_id = False    
+                            b_next_is_gene = True
+                            continue
+                        else:
+                            # otherwise
+                            # store info
+                            chrs.append(contig)
+                            if b_include_protein_id and (product != ''):
+                                tmp_name = product + " " +protein_id
+                            elif product == '': # in some case, only protein_id is provided, we must keep in this case
+                                # even if b_include_protein_id is False
+                                tmp_name = protein_id
+                            else:
+                                tmp_name = product
+                            names.append(tmp_name)
+
+                            # print(' '.join([curr_type,
+                            #                 cds_start,
+                            #                 cds_end,
+                            #                 tmp_name ]))
+                                
+                            types.append('cds')
+                            starts.append(int(cds_start) + contig_pos_shift)
+                            ends.append(int(cds_end) + contig_pos_shift)
+                            starts_vardict.append(int(cds_start))
+                            ends_vardict.append(int(cds_end))
+                            print("\t".join([
+                                prog_tag,
+                                "RECORD: name:"+tmp_name,
+                                "type:cds",
+                                "starts:"+cds_start,
+                                "end:"+cds_end+", line "+str(frame.f_lineno)
+                            ]))
+                            product = ''
+                            protein_id = ''
+                            b_next_is_protein_id = False    
+                            b_next_is_gene = True # added 2024 10 01                    
+                            continue
 
                     if line_fields[0] == 'ncRNA_class':
                         protein_id = line_fields[1]
