@@ -71,8 +71,7 @@ if( length(args) > 6 )
 {
   b_covdepth <- TRUE
   # to prepare coverage depth graph above variant/annotation graph
-  # coverage_depth <- try( read.table(args[7], h=F, sep = "\t", silent=TRUE) ) # read the dataframe
-  coverage_depth <- try( read.table(args[7], h=F, sep = "\t") ) # read the dataframe
+  coverage_depth <- try( read.table(args[7], h=F, sep = "\t", blank.lines.skip=TRUE), silent=TRUE ) # read the dataframe
   if(inherits(coverage_depth,"try-error"))
     coverage_depth <- NULL
     # b_covdepth <- FALSE
