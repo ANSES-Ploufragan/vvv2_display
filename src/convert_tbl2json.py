@@ -234,10 +234,16 @@ chrs  = []
 cpt_gene = 0
 
 # pattern to remove non alphanumeric character (ie: <> character befire start end positions of genes, cds, etc...)
-non_alphanum = re.compile("\W") # [\'\(\)\W]")
+non_alphanum = re.compile(r"\W") # [\'\(\)\W]")
 
 # for each annotation file created by vadr
 for annot_f in [pass_annot_f, fail_annot_f]:
+
+    # initialize at the beginning of the file to avoid to keep variables of previous file (vadr pass when reading fail)
+    b_next_is_gene = False
+    b_next_is_product = False
+    b_next_is_protein_id = False
+    b_next_is_note =  False
 
     # read annotation file
     print(prog_tag + " read "+annot_f+" file")
@@ -307,50 +313,110 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         b_next_is_product = False
                         curr_type = 'gene'
                         gene_name = ''
+                        gene_start = ''
+                        gene_end = ''
 
                         if len(names) != len(types):
                             sys.exit(prog_tag+"[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
 
                         continue
+                    
+                    elif re.search(r'^>Feature', line_fields[0]):
+                        b_additional = False
+                        m = re.search(r">Feature (\S+)", line)
+                        contig = m.group(1)
+                        print(prog_tag + " Treating contig "+contig)
+
+                        # get the index of current contig
+                        contig_index = contig_names.index(contig)
+                        # if not the first contig, we must shift all start end position recorded according
+                        # to the sum of all previous found contigs
+                        if contig_index != 0:
+                            contig_pos_shift += int(contig_lengths[contig_index - 1])
+                        continue
 
                     elif line_fields[2] == 'CDS':
-                        # record gene info
-                        cpt_gene += 1
-                        gene_name = 'gene_'+str(cpt_gene)
-                        
-                        # print("CDS for line "+line)
 
-                        print(' '.join(['gene',
-                                       gene_start,
-                                       gene_end,
-                                       gene_name])
-                              )
-                        b_next_is_gene = False
-                        # store info
-                        chrs.append(contig)
-                        names.append(gene_name)
-                        types.append('gene')
-                        starts.append(int(gene_start) + contig_pos_shift)
-                        ends.append(int(gene_end) + contig_pos_shift)
-                        starts_vardict.append(int(gene_start))
-                        ends_vardict.append(int(gene_end))
-                        print("\t".join([prog_tag,
-                                         "RECORD: name:"+gene_name,
-                                         "type:gene",
-                                         "starts:"+gene_start,
-                                         "end:"+gene_end,
-                                         "contig:"+contig+ ", line "+str(frame.f_lineno)]))
+                        # # added 2024 10 01, getting info on the line is more sure, previous gene info not always available
+                        # if gene_start == '': # get gene pos only if not already buffered
+                        #     gene_start = re.sub(non_alphanum, '', line_fields[0])
+                        #     gene_end   = re.sub(non_alphanum, '', line_fields[1])
+                        cds_start = re.sub(non_alphanum, '', line_fields[0])
+                        cds_end   = re.sub(non_alphanum, '', line_fields[1])
+
+                        # ----------------------------------------------------------
+                        # check if previous gene is the same with a better name
+                        last_gene_index = None
+                        if(len(starts) > 0):
+                            for i in reversed( range(len(starts)) ):
+                                if types[i] == 'gene':
+                                    last_gene_index = i
+                                    break
+
+                        if( (last_gene_index is not None) and 
+                            (gene_start != "") and
+                            (starts[last_gene_index] == int(gene_start) + contig_pos_shift ) and # same start pos
+                            (ends[last_gene_index]   == int(gene_end  ) + contig_pos_shift ) # same start pos
+                        ):
+                            if not re.match('gene_', gene_name):
+                                if re.match('gene_', names[last_gene_index]):
+                                    # if so, we replace previously recorded name by current one
+                                    names[i] = gene_name
+                                elif re.match('similar to ', names[last_gene_index]):
+                                    # if so, we replace previously recorded name by current one
+                                    names[i] = gene_name + ' ' + names[last_gene_index]
+
+                            # if so, no need to record again
+                            print("\t".join([
+                                prog_tag,
+                                "PASS (already RECORDED with "+names[last_gene_index]+")",
+                                "type:gene",
+                                "starts:"+gene_start,
+                                "end:"+gene_end,
+                                "contig:"+contig+", line "+str(frame.f_lineno)
+                            ]))                       
+                                
+                        else:
+                            # ----------------------------------------------------------
+                            # record gene info only if found previously
+                            if gene_start != '':
+                                cpt_gene += 1
+                                gene_name = 'gene_'+str(cpt_gene)
+                                #    types.append('gene')
+
+                                # print("CDS for line "+line)
+
+                                print(' '.join(['gene',
+                                                gene_start,
+                                                gene_end,
+                                                gene_name])
+                                    )
+                                
+                                # store info of previous line \d+ \d+, gene
+                                chrs.append(contig)
+                                names.append(gene_name)
+                                types.append('gene')
+                                # types.append('cds') # changed 2024 10 08
+                                starts.append(int(gene_start) + contig_pos_shift)
+                                ends.append(int(gene_end) + contig_pos_shift)
+                                starts_vardict.append(int(gene_start))
+                                ends_vardict.append(int(gene_end))
+                                print("\t".join([prog_tag,
+                                                "RECORD: name:"+gene_name,
+                                                "type:"+types[len(types)-1],
+                                                "starts:"+gene_start,
+                                                "end:"+gene_end,
+                                                "contig:"+contig+ ", line "+str(frame.f_lineno)]))
+                            
                         if len(names) != len(types):
                             sys.exit(prog_tag + "[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
                         
-                        # ask to treat current CDS info
-                        cds_start = line_fields[0]
-                        cds_end = line_fields[1]
-                        cds_start = re.sub(non_alphanum, '', cds_start)
-                        cds_end   = re.sub(non_alphanum, '', cds_end)
+                        b_next_is_gene = False
                         b_next_is_product = True
                         curr_type = 'CDS'
                         gene_name = ''
+                        gene_start = ''
+                        gene_end = ''
                         continue
 
                     # NEW
@@ -372,19 +438,73 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         gene_name = ''
                         continue
                     
-                    else:
-                        # print("No CDS field2 or gene field0, line "+str(frame.f_lineno))
-                        gene_name = line_fields[1]
+                    # section added 2024 09 24, when 2 gene section are following each other
+                    # without any other description
+                    elif line_fields[2] == 'gene':
 
-                        # print( line_fields[2].upper() + " for line "+line)
-                        
-                        # print("gene:b_next_is_gene:"+b_next_is_gene+"\tline_fields 2:"+line_fields[2]+"\tgene_name:"+gene_name+" for line "+line)
-                        print(' '.join(['gene',
-                                       gene_start,
-                                       gene_end,
-                                       gene_name]))
-                        b_next_is_gene = False
-                        # store info
+                        gene_start = re.sub(non_alphanum, '', line_fields[0])
+                        gene_end   = re.sub(non_alphanum, '', line_fields[1])
+
+                        # ----------------------------------------------------------
+                        # check if previous gene is the same with a better name
+                        if(len(starts) > 0):
+                            last_gene_index = None
+                            for i in reversed( range(len(starts)) ):
+                                if types[i] == 'gene':
+                                    last_gene_index = i
+                                    break
+
+                            if( (last_gene_index is not None) and 
+                                (starts[last_gene_index] == int(gene_start) + contig_pos_shift ) and # same start pos
+                                (ends[last_gene_index]   == int(gene_end  ) + contig_pos_shift ) # same start pos
+                            ):
+                                if not re.match('gene_', gene_name):
+                                    if re.match('gene_', names[last_gene_index]):
+                                        # if so, we replace previously recorded name by current one
+                                        names[i] = gene_name
+                                    elif re.match('similar to ', names[last_gene_index]):
+                                        # if so, we replace previously recorded name by current one
+                                        names[i] = gene_name + ' ' + names[last_gene_index]
+
+                                # if so, no need to record again
+                                print("\t".join([
+                                    prog_tag,
+                                    "PASS (already RECORDED with "+names[last_gene_index]+"): name:" + gene_name,
+                                    "type:gene",
+                                    "starts:"+gene_start,
+                                    "end:"+gene_end,
+                                    "contig:"+contig+", line "+str(frame.f_lineno)
+                                ]))
+                                b_next_is_gene = False                            
+                                b_next_is_product = False
+                                curr_type = 'gene'
+                                gene_name = ''
+                                gene_start = ''
+                                gene_end = ''
+                                
+                                if len(names) != len(types):
+                                    sys.exit(prog_tag+"[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
+                                continue
+                        # ----------------------------------------------------------
+
+                        # record gene info
+                        cpt_gene += 1
+                        gene_name = 'gene_'+str(cpt_gene)
+
+                        # # record gene info: correct previous recorded gene name (gene_n)
+                        # if re.search(r'^gene_', gene_name) or gene_name == '': 
+                        #     gene_name = ' '.join(line_fields[1:])
+                        # elif gene_name == '':
+                        #     gene_name = ' '.join(line_fields[1:])
+                        # else:
+                        #     gene_name = gene_name + ' ' + ' '.join(line_fields[1:])
+
+                        # print(' '.join(['gene',
+                        #                gene_start,
+                        #                gene_end,
+                        #                gene_name]))
+
+                       # store info
                         chrs.append(contig)
                         names.append(gene_name)
                         types.append('gene')
@@ -394,94 +514,156 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         ends_vardict.append(int(gene_end))
                         print("\t".join([
                             prog_tag,
-                            "RECORD: name:{gene_name}",
-                            "type:gene",
-                            "starts:"+gene_start,
-                            "end:"+gene_end,
-                            "contig:"+contig + ", line "+str(frame.f_lineno)
-                        ]))
-                        if len(names) != len(types):
-                            sys.exit(prog_tag +"[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
-                        gene_name = ''
-                        continue
-                    
-                elif b_next_is_product:
-                    if b_verbose:
-                        print(prog_tag + " NXT is PRODUCT "+str(b_next_is_product)+", line "+str(frame.f_lineno))
-                    
-                    if re.search(r'^product', line_fields[0]):
-                        product = ' '.join(line_fields[0].split(' ')[1:]) + ' ' + ' '.join(line_fields[1:])
-                        b_next_is_product = False
-                        b_next_is_protein_id = True
-                        if b_verbose:
-                            print("TMP_PRODUCT:"+product+", line "+str(frame.f_lineno))
-                        continue
-                    elif len(line_fields) == 2:
-                        # means only coordinates because gene longer than CDS
-                        print(prog_tag + " CDS shorter than gene, skip useless coordinates")
-                        continue
-                    # -----------------------------------------------------------------------------------
-                    # this part until else MUST be useless, but bug found only when b_verbose is True...
-                    elif (len(line_fields) == 3) and (line_fields[2] == 'misc_feature'):
-                        misc_feature_start = re.sub(non_alphanum, '', line_fields[0])
-                        misc_feature_end   = re.sub(non_aplhanum, '',bline_fields[1])
-                        b_next_is_note     = True
-                        b_next_is_product  = False
-                        continue
-                    elif (len(line_fields) == 3) and (line_fields[2] == 'gene'):
-                        gene_start = re.sub(non_alphanum, '', line_fields[0])
-                        gene_end   = re.sub(non_aplhanum, '', line_fields[1])
-                        b_next_is_gene    = True
-                        b_next_is_product = False
-                        continue
-                    elif (len(line_fields) == 2) and (line_fields[0] == 'gene'):
-
-                        gene_name =  ' '.join( line_fields[0].split(' ')[1:] )+ ' '+ ' '.join(line_fields[1:])
-
-                        if types[-1] == 'gene':
-                            names[-1] = gene_name
-                        else:
-                            sys.exit(prog_tag + " [Error] found 'gene genename' supposed to correct recorded name at previous line, but previous type is "+types[-1]+", not normal, line "+str(frame.f_lineno))
-                        
-                        # print(' '.join(['gene',
-                        #                gene_start,
-                        #                gene_end,
-                        #                gene_name]))
-                        
-                        b_next_is_gene = False
-
-                        print("\t".join([
-                            prog_tag, 
-                            "CORRECT: name:" + gene_name,
+                            "RECORD: name:" + gene_name,
                             "type:gene",
                             "starts:"+gene_start,
                             "end:"+gene_end,
                             "contig:"+contig+", line "+str(frame.f_lineno)
                         ]))
-                        if len(names) != len(types):
-                            sys.exit(prog_tag+"[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
+
+                        gene_start = line_fields[0]
+                        gene_end   = line_fields[1]
+                        gene_start = re.sub(non_alphanum, '', gene_start)
+                        gene_end   = re.sub(non_alphanum, '', gene_end)
+                        
+                        if b_verbose:
+                            print("\t".join([
+                                "TMP_GENE:"+line_fields[2],
+                                gene_start,
+                                gene_end,
+                                "for line "+str(line_fields)
+                            ]))
+
+                        b_next_is_gene = False                                                        
+                        b_next_is_product = False
                         
                         curr_type = 'gene'
-                        b_next_is_product = False
-                        b_next_is_gene = False
+                        gene_name = ''
+
+                        if len(names) != len(types):
+                            sys.exit(prog_tag+"[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
+
                         continue
-                    
                     # -----------------------------------------------------------------------------------
-                    elif (len(line_fields) == 3) and (line_fields[2] == 'CDS'):
-                        cds_start = re.sub(non_alphanum, '', line_fields[0])
-                        cds_end   = re.sub(non_alphanum, '', line_fields[1])
-                        curr_type = 'CDS'
-                        b_next_is_gene = False
-                        b_next_is_product = True
-                        continue
-                    else:
-                        print("line_fields:"+str(line_fields)+", line "+ str(sys._getframe().f_lineno) )
-                        sys.exit(prog_tag + "[Error] Case not encountered line "+ str(sys._getframe().f_lineno) )
+                    # added 2024 09 26 because misc_feature found after note (therefore b_next_gene is True)
+                    elif (line_fields[2] == 'misc_feature'):
+                        misc_feature_start = re.sub(non_alphanum, '', line_fields[0])
+                        misc_feature_end   = re.sub(non_alphanum, '', line_fields[1])
+
+                        if b_next_is_gene: # means gene recorded just above, if same coordinate
+                                           # we need to record gene
+                            if( (gene_start == misc_feature_start)and
+                                (gene_end   == misc_feature_end) ):
+                            
+                                # record gene info
+                                cpt_gene += 1
+                                gene_name = 'gene_'+str(cpt_gene)
+
+                                # # record gene info: correct previous recorded gene name (gene_n)
+                                # if re.search(r'^gene_', gene_name) or gene_name == '': 
+                                #     gene_name = ' '.join(line_fields[1:])
+                                # elif gene_name == '':
+                                #     gene_name = ' '.join(line_fields[1:])
+                                # else:
+                                #     gene_name = gene_name + ' ' + ' '.join(line_fields[1:])
+
+                                # print(' '.join(['gene',
+                                #                gene_start,
+                                #                gene_end,
+                                #                gene_name]))
+
+                                # store info
+                                chrs.append(contig)
+                                names.append(gene_name)
+                                types.append('gene')
+                                starts.append(int(gene_start) + contig_pos_shift)
+                                ends.append(int(gene_end) + contig_pos_shift)
+                                starts_vardict.append(int(gene_start))
+                                ends_vardict.append(int(gene_end))
+                                print("\t".join([
+                                    prog_tag,
+                                    "RECORD: name:" + gene_name,
+                                    "type:gene",
+                                    "starts:"+gene_start,
+                                    "end:"+gene_end,
+                                    "contig:"+contig+", line "+str(frame.f_lineno)
+                                ]))
+
+                        else:
+                            print("\t".join([
+                                prog_tag,
+                                "MISC_FEATURE:",
+                                "starts:"+misc_feature_start,
+                                "end:"+misc_feature_end,
+                                "contig:"+contig + ", line "+str(frame.f_lineno)
+                            ]))
                         
-                elif b_next_is_protein_id:
-                    if b_verbose:
-                        print(prog_tag + " NXT is PROTEIN "+str(b_next_is_protein_id)+", line "+str(frame.f_lineno))                    
-                    if line_fields[0] == 'protein_id':
+                        b_next_is_gene     = False # added 2024 10 01
+                        b_next_is_note     = True
+                        b_next_is_product  = False
+                        continue
+                    # added 2024 09 26 handle note after misc_feature
+                    elif line_fields[0] == 'note':
+                        note = ' '.join(line_fields[1:])
+                        print("initial note: "+note+", line "+ str(sys._getframe().f_lineno) )    
+
+                        # print("line_fields 1..3:"+str(line_fields[1:3]))
+                        
+                        # -----------------------------                        
+                        # means that we face a protein similarity we must display as a protein / cds
+                        if((' '.join(line_fields[1:3])) == 'similar to'):
+                        # if(re.search(r'^similar to',line_fields[1] ):                            
+
+                            m = re.search(r'(similar to [^\t]+)', line)
+                            note = re.sub('\'','', m.group(1))
+
+                            if b_verbose:
+                                print("note set to "+note+", line "+ str(sys._getframe().f_lineno) )
+                                print(' '.join(['cds',
+                                                misc_feature_start,
+                                                misc_feature_end,
+                                                note]))
+                            print("found "+note+", line "+ str(sys._getframe().f_lineno) )    
+                            types.append('cds')
+                            # types.append(curr_type)                            
+                        # -----------------------------
+                        else: # otherwise, records classical misc_feature
+
+                            if b_verbose:
+                                print(' '.join(['misc_feature',
+                                                misc_feature_start,
+                                                misc_feature_end,
+                                                note]))
+                            # types.append('misc_feature')
+                            types.append(curr_type)                            
+                            print("found misc_feature "+note+", line "+ str(sys._getframe().f_lineno) )
+                                    
+                        # store info
+                        chrs.append(contig)
+                        names.append(note)
+                        # type recorded above
+                        starts.append(int(misc_feature_start)  + contig_pos_shift)
+                        ends.append(int(misc_feature_end)  + contig_pos_shift)
+                        starts_vardict.append(int(misc_feature_start))
+                        ends_vardict.append(int(misc_feature_end))
+                        print("\t".join([
+                            prog_tag, 
+                            "RECORD: name:"+note,
+                            "type:"+types[-1],
+                            "starts:"+misc_feature_start,
+                            "end:"+misc_feature_end,
+                            "contig:"+contig+", line "+str(frame.f_lineno)
+                        ]))
+                        note = ''
+                        b_next_is_note = False
+                        b_next_is_gene = False
+                        
+                        if len(names) != len(types):
+                            sys.exit("names and types not with the same number of elements, line "+str(len(types)))
+                        continue          
+
+                    # added 2024 10 01 because in some cases, we can find protein_id when gene is expected
+                    elif line_fields[0] == 'protein_id':
                         protein_id = line_fields[1]
                         tmp_name = protein_id
                         b_next_is_protein_id = False
@@ -523,7 +705,209 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         ]))
                         product = ''
                         protein_id = ''
+                        b_next_is_protein_id = False
                         continue
+
+                    # added 2024 09 26 handle "Additional information", no gene record afterthat, only possible corrections
+                    # on start/stop info
+                    elif re.match(r"^Additional", line_fields[0]) :
+                        b_next_gene          = False
+                        b_next_is_note       = False
+                        b_next_is_product    = False
+                        b_next_is_protein_id = False 
+                        b_additional         = True
+                        print("Additional section detected")
+                        continue
+                    elif not b_additional:
+
+                        # print("No CDS field2 or gene field0, line "+str(frame.f_lineno))
+                        gene_name = line_fields[1]
+
+                        # print(' '.join(['gene',
+                        #                gene_start,
+                        #                gene_end,
+                        #                gene_name]))
+                        b_next_is_gene = False
+                        # store info
+                        chrs.append(contig)
+                        names.append(gene_name)
+                        types.append('gene')
+                        starts.append(int(gene_start) + contig_pos_shift)
+                        ends.append(int(gene_end) + contig_pos_shift)
+                        starts_vardict.append(int(gene_start))
+                        ends_vardict.append(int(gene_end))
+                        print("\t".join([
+                            prog_tag,
+                            "RECORD: name:{gene_name}",
+                            "type:gene",
+                            "starts:"+gene_start,
+                            "end:"+gene_end,
+                            "contig:"+contig + ", line "+str(frame.f_lineno)
+                        ]))
+                        if len(names) != len(types):
+                            sys.exit(prog_tag +"[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
+                        gene_name  = ''
+                        gene_start = ''
+                        gene_end   = ''
+                        continue
+                    
+                elif b_next_is_product:
+                    if b_verbose:
+                        print(prog_tag + " NXT is PRODUCT "+str(b_next_is_product)+", line "+str(frame.f_lineno))
+                    
+                    if re.search(r'^product', line_fields[0]):
+                        product = ' '.join(line_fields[0].split(' ')[1:]) + ' ' + ' '.join(line_fields[1:])
+                        b_next_is_product = False
+                        b_next_is_protein_id = True
+                        if b_verbose:
+                            print("TMP_PRODUCT:"+product+", line "+str(frame.f_lineno))
+                        continue
+                    elif len(line_fields) == 2:
+                        # means only coordinates because gene longer than CDS
+                        print(prog_tag + " CDS shorter than gene, skip useless coordinates")
+                        continue
+                    # -----------------------------------------------------------------------------------
+                    # this part until else MUST be useless, but bug found only when b_verbose is True...
+                    elif (len(line_fields) == 3) and (line_fields[2] == 'misc_feature'):
+                        misc_feature_start = re.sub(non_alphanum, '', line_fields[0])
+                        misc_feature_end   = re.sub(non_alphanum, '',bline_fields[1])
+                        b_next_is_note     = True
+                        b_next_is_product  = False
+                        continue
+                    elif (len(line_fields) == 3) and (line_fields[2] == 'gene'):
+                        gene_start = re.sub(non_alphanum, '', line_fields[0])
+                        gene_end   = re.sub(non_aplhanum, '', line_fields[1])
+                        b_next_is_gene    = True
+                        b_next_is_product = False
+                        continue
+                    elif (len(line_fields) == 2) and (line_fields[0] == 'gene'):
+
+                        gene_name =  ' '.join( line_fields[0].split(' ')[1:] )+ ' '+ ' '.join(line_fields[1:])
+
+                        if types[-1] == 'gene':
+                            names[-1] = gene_name
+                        else:
+                            sys.exit(prog_tag + " [Error] found 'gene genename' supposed to correct recorded name at previous line, but previous type is "+types[-1]+", not normal, line "+str(frame.f_lineno))
+                        
+                        # print(' '.join(['gene',
+                        #                gene_start,
+                        #                gene_end,
+                        #                gene_name]))
+                        
+                        print("\t".join([
+                            prog_tag, 
+                            "CORRECT: name:" + gene_name,
+                            "type:gene",
+                            "starts:"+gene_start,
+                            "end:"+gene_end,
+                            "contig:"+contig+", line "+str(frame.f_lineno)
+                        ]))
+                        if len(names) != len(types):
+                            sys.exit(prog_tag+"[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
+                        
+                        curr_type = 'gene'
+                        b_next_is_product = False
+                        b_next_is_gene = False
+                        continue
+                    
+                    # -----------------------------------------------------------------------------------
+                    elif (len(line_fields) == 3) and (line_fields[2] == 'CDS'):
+                        cds_start = re.sub(non_alphanum, '', line_fields[0])
+                        cds_end   = re.sub(non_alphanum, '', line_fields[1])
+                        curr_type = 'CDS'
+                        b_next_is_gene = False
+                        b_next_is_product = True
+                        continue
+                    else:
+                        print("line_fields:"+str(line_fields)+", line "+ str(sys._getframe().f_lineno) )
+                        sys.exit(prog_tag + "[Error] Case not encountered line "+ str(sys._getframe().f_lineno) )
+                        
+                elif b_next_is_protein_id:
+                    if b_verbose:
+                        print(prog_tag + " NXT is PROTEIN "+str(b_next_is_protein_id)+", line "+str(frame.f_lineno))                    
+                    if line_fields[0] == 'protein_id':
+                        protein_id = line_fields[1]
+                        tmp_name = protein_id
+                        
+                        # escape cotes, because misinterprated by R
+                        product    = re.sub(r"([\'])", '', product)
+                        protein_id = re.sub(r"([\'])", '', protein_id)
+                        # remove spaces at beginning and end
+                        product    = product.strip()
+                        protein_id = protein_id.strip()                        
+                        
+                        # check if cds already recorded
+                        # if yes, keep more relevant name, do not add new cds
+                                               # ----------------------------------------------------------
+                        # check if previous gene is the same with a better name
+                        last_cds_index = None
+                        if(len(starts) > 0):
+                            for i in reversed( range(len(starts)) ):
+                                if types[i] == 'cds':
+                                    last_cds_index = i
+                                    break
+
+                        if( (last_cds_index is not None) and 
+                            (starts[last_cds_index] == int(cds_start) + contig_pos_shift ) and # same start pos
+                            (ends[last_cds_index]   == int(cds_end  ) + contig_pos_shift ) # same start pos
+                        ):
+                            if not re.match('gene_', product):
+                                if re.match('gene_', names[last_cds_index]):
+                                    # if so, we replace previously recorded name by current one
+                                    names[i] = product
+                                elif re.match('similar to ', names[last_cds_index]):
+                                    # if so, we replace previously recorded name by current one
+                                    names[i] = product + ' ' + names[last_cds_index]
+
+                            # if so, no need to record again
+                            print("\t".join([
+                                prog_tag,
+                                "PASS (already RECORDED with "+names[last_cds_index]+")",
+                                "type:cds",
+                                "starts:"+cds_start,
+                                "end:"+cds_end,
+                                "contig:"+contig+", line "+str(frame.f_lineno)
+                            ]))                       
+                            product = ''
+                            protein_id = ''
+                            b_next_is_protein_id = False    
+                            b_next_is_gene = True
+                            continue
+                        else:
+                            # otherwise
+                            # store info
+                            chrs.append(contig)
+                            if b_include_protein_id and (product != ''):
+                                tmp_name = product + " " +protein_id
+                            elif product == '': # in some case, only protein_id is provided, we must keep in this case
+                                # even if b_include_protein_id is False
+                                tmp_name = protein_id
+                            else:
+                                tmp_name = product
+                            names.append(tmp_name)
+
+                            # print(' '.join([curr_type,
+                            #                 cds_start,
+                            #                 cds_end,
+                            #                 tmp_name ]))
+                                
+                            types.append('cds')
+                            starts.append(int(cds_start) + contig_pos_shift)
+                            ends.append(int(cds_end) + contig_pos_shift)
+                            starts_vardict.append(int(cds_start))
+                            ends_vardict.append(int(cds_end))
+                            print("\t".join([
+                                prog_tag,
+                                "RECORD: name:"+tmp_name,
+                                "type:cds",
+                                "starts:"+cds_start,
+                                "end:"+cds_end+", line "+str(frame.f_lineno)
+                            ]))
+                            product = ''
+                            protein_id = ''
+                            b_next_is_protein_id = False    
+                            b_next_is_gene = True # added 2024 10 01                    
+                            continue
 
                     if line_fields[0] == 'ncRNA_class':
                         protein_id = line_fields[1]
@@ -570,7 +954,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         protein_id = ''
                         continue
                     
-                    elif re.search(r'^product', line_fields[0]):
+                    elif re.match('product', line_fields[0]):
                         product_str = ' '.join(line_fields[0].split(' ')[1:]) + ' ' + ' '.join(line_fields[1:])
                         product = product + ' ' + product_str
                         b_next_is_protein_id = True
@@ -593,9 +977,8 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                 elif b_next_is_note:
                     if line_fields[0] == 'note':
                         note = ' '.join(line_fields[1:])
-
-                        # print("line_fields 1..3:"+str(line_fields[1:3]))
-                        
+                        # print("initial note: "+note+", line "+ str(sys._getframe().f_lineno) )    
+             
                         # -----------------------------                        
                         # means that we face a protein similarity we must display as a protein / cds
                         if((' '.join(line_fields[1:3])) == 'similar to'):
@@ -610,7 +993,6 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                                 misc_feature_start,
                                                 misc_feature_end,
                                                 note]))
-                                
                             types.append('cds')
                             # types.append(curr_type)                            
                         # -----------------------------
@@ -623,6 +1005,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                                 note]))
                             # types.append('misc_feature')
                             types.append(curr_type)                            
+                            print("found misc_feature "+note+", line "+ str(sys._getframe().f_lineno) )
                                     
                         # store info
                         chrs.append(contig)
@@ -642,6 +1025,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         ]))
                         note = ''
                         b_next_is_note = False
+                        b_next_is_gene = True # added 2024 09 19
                         
                         if len(names) != len(types):
                             sys.exit("names and types not with the same number of elements, line "+str(len(types)))
@@ -650,7 +1034,8 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                     else: # means new start stop for misc_features
                         misc_feature_start = line_fields[0]
                         misc_feature_end = line_fields[1]
-                        b_next_is_note = False                        
+                        # b_next_is_note = False                        
+                        b_next_is_note = True # changed 2024 10 01                        
                         # sys.exit("NOTE STOP")
                         continue
 
@@ -721,15 +1106,35 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             #    ends[index2correct] = cds_stop_corrected
                             # except ValueError:
                             #    sys.exit(f"Error 'similar to {cds_name_2correct}' not found in names")
-                # -------------------------------------------------------------
+                    
+
+                    # treatment of exception (frameshift)
+                    if 'FRAMESHIFT_HIGH_CONF' in line:
+                        if b_verbose:
+                            print("FRAMESHIFT_HIGH_CONF detected: "+line)
+                            
+                        # get corrected end coordonates
+                        m = re.search(r'\(CDS:([^\)]+)\) .*? seq-coords:(\d+)\.\.(\d+)\:([\+\-]).*? mdl-coords:(\d+)\.\.(\d+)\:([\+\-])', line)
+                        # first match: CDS name
+                        cds_name_with_frameshift = m.group(1)
+                        # second match: position of frameshift start
+                        # third  match: position of frameshift end
+                        fs_start = int(m.group(2)) - 1  + contig_pos_shift 
+                        fs_end   = int(m.group(3)) - 1  + contig_pos_shift 
+                        fs_strand=     m.group(4)
+                        mdl_start = int(m.group(5)) - 1  + contig_pos_shift 
+                        mdl_end   = int(m.group(6)) - 1  + contig_pos_shift 
+                        mdl_strand=     m.group(7)
+                        if b_verbose:
+                            print(prog_tag + " Frameshift in "+cds_name_with_frameshift+" at pos "+fs_start+':'+fs_end)
 
                 if b_verbose:
                     print(prog_tag + " line_fields:"+str(line_fields)+", line "+str(sys._getframe().f_lineno))
                 if re.search(r'^>Feature', line_fields[0]):
                     b_additional = False
-                    print(prog_tag + " Treating "+line_fields[0]+" contig")
                     m = re.search(r">Feature (\S+)", line)
                     contig = m.group(1)
+                    print(prog_tag + " Treating contig "+contig)
 
                     # get the index of current contig
                     contig_index = contig_names.index(contig)
@@ -737,7 +1142,101 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                     # to the sum of all previous found contigs
                     if contig_index != 0:
                         contig_pos_shift += int(contig_lengths[contig_index - 1])
-                    
+                    continue
+
+                # added 2024 09 24: now need to replace name of previous record, testing if start end are the same
+                # otherwise record as set here
+                elif line_fields[0] == 'gene':
+
+                        
+                        # record gene info: correct previous recorded gene name (gene_n)
+                        if re.match(r'^gene_', gene_name) or gene_name == '': 
+                            gene_name = ' '.join(line_fields[1:])
+                            print("gene_name set to "+gene_name+", line "+str(frame.f_lineno))
+                            
+                        # ----------------------------------------------------------
+                        # check if previous gene is the same with a better name
+                        if(len(starts) > 0):
+                            last_gene_index = None
+                            for i in reversed( range(len(starts)) ):
+                                if types[i] == 'gene':
+                                    last_gene_index = i
+                                    break
+
+                            if( (last_gene_index is not None) and 
+                                (starts[last_gene_index] == int(gene_start) + contig_pos_shift ) and # same start pos
+                                (ends[last_gene_index]   == int(gene_end  ) + contig_pos_shift ) # same start pos
+                            ):
+                                if not re.match('gene_', gene_name):
+                                    if re.match('gene_', names[last_gene_index]):
+                                        # if so, we replace previously recorded name by current one
+                                        names[last_gene_index] = gene_name
+                                        print("previous gene_name renamed to "+gene_name+", line "+str(frame.f_lineno))
+                                    # elif names[last_gene_index] == '':
+                                    #     # if so, we replace previously missing name by current one
+                                    #     names[last_gene_index] = gene_name
+                                    elif re.match('similar to ', names[last_gene_index]):
+                                        # if so, we replace previously recorded name by current one
+                                        names[last_gene_index] = gene_name + ' ' + names[last_gene_index]
+                                        print("previous gene_name renamed to "+gene_name+", line "+str(frame.f_lineno))
+
+                                # if so, no need to record again
+                                print("\t".join([
+                                    prog_tag,
+                                    "PASS (already RECORDED new_name '"+names[last_gene_index]+"')",
+                                    "type:gene",
+                                    "starts:"+gene_start,
+                                    "end:"+gene_end,
+                                    "contig:"+contig+", line "+str(frame.f_lineno)
+                                ]))
+                                b_next_is_gene = False                            
+                                b_next_is_product = False
+                                curr_type = 'gene'
+                                gene_name = ''
+                                gene_start = ''
+                                gene_end = ''
+                                if len(names) != len(types):
+                                    sys.exit(prog_tag+"[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
+                                continue
+                        # ----------------------------------------------------------
+
+                        else:
+                            gene_name = gene_name + ' ' + ' '.join(line_fields[1:])
+
+                        # print(' '.join(['gene',
+                        #                gene_start,
+                        #                gene_end,
+                        #                gene_name]))
+
+                       # store info
+                        chrs.append(contig)
+                        names.append(gene_name)
+                        types.append('gene')
+                        starts.append(int(gene_start) + contig_pos_shift)
+                        ends.append(int(gene_end) + contig_pos_shift)
+                        starts_vardict.append(int(gene_start))
+                        ends_vardict.append(int(gene_end))
+                        print("\t".join([
+                            prog_tag,
+                            "RECORD: name:" + gene_name,
+                            "type:gene",
+                            "starts:"+gene_start,
+                            "end:"+gene_end,
+                            "contig:"+contig+", line "+str(frame.f_lineno)
+                        ]))
+
+                        b_next_is_gene = False                            
+                        b_next_is_product = False
+                        curr_type  = 'gene'
+                        gene_name  = ''
+                        gene_start = ''
+                        gene_end   = ''
+
+                        if len(names) != len(types):
+                            sys.exit(prog_tag+"[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
+
+                        continue
+
                 elif line_fields[2] == 'gene':
                     gene_start = line_fields[0]
                     gene_end   = line_fields[1]
@@ -752,6 +1251,12 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             gene_end,
                             "for line "+str(line_fields)
                         ]))
+                    print("\t".join([
+                        "TMP_GENE:"+line_fields[2],
+                        gene_start,
+                        gene_end,
+                        "for line "+str(line_fields)
+                    ]))
 
                 elif line_fields[2] == 'CDS':
                     cds_start = line_fields[0]
@@ -796,6 +1301,12 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             misc_feature_start,
                             misc_feature_end
                         ]))
+                    print("\t".join([
+                        "TMP_MISC_FEATURE:"+line_fields[2],
+                        misc_feature_start,
+                        misc_feature_end
+                    ]))
+
 
                 elif line_fields[2] == 'mat_peptide':
                     cds_start = line_fields[0]
@@ -830,7 +1341,11 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         ]))
                         
                 elif "Additional" in line_fields[0]:
-                    b_additional = True
+                    b_additional         = True
+                    b_next_is_gene       = False
+                    b_next_is_note       = False
+                    b_next_is_product    = False
+                    b_next_is_protein_id = False 
 
                 else:
                     print(prog_tag + " Case not treated for line "+line+", line "+str(sys._getframe().f_lineno))

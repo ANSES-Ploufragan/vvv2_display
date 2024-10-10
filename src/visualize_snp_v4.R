@@ -55,8 +55,15 @@ threshold = as.numeric(args[4]) # define threshold
 
 # added 2024 02 27
 json_genes = read_json(args[5]) # json file with genes limits in "genes"->"name" [start,end]
-#str(json_genes$genes)
+if( b_verbose ){
+  print("json genes:")
+  str(json_genes$genes)
+}
 
+if( b_verbose ){
+  print("json proteins:")
+  str(json_genes$proteins)
+}
 
 outfile = args[6]
 
@@ -64,11 +71,11 @@ if( length(args) > 6 )
 {
   b_covdepth <- TRUE
   # to prepare coverage depth graph above variant/annotation graph
-  coverage_depth <- try( read.table(args[7], h=F, sep = "\t") ) # read the dataframe
+  coverage_depth <- try( read.table(args[7], h=F, sep = "\t", blank.lines.skip=TRUE), silent=TRUE ) # read the dataframe
   if(inherits(coverage_depth,"try-error"))
     coverage_depth <- NULL
-    #b_covdepth <- FALSE
-    #print("No coverage data found, disable coverage depth display in final graph")
+    # b_covdepth <- FALSE
+    print("No coverage data found, disable coverage depth display in final graph")
 }else
 { 
   b_covdepth <- FALSE 
@@ -88,6 +95,15 @@ if(b_covdepth){
     m = paste("Coverage - median_coverage =", med, "[", mini, ":", maxi, "]", sep = " ")
     options(repr.plot.width = 5, repr.plot.height =1)
     cd = ggplot(coverage_depth, aes(x = V1, y = V2)) + geom_line(color = "black", linewidth = 0.5)
+    #  + labs(list(title = m, x = "Base Position", y = "Number of Reads")
+    cd1 = cd + labs(title = m) # add graph title
+    cd2 = cd1 + xlab("") # add x axe title
+    cd3 = cd2 + ylab("Number of reads") # add axes and graph titles 
+  }
+  else{
+    m = "Coverage - median_coverage = 0 [-inf:inf]"
+    options(repr.plot.width = 5, repr.plot.height =1)
+    cd = ggplot() + geom_line(color = "black", linewidth = 0.5)
     #  + labs(list(title = m, x = "Base Position", y = "Number of Reads")
     cd1 = cd + labs(title = m) # add graph title
     cd2 = cd1 + xlab("") # add x axe title
@@ -186,7 +202,17 @@ genecols = append(genecols, complete_col_set)
 gene_id_labels = unique(density$gene_id)
 density$gene_id_num = paste(  sprintf("%02d", match(density$gene_id, gene_id_labels) ), ":", density$gene_id) 
 
+# if( b_verbose ){
+#   print("protein_id_labels BEFORE removing duplicates:")
+#   print(density$protein_id)
+# }
+
 protein_id_labels = unique(density$protein_id)
+
+# if( b_verbose ){
+#   print("protein_id_labels BEFORE shortening:")
+#   print(protein_id_labels)
+# }
 
 # truncate long legend
 replacement <- function(x){
@@ -195,6 +221,18 @@ replacement <- function(x){
   replaced = str_replace_all(replaced, ":[[:alnum:] \\-]+$","")      # remove last :....
   replaced = str_replace_all(replaced, "\\[[[:alnum:] \\-]+\\]","")  # remove [...]
   replaced = str_replace_all(replaced, " (?:putative|growth)[[:alnum:] \\-]+","")  # remove useless annotations
+  replaced = str_replace_all(replaced, "similar to","~")  # remove useless annotations
+  replaced = str_replace_all(replaced, "polyprotein","polyprot")  # remove useless annotations
+  replaced = str_replace_all(replaced, "membrane","memb.")  # remove useless annotations
+  replaced = str_replace_all(replaced, "envelope","env.")  # remove useless annotations
+  replaced = str_replace_all(replaced, "protein","prot.")  # remove useless annotations
+  replaced = str_replace_all(replaced, "coronavirus","coro.")  # remove useless annotations
+  replaced = str_replace_all(replaced, " product,",",")  # remove useless annotations
+  replaced = gsub(" hydrophobic domain [0-9]+", "", replaced)  # remove useless annotations
+  replaced = str_replace_all(replaced, "polymerase","polym.")  # remove useless annotations
+  replaced = str_replace_all(replaced, "dependent","dep.")  # remove useless annotations
+  replaced = str_replace_all(replaced, "frameshift","fr.shift")  # remove useless annotations
+  replaced = gsub(" metal binding [A-Za-z/]+","", replaced)  # remove useless annotations
   return( replaced )
 }
 
@@ -202,14 +240,14 @@ replacement <- function(x){
 # protein_id_labels = lapply(protein_id_labels, FUN = function(x) str_replace_all(x, ":[A-Za-z0-9 ]+,",""))
 protein_id_labels = lapply(protein_id_labels, replacement)
 if( b_verbose ){
-  print("protein_id_labels shortened:")
+  print("protein_id_labels SHORTENED:")
   print(protein_id_labels)
 }
 density$protein_id = lapply(density$protein_id, replacement)
-if( b_verbose ){
-  print("protein_id shortened:")
-  print(density$protein_id)
-}
+# if( b_verbose ){
+#   print("protein_id shortened:")
+#   print(density$protein_id)
+# }
 
 density$protein_id_num = paste(  sprintf("%03d", match(density$protein_id, protein_id_labels) ), ":",  density$protein_id) 
 
@@ -232,6 +270,8 @@ p1 = p + geom_point(aes(x = position, y = -0.1, colour = density$gene_id_num, sh
 # add consensus gene boxes 
 p1bis = p1
 
+# -------------------------------------------------------------------------------
+# for gene boxes display
 gnames = names(json_genes$genes)
 ybase  = -0.04
 yshift = -0.00
@@ -271,6 +311,7 @@ gnames_label=lapply(nrange, FUN=function(x){
                       )
 # colrect=rep("black", length(gnames))
 # filrect=rep("white", length(gnames))
+# -------------------------------------------------------------------------------
 
 df=data.frame(xmi,xma,ymi,yma) # ,colrect,filrect)
 

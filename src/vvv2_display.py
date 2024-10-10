@@ -377,11 +377,11 @@ def __main__():
     if(json_annot_f == ''):
        json_annot_f = vardict_vcf_f
 #       json_annot_f = json_annot_f.replace('.vcf', '.json')
-       json_annot_f = re.sub('\.[^\.]+$', '.json', json_annot_f)       
+       json_annot_f = re.sub(r'\.[^\.]+$', '.json', json_annot_f)       
     if(bed_vardict_annot_f == ''):
        bed_vardict_annot_f = vardict_vcf_f
 #       bed_vardict_annot_f = bed_vardict_annot_f.replace('.vcf', '.vardict.bed')
-       bed_vardict_annot_f = re.sub('\.[^\.]+$', '_vardict.bed', bed_vardict_annot_f)
+       bed_vardict_annot_f = re.sub(r'\.[^\.]+$', '_vardict.bed', bed_vardict_annot_f)
        
     p_script = PYTHON_SCRIPTS + "convert_tbl2json.py"
     cmd = ' '.join([ p_script,
@@ -417,7 +417,7 @@ def __main__():
     if(correct_vcf_f == ''):
        correct_vcf_f = vardict_vcf_f
 #       correct_vcf_f = correct_vcf_f.replace('vardict.vcf', '_correct.vcf')
-       correct_vcf_f = re.sub('\.[^\.]+$', '_correct.vcf', correct_vcf_f)
+       correct_vcf_f = re.sub(r'\.[^\.]+$', '_correct.vcf', correct_vcf_f)
          
     p_script = PYTHON_SCRIPTS + "correct_multicontig_vardict_vcf.py"
     print("p_script:" + p_script)
@@ -459,10 +459,10 @@ def __main__():
 
     if(snp_loc_f == ''):
        snp_loc_f = vardict_vcf_f
-       snp_loc_f = re.sub('\.[^\.]+$', '_snp.txt', snp_loc_f)
+       snp_loc_f = re.sub(r'\.[^\.]+$', '_snp.txt', snp_loc_f)
     if(snp_loc_summary_f == ''):   
        snp_loc_summary_f = vardict_vcf_f
-       snp_loc_summary_f = re.sub('\.[^\.]+$', '_snp_summary.txt', snp_loc_summary_f)
+       snp_loc_summary_f = re.sub(r'\.[^\.]+$', '_snp_summary.txt', snp_loc_summary_f)
       
     # vcf file from vardict
     # json annotation file deduced from vadr, later vigor4(5?)
@@ -498,7 +498,7 @@ def __main__():
         elif cov_depth_corr_f == '':
             # create a file name if not given, deducing it from cov_depth_f
             cov_depth_corr_f = cov_depth_f
-            cov_depth_corr_f = re.sub('\.[^\.]+$', '_corrected.txt', cov_depth_corr_f)
+            cov_depth_corr_f = re.sub(r'\.[^\.]+$', '_corrected.txt', cov_depth_corr_f)
             # handle case with cov_depth_f without extension (file provided by user)
             if cov_depth_corr_f == cov_depth_f:
                 cov_depth_corr_f = cov_depth_corr_f + '_corrected.txt'
@@ -535,7 +535,7 @@ def __main__():
         
     if(png_var_f == ''):
        png_var_f = snp_loc_f
-       png_var_f = re.sub('\.[^\.]+$', '.png', png_var_f)
+       png_var_f = re.sub(r'\.[^\.]+$', '.png', png_var_f)
     
     # env r-env.yaml
     r_script = R_SCRIPTS + "visualize_snp_v4.R"

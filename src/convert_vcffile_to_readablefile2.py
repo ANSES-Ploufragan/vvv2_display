@@ -245,16 +245,14 @@ else:
     # print("genomeposition:"+str(genomeposition)+", line "+str(frame.f_lineno))
 
     # look for 3 groups: SNP_position , REF , ALT
-    regex1 = '[a-zA-Z0-9\._]+[\t]([0-9]+)[\t][a-zA-Z0-9\._-]+[\t]([ATCGKMSWRYBDHVN\.]+)'\
-'\t(([ATCGKMSWRYBDHVN\,\.]+)||<DUP>||<DEL>||<INV>||<INS>||<FUS>)\t[0-9]+\t[A-Za-z0-9\.\;\,]+\tSAMPLE='
+    regex1 = r'[a-zA-Z0-9\._]+[\t]([0-9]+)[\t][a-zA-Z0-9\._-]+[\t]([ATCGKMSWRYBDHVN\.]+)\t(([ATCGKMSWRYBDHVN\,\.]+)||<DUP>||<DEL>||<INV>||<INS>||<FUS>)\t[0-9]+\t[A-Za-z0-9\.\;\,]+\tSAMPLE='
     # look for 1 group: Variant frequency
-    regex2 = '[0-9\/\,\.]+:[0-9\/\,\.]+:[0-9\/\,\.]+:[0-9\/\,\.]+:'\
-'([0-9\/\,\.]+):[0-9\/\,\.]+:[0-9\.\/\,\.%]+'
+    regex2 = r'[0-9\/\,\.]+:[0-9\/\,\.]+:[0-9\/\,\.]+:[0-9\/\,\.]+:([0-9\/\,\.]+):[0-9\/\,\.]+:[0-9\.\/\,\.%]+'
 
     ## regex compilation
     reg1 , reg2 = re.compile(regex1) , re.compile(regex2)
     # get the left sequence and the right sequence from the reference base
-    lseq, rseq = re.compile(";LSEQ=([A-Z0]+);"), re.compile(";RSEQ=([A-Z0]+);")
+    lseq, rseq = re.compile(r";LSEQ=([A-Z0]+);"), re.compile(r";RSEQ=([A-Z0]+);")
 
     # dictionnary initialization to store data
     dico = {} # forward in the script key = snp_location
@@ -285,7 +283,7 @@ else:
     A = 0 # this flag is used in the write_line function in order to add indices to line where variants are upper than threshold
     with open(args.out, "w") as filout:
         summary_list = []
-        regex = '([0-9]+)\t1\t([A-Z\>\<]+)\t([A-Z\>\<]+)\t([0-9\.]+)\t[A-Z\>\<]+\t[A-Z\>\<]+\t([A-Z0-9a-z\-_\, /]+)\t([^\t]*)\t1\t([0-9]+)\t([A-Z]+\t[A-Z]+\t(no|yes))\n'
+        regex = r'([0-9]+)\t1\t([A-Z\>\<]+)\t([A-Z\>\<]+)\t([0-9\.]+)\t[A-Z\>\<]+\t[A-Z\>\<]+\t([A-Z0-9a-z\-_\, /]+)\t([^\t]*)\t1\t([0-9]+)\t([A-Z]+\t[A-Z]+\t(no|yes))\n'
         REGEX = re.compile(regex)    
         filout.write("position\tSNP\tref\talt\tvariant_percent\tadd_ref\tadd_alt\tgene_id\tprotein_id\tsize_point\tindice\tlseq\trseq\tisHomo\n")
         a = 0 # flag to find the first genomic region after initialization of i
