@@ -602,6 +602,23 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         b_next_is_note     = True
                         b_next_is_product  = False
                         continue
+                    # added 2024 11 12 handle stem_loop after protein, expecting gene
+                    elif line_fields[2] == 'stem_loop':
+                        misc_feature_start = line_fields[0]
+                        misc_feature_end   = line_fields[1]
+                        misc_feature_start = re.sub(non_alphanum, '', misc_feature_start)
+                        misc_feature_end   = re.sub(non_alphanum, '', misc_feature_end)
+
+                        b_next_is_product = False
+                        b_next_is_gene = False
+                        b_next_is_note = True                    
+                        curr_type = 'stem_loop'
+                        if b_verbose:
+                            print("\t".join([
+                                "TMP_STEM_LOOP:"+line_fields[2],
+                                misc_feature_start,
+                                misc_feature_end
+                            ]))
                     # added 2024 09 26 handle note after misc_feature
                     elif line_fields[0] == 'note':
                         note = ' '.join(line_fields[1:])
