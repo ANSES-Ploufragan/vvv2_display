@@ -21,6 +21,7 @@ library(jsonlite) # to read json
 b_verbose <- FALSE
 
 args <- commandArgs(TRUE) # all arguments are character types
+b_log_scale <- TRUE # default value, modified bar args[7]
 
 density <- try( read.table(args[1], h=T, sep = "\t") ) # read the dataframe
 if(inherits(density,"try-error"))
@@ -67,11 +68,22 @@ if( b_verbose ){
 
 outfile = args[6]
 
-if( length(args) > 6 )
+# added 2024 11 20: option to know if we want log10 scale for covdepth (1, true for the default; 0, false if not)
+b_log_scale_int = as.numeric(args[7])
+if( b_log_scale_int == 1)
+{
+  b_log_scale = TRUE
+}else
+{
+  b_log_scale = FALSE
+}
+
+
+if( length(args) > 7 )
 {
   b_covdepth <- TRUE
   # to prepare coverage depth graph above variant/annotation graph
-  coverage_depth <- try( read.table(args[7], h=F, sep = "\t", blank.lines.skip=TRUE), silent=TRUE ) # read the dataframe
+  coverage_depth <- try( read.table(args[8], h=F, sep = "\t", blank.lines.skip=TRUE), silent=TRUE ) # read the dataframe
   if(inherits(coverage_depth,"try-error"))
     coverage_depth <- NULL
     # b_covdepth <- FALSE
@@ -94,11 +106,24 @@ if(b_covdepth){
     med = median(coverage_depth$V2)
     m = paste("Coverage - median_coverage =", med, "[", mini, ":", maxi, "]", sep = " ")
     options(repr.plot.width = 5, repr.plot.height =1)
-    cd = ggplot(coverage_depth, aes(x = V1, y = V2)) + geom_line(color = "black", linewidth = 0.5)
+    if(b_log_scale)
+    {
+      cd = ggplot(coverage_depth, aes(x = V1, y = V2)) + geom_line(color = "black", linewidth = 0.5) + scale_x_continuous(trans='log10') + coord_trans(y="log10")
+    }else
+    {
+      # when no log scale
+      cd = ggplot(coverage_depth, aes(x = V1, y = V2)) + geom_line(color = "black", linewidth = 0.5)
+    }
     #  + labs(list(title = m, x = "Base Position", y = "Number of Reads")
     cd1 = cd + labs(title = m) # add graph title
     cd2 = cd1 + xlab("") # add x axe title
-    cd3 = cd2 + ylab("Number of reads") # add axes and graph titles 
+    if(b_log_scale)
+    {
+      cd3 = cd2 + ylab("Number of reads (log)") # add axes and graph titles  
+    }else
+    {
+      cd3 = cd2 + ylab("Number of reads") # add axes and graph titles
+    } 
   }
   else{
     m = "Coverage - median_coverage = 0 [-inf:inf]"

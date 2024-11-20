@@ -54,6 +54,11 @@ def __main__():
     # to record if we display cov depth in graph or not (depends on provided intputs)
     b_cov_depth_display = False
 
+    # to get argument telling if covdepth ordinates are in log10 scale (default yes)
+    b_log_scale_int   = 1
+    b_log_scale_str   = str(b_log_scale_int)
+    b_log_scale       = True
+
     # --------------------------------------
     # input files
     # --------------------------------------
@@ -112,6 +117,9 @@ def __main__():
     parser.add_argument("-w", "--var_significant_threshold", dest='var_significant_threshold',
                         help="(percentage var_significant_threshold\%) Define minimal proportion of a variant to be kept in significant results",
                         type=int)
+    parser.add_argument("-y", "--covdepth_linear_scale", dest='b_log_scale',
+                        help="[Optional] to display covepth ordinates in linear scale (default log10 scale)",
+                        action='store_false')
     parser.add_argument("-o", "--cov_depth_f", dest='cov_depth_f',
                         help="[optional] in: text file of coverage depths (given by samtools depth)",
                         metavar="FILE")     
@@ -247,6 +255,12 @@ def __main__():
             b_cov_depth_display = True
         else:
             b_cov_depth_display = False
+        if args.b_log_scale:
+            b_log_scale_int   = 1
+        else:
+            b_log_scale_int   = 0
+        b_log_scale_str   = str(b_log_scale_int)
+
         # ----------------------------------------------------------------
         # optional arguments only for Galaxy compatibility
         if args.json_annot_f is not None:
@@ -545,6 +559,8 @@ def __main__():
         png_var_f         = test_dir + "/res_snp.png"
         contig_limits_f   = test_dir + "/contig_limits.txt"
         contig_names_f    = test_dir + "/contig_names.txt"
+        b_log_scale_int   = 1
+        b_log_scale       = str(b_log_scale_int)
         
     if(png_var_f == ''):
        png_var_f = snp_loc_f
@@ -561,7 +577,8 @@ def __main__():
                 contig_names_f,
                 threshold,
                 json_annot_f,
-                png_var_f])
+                png_var_f,
+                b_log_scale_str])
 
     # parameter to allow coverage depth display above variants/annotations
     if b_cov_depth_display:

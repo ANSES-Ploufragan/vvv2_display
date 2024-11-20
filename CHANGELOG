@@ -1,4 +1,5 @@
 0.2.3:
+  - set as default log10 display for covdepth graph, add -y option to set this scale linear
   - add option -w <int> to define the percentage threshold to consider significant a variant
   - bug correction: handle now stem loop occuring when gene is expected in tab file for conversion to json file
 0.2.2:
