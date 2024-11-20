@@ -1,3 +1,6 @@
+0.2.3:
+  - add option -w <int> to define the percentage threshold to consider significant a variant
+  - bug correction: handle now stem loop occuring when gene is expected in tab file for conversion to json file
 0.2.2:
   - better distinguish gene and CDS
   - compatibility with python 3.12 (regexp strings prefixed by r)

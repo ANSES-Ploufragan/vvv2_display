@@ -45,6 +45,8 @@ def __main__():
     dir_path = os.path.dirname(os.path.abspath(__file__)) # dir of current script
 
     b_verbose = False
+    var_significant_threshold = 7 # default value
+    var_significant_threshold_str = str(var_significant_threshold)
     # allow to run tests from everywhere
     
     prog_tag = '[' + os.path.basename(__file__) + ']'
@@ -107,6 +109,9 @@ def __main__():
     parser.add_argument("-r", "--png_var_f", dest='png_var_f',
                         help="out: png file with variant proportions and annotations",
                         metavar="FILE")
+    parser.add_argument("-w", "--var_significant_threshold", dest='var_significant_threshold',
+                        help="(percentage var_significant_threshold\%) Define minimal proportion of a variant to be kept in significant results",
+                        type=int)
     parser.add_argument("-o", "--cov_depth_f", dest='cov_depth_f',
                         help="[optional] in: text file of coverage depths (given by samtools depth)",
                         metavar="FILE")     
@@ -161,6 +166,9 @@ def __main__():
     # parser.set_defaults(b_test_convert_vcffile_to_readable=False)
     # parser.set_defaults(b_test_visualize_snp_v4=False)
     parser.set_defaults(b_verbose=False)
+    parser.set_defaults(var_significant_threshold=7)
+    if var_significant_threshold is not None:
+        var_significant_threshold_str = str(var_significant_threshold)
 
     # get absolute path in case of files
     args = parser.parse_args()
@@ -279,6 +287,9 @@ def __main__():
             cov_depth_corr_f = os.path.abspath(args.cov_depth_corr_f)
         # ----------------------------------------------------------------
         
+        if args.var_significant_threshold is not None:
+            var_significant_threshold = args.var_significant_threshold
+            var_significant_threshold_str = str(var_significant_threshold)
         if args.b_verbose is not None:
             b_verbose = args.b_verbose
         print(prog_tag + " arguments checked... line "+str(frame.f_lineno))
@@ -313,7 +324,8 @@ def __main__():
                             "--contig_names_f", contig_names_f,   
                             "--cov_depth_f", cov_depth_f,  
                             "--cov_depth_corr_f", cov_depth_corr_f,              
-                            "--png_var_f", png_var_f
+                            "--png_var_f", png_var_f,
+                            "--var_significant_threshold", var_significant_threshold_str
                     ])
         print(prog_tag + " START")    
         print(prog_tag + " cmd:" + cmd)
@@ -343,7 +355,8 @@ def __main__():
                     "--contig_names_f", contig_names_f,   
                     "--cov_depth_f", cov_depth_f,                     
                     "--cov_depth_corr_f", cov_depth_corr_f,              
-                    "--png_var_f", png_var_f
+                    "--png_var_f", png_var_f,
+                    "--var_significant_threshold", var_significant_threshold_str                    
                     ])
         print(prog_tag + " START")    
         print(prog_tag + " cmd:" + cmd)
@@ -470,7 +483,7 @@ def __main__():
     # snp_loc_f = f"{ech}_snp_location"
     # p_script = f"{PYTHON_SCRIPTS}convert_vcffile_to_readablefile.py" # use pyvcf
     p_script = PYTHON_SCRIPTS + "convert_vcffile_to_readablefile2.py" # use pysam
-    threshold = "0.07"
+    threshold = "%.2f" % (var_significant_threshold / 100)
     cmd = ' '.join([p_script,
                     "--vcfs", correct_vcf_f,
                     "--json", json_annot_f,
@@ -539,7 +552,8 @@ def __main__():
     
     # env r-env.yaml
     r_script = R_SCRIPTS + "visualize_snp_v4.R"
-    threshold = "0.07"
+    threshold = "%.2f" % (var_significant_threshold / 100) #"0.07"
+    
     # png_var_f = f"{ech}_graphic_variant.png"
     cmd = " ".join(["R --vanilla --quiet --args",
                 snp_loc_f, 
