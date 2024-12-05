@@ -252,7 +252,9 @@ else:
     ## regex compilation
     reg1 , reg2 = re.compile(regex1) , re.compile(regex2)
     # get the left sequence and the right sequence from the reference base
-    lseq, rseq = re.compile(r";LSEQ=([A-Z0]+);"), re.compile(r";RSEQ=([A-Z0]+);")
+    #           part added to left regexp:---------                       and right:--- and not finished by ;
+    lseq, rseq = re.compile(r";LSEQ=([A-Z0\.\:0-9\-]+);"), re.compile(r";RSEQ=([A-Z0SNV]+)")
+    # lseq, rseq = re.compile(r";LSEQ=([A-Z0]+);"), re.compile(r";RSEQ=([A-Z0]+);")
 
     # dictionnary initialization to store data
     dico = {} # forward in the script key = snp_location
@@ -273,8 +275,19 @@ else:
                 alt = (reg1.search(line)).group(3) ; new_list.append(alt)
                 freq = (reg2.search(line)).group(1) ; new_list.append(freq)
                 snp = len(alt.split(",")) ; new_list.append(snp)
-                leftseq = (lseq.search(line)).group(1); new_list.append(leftseq)
-                rightseq = (rseq.search(line)).group(1); new_list.append(rightseq)
+                try:
+                    rightseq = (rseq.search(line)).group(1); 
+                except AttributeError:
+                    sys.exit("")
+                # added 2024 12 05
+                # special case of vcf vardict result usually occuring at le last positions of the virus, no seq are provided
+                # for both leftseq (ACCNR:coordinate instead, regexp changed for this) and rightseq (SNV)
+                if rightseq == 'SNV':
+                    rightseq = ''
+                else:
+                    leftseq = (lseq.search(line)).group(1); 
+                new_list.append(rightseq)
+                new_list.append(leftseq)
                 dico[SNP_position] = new_list
 
     # Once harvested, data need to be recorded in a file
