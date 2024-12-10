@@ -85,9 +85,9 @@ if( length(args) > 7 )
   # to prepare coverage depth graph above variant/annotation graph
   coverage_depth <- try( read.table(args[8], h=F, sep = "\t", blank.lines.skip=TRUE), silent=TRUE ) # read the dataframe
   if(inherits(coverage_depth,"try-error"))
-    coverage_depth <- NULL
+    # coverage_depth <- NULL
     # b_covdepth <- FALSE
-    print("No coverage data found, disable coverage depth display in final graph")
+    print("Try-error triggered: either No coverage data found, disable coverage depth display in final graph")
 }else
 { 
   b_covdepth <- FALSE 
@@ -108,7 +108,8 @@ if(b_covdepth){
     options(repr.plot.width = 5, repr.plot.height =1)
     if(b_log_scale)
     {
-      cd = ggplot(coverage_depth, aes(x = V1, y = V2)) + geom_line(color = "black", linewidth = 0.5) + scale_x_continuous(trans='log10') + coord_trans(y="log10")
+      #                                             +1 is only to avoid log(0) when cov depth is 0 (log(0)=-inf)
+      cd = ggplot(coverage_depth, aes(x = V1, y = V2+1)) + geom_line(color = "black", linewidth = 0.5) + coord_trans(y="log10")
     }else
     {
       # when no log scale
