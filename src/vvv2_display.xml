@@ -1,15 +1,20 @@
-<tool id="vvv2_display" name="vvv2_display: Display SNP proportions and CDS of an assembly in png image" version="0.2.2" python_template_version="3.9">
+<tool id="vvv2_display" name="vvv2_display: Display SNP proportions and CDS of an assembly in png image" version="0.2.3" python_template_version="3.9">
     <requirements>
-      <requirement type="package" version="0.2.2">vvv2_display</requirement>	      
+      <requirement type="package" version="0.2.3">vvv2_display</requirement>	      
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-       vvv2_display.py -f '$vadr_fail_annotation' -p '$vadr_pass_annotation' -s '$seqstat' -n '$vardict_vcf' -r '$snp_img' -o '$cov_depth' -e '$cov_depth_corr' -t '$snp_loc' -u '$snp_loc_summary' -j '$json_annot' -k '$bed_annot' -l '$correct_vcf' -m '$contig_limits'
+       vvv2_display.py -f '$vadr_fail_annotation' -p '$vadr_pass_annotation' -s '$seqstat' -n '$vardict_vcf' -r '$snp_img' -w '$var_significant_thres' -o '$cov_depth' -e '$cov_depth_corr' -t '$snp_loc' -u '$snp_loc_summary' -j '$json_annot' -k '$bed_annot' -l '$correct_vcf' -m '$contig_limits' '$cov_depth_scale'
     ]]></command>
     <inputs>
         <param type="data" name="vadr_fail_annotation" format="tabular" />
         <param type="data" name="vadr_pass_annotation" format="tabular" />
         <param type="data" name="seqstat" format="txt" />
         <param type="data" name="vardict_vcf" format="vcf" />
+        <param type="integer" name="var_significant_thres" value="7" min="0" max="100" label="min int threshold to keep significant variant (%age)" format="int" />
+        <param type="select" name="cov_depth_scale" label="tells if cov depth scale (ordinate) is displayed with log10 (default) or linear scale" help="tells if cov depth scale (ordinate) is displayed with log10 (default) or linear scale">
+          <option value="">log10 scale</option>
+			    <option value="-y">linear scale</option>
+        </param>
         <param type="data" name="cov_depth" format="txt" />
     </inputs>
     <outputs>
@@ -39,6 +44,8 @@
             <param name="vadr_pass annotation" value="test_vvv2_display/res_vadr_pass.tbl"/>
             <param name="vadr_seqstat" value="test_vvv2_display/res_vadr.seqstat"/>
             <param name="vardict_vcf" value="test_vvv2_display/res_vardict.vcf"/>
+            <param name="var_significant_thres" value="7"/>
+            <param name="cov_depth_scale" value=""></param>
             <output name="snp_img" file="test_vvv2_display/res_snp.png"/>	    
             <output name="snp_loc_summary" file="test_vvv2_display/res_snp_summary.txt"/>
 	          <!-- intermediate output files -->
