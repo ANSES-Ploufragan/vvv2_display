@@ -478,7 +478,7 @@ p10 = p9 + geom_line(aes(x = position, y = 0.5), color = "red")
 minus_maxlength_over6 = - max(contig_limits) / 50
 
 # give scale and breaks of the y axis
-p11 = p10 + scale_y_continuous(limits=c(-0.1,1.1), labels = scales::percent, breaks=c(0.0, 0.07, 0.2, 0.4, 0.6, 0.8, 1.0))
+p11 = p10 + scale_y_continuous(limits=c(-0.1,1.1), labels = scales::percent, breaks=c(0.0, threshold, 0.2, 0.4, 0.6, 0.8, 1.0))
 
 if( b_covdepth ){
   # gives proportions for covdepth graph (cd3) and variant graph (p11) in the grid plot
