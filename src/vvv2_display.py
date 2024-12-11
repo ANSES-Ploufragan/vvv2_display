@@ -115,7 +115,7 @@ def __main__():
                         help="out: png file with variant proportions and annotations",
                         metavar="FILE")
     parser.add_argument("-w", "--var_significant_threshold", dest='var_significant_threshold',
-                        help="(percentage var_significant_threshold\%) Define minimal proportion of a variant to be kept in significant results",
+                        help="(percentage var_significant_threshold %) Define minimal proportion of a variant to be kept in significant results",
                         type=int)
     parser.add_argument("-y", "--covdepth_linear_scale", dest='b_log_scale',
                         help="[Optional] to display covepth ordinates in linear scale (default log10 scale)",
