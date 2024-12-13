@@ -354,10 +354,12 @@ def __main__():
         fail_annot_f  = test_dir + "/res_vadr_fail.tbl" # from vadr results
         seq_stat_f    = test_dir + "/res_vadr.seqstat"  # from vadr results
         vardict_vcf_f = test_dir + "/res_vardict.vcf"  # from lofreq results    
+        cov_depth_f   = test_dir + "/res_covdepth.txt"  # from samtools results
         # tmp out files
         json_annot_f    = test_dir + "/res_vadr.json"     # from convert_tbl2json.
         contig_limits_f = test_dir + "/contig_limits.txt" 
         contig_names_f = test_dir + "/contig_names.txt"  
+        cov_depth_corr_f= test_dir + "/res_covdepth_corr.txt"
         # final out file
         png_var_f    = test_dir + "/res_vvv2.png"     # from ...
         cmd = ' '.join([ dir_path + "/vvv2_display.py",
@@ -368,7 +370,7 @@ def __main__():
                     "--contig_limits_f", contig_limits_f,   
                     "--contig_names_f", contig_names_f,   
                     "--cov_depth_f", cov_depth_f,                     
-                    "--cov_depth_corr_f", cov_depth_corr_f,              
+                    "--cov_depth_corr_f", cov_depth_corr_f,       
                     "--png_var_f", png_var_f,
                     "--var_significant_threshold", var_significant_threshold_str                    
                     ])
