@@ -36,7 +36,7 @@
             <param name="vadr_seqstat" value="test_vvv2_display/res_vadr.seqstat"/>
             <param name="vardict_vcf" value="test_vvv2_display/res_vardict.vcf"/>
             <param name="var_significant_thres" value="7"/>
-            <param name="cov_depth_scale" value="test_vvv2_display/res_covdepth.txt"></param>
+            <param name="cov_depth_scale" value="test_vvv2_display/res_covdepth.txt" />
             <output name="snp_img" file="test_vvv2_display/res_snp.png"/>	    
             <output name="snp_loc_summary" file="test_vvv2_display/res_snp_summary.txt"/>
 	          <!-- intermediate output files -->
@@ -47,7 +47,7 @@
             <output name="contig_limits" file="test_vvv2_display/contig_limits.txt"/>
             <output name="cov_depth_corr" file="test_vvv2_display/res_covdepth_corrected.txt"/>
 	    <!-- end intermediate output files -->	    
-        </test>
+      </test>
     </tests>
     <help><![CDATA[
 [vvv2_display.py]
