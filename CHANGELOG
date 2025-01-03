@@ -1,6 +1,6 @@
 0.2.3:
   - correct typo errors, add parameters in xml wrapper
-  - correct '\%' in vvv2_display.py help
+  - remove '\%' in vvv2_display.py help
   - update Galaxy xml wrapper to get 2 additional arguments: linear scale for cov_depth and max variant threshold (%age)
   - bug correction: 1 added to all covdepth at all positions to avoid log(0)=-inf
   - updated yaml (conda recipe) and xml (galaxy wrapper)
