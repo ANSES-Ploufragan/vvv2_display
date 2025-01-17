@@ -26,7 +26,7 @@ if (sys.version_info < (3, 9)):
 
 setuptools.setup(
     name="vvv2_display",  # Required
-    version="0.2.3",  # Required
+    version="0.2.3.2",  # Required
     description="Viral Variant Visualizer 2 display",  # Optional
     long_description=long_description,
     long_description_content_type="text/markdown",  # Optional (see note above)

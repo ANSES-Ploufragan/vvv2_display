@@ -1,4 +1,8 @@
-0.2.3:
+0.2.3.2:
+  - correct max number of args from 25 to 30
+  - change version 0.2.3.1 -> 0.2.3.2
+  - remove '' surrounding last argument of Galaxy xml wrapper
+0.2.3.1:
   - correct typo errors, add parameters in xml wrapper
   - remove '\%' in vvv2_display.py help
   - update Galaxy xml wrapper to get 2 additional arguments: linear scale for cov_depth and max variant threshold (%age)
