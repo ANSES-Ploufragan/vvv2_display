@@ -1466,8 +1466,10 @@ with open(json_annot_f, 'w+') as f:
         f.write("\"virus_id\": \"unkown\", ")
     b_first_cds_found = False
 
+    # **********************************************
     # for genes
     f.write("\"genes\": {")
+    b_gene_found = False
     for i in range(len(names)):
         if types[i] == 'gene':
             if b_first_cds_found:
@@ -1475,7 +1477,26 @@ with open(json_annot_f, 'w+') as f:
 
             f.write("\""+names[i]+"\": ["+str(starts[i])+", "+str(ends[i])+"]")
             b_first_cds_found = True
+            b_gene_found = True
+
+    # ------------------------------------------
+    # special case of not recorded genes
+    # means genes not recorded, like in PCV2,
+    # therefore we must deduce them from proteins, calling them ORF1...ORFN
+    if not b_gene_found:
+        b_first_cds_found = False
+        for i in range(len(names)):
+            if types[i] == 'cds':
+                tmp_name = 'ORF'+str(i+1)
+                if b_first_cds_found:
+                    f.write(", ")
+
+                f.write("\""+tmp_name+"\": ["+str(starts[i])+", "+str(ends[i])+"]")
+                b_first_cds_found = True
+    # ------------------------------------------
+
     f.write("}")
+    # **********************************************
 
     b_first_cds_found = False
     # for proteins
