@@ -1,3 +1,7 @@
+0.2.3.2:
+  - correct max number of args from 25 to 30 for vvv2_display.py
+  - change version 0.2.3.1 -> 0.2.3.2
+  - remove '' surrounding last argument of Galaxy xml wrapper
 0.2.3.1:
   - same, only to make release archives updated (not the case when deleting and creating again with the same tags)
 0.2.3:
