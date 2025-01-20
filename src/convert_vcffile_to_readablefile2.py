@@ -69,6 +69,7 @@ this gene.
     gene = "intergene"
     base_inf_allgenes = ''
     base_sup_allgenes = ''
+
     # print("find_key_genes call pos ("+str(genomepos)+")")
     for typ in dico_json:
         # print(f"dico_json key treated:{key}")
@@ -76,6 +77,13 @@ this gene.
         if typ == "genes":
             for key in dico_json[typ]:
                 base_inf , base_sup = dico_json[typ][key][0] , dico_json[typ][key][1]
+
+                # if gene in reverse orientation, change coordinates to make base_inf < base_sup
+                if base_sup < base_inf:
+                    base_tmp = base_sup
+                    base_sup = base_inf
+                    base_inf = base_tmp
+
                 if (base_inf <= genomepos)and(genomepos <= base_sup):
                     # print("GENE base_inf:"+str(base_inf)+" <= genomepos:"+str(genomepos)+" <= base_sup:"+str(base_sup))
                     if gene == 'intergene':
@@ -91,6 +99,7 @@ this gene.
                 #     print(f"NOT( base_inf:{base_inf} <= genomepos:{genomepos} <= base_sup:{base_sup} )")
                 #     continue
     # print(f"return gene:{gene}\tbase_inf:{base_inf_allgenes}\tbase_sup:{base_sup_allgenes}")
+
     return gene, base_inf_allgenes, base_sup_allgenes
 
 def find_key_proteins(dico_json, genomepos, gene_res):
@@ -107,6 +116,13 @@ this protein.
         if typ == "proteins":
             for key in dico_json[typ]:
                 base_inf , base_sup = dico_json[typ][key][0] , dico_json[typ][key][1]
+
+                 # if gene in reverse orientation, change coordinates to make base_inf < base_sup
+                if base_sup < base_inf:
+                    base_tmp = base_sup
+                    base_sup = base_inf
+                    base_inf = base_tmp
+
                 if (base_inf <= genomepos)and(genomepos <= base_sup):
                     # print("PROT base_inf:"+str(base_inf)+" <= genomepos:"+str(genomepos)+" <= base_sup:"+str(base_sup))
                     if gene_res == 'intergene':
@@ -306,6 +322,7 @@ else:
             pos = genomeposition[i]
             gene_id, base_inf, base_sup = find_key_genes(dico_json, pos)
             protein_id, pbase_inf, pbase_sup = find_key_proteins(dico_json, pos, gene_id)
+            # print("pos gene_id protein_id:"+str(pos)+"\t"+gene_id+"\t"+protein_id)
             line = write_line(temp_counts[i], pos, gene_id, protein_id, dico)
             filout.write(line)
 
