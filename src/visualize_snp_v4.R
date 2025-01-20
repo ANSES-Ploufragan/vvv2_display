@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 #
-# FT; last modification November 20th 2024
+# FT; last modification January 20th 2025
 # AF; last modification February 16th 2019
 #
 # Description:  This script has been written in order to generate a graph
@@ -226,7 +226,11 @@ genecols = append(genecols, complete_col_set)
 
 # needed to have color labels NOT ORDERED and to choose colors
 gene_id_labels = unique(density$gene_id)
+# print("gene_id_labels BEFORE numbering:")
+# print(gene_id_labels)
 density$gene_id_num = paste(  sprintf("%02d", match(density$gene_id, gene_id_labels) ), ":", density$gene_id) 
+# print("gene_id_labels AFTER numbering:")
+# print(density$gene_id_num)
 
 # if( b_verbose ){
 #   print("protein_id_labels BEFORE removing duplicates:")
@@ -329,7 +333,11 @@ ymm=as.numeric(unlist(ymm))
 
 gnames_label=lapply(nrange, FUN=function(x){ 
                                     glabel = ""
-                                    if( (xma[x] - xmi[x]) > min_glength){
+                                    if( (xma[x] > xmi[x]) &
+                                        ( (xma[x] - xmi[x]) > min_glength) ){
+                                      glabel=gnames[x]
+                                    } else if( (xma[x] < xmi[x]) &
+                                        ( (xmi[x] - xma[x]) > min_glength) ){
                                       glabel=gnames[x]
                                     }
                                     glabel
