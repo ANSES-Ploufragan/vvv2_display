@@ -1487,7 +1487,7 @@ with open(json_annot_f, 'w+') as f:
         b_first_cds_found = False
         for i in range(len(names)):
             if types[i] == 'cds':
-                tmp_name = 'ORF'+str(i+1)
+                tmp_name = 'gene_'+str(i+1)
                 if b_first_cds_found:
                     f.write(", ")
 
@@ -1551,6 +1551,7 @@ print("creates "+bed_vardict_annot_f+" file")
 with open(bed_vardict_annot_f, 'w+') as f:
     # no header otherwise bug in vardict
     for i in range(len(names)):
+        # print("for vardict, treat BED contig "+names[i])
         f.write("\t".join([
             chrs[i],
             str(starts_vardict[i]),
