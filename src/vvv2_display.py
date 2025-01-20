@@ -38,7 +38,7 @@ def __main__():
     b_test_vvv2_display                    = False # ok 2022 05 05 complet, partial tc
     b_test_convert_tbl2json                = False # ok 2022 04 26 complete tc,
     b_test_correct_multicontig_vardict_vcf = False # ok 2022 04 29 partial tc
-    b_test_convert_vcffile_to_readable     = False # ok 2024 03 27 complete tc,
+    b_test_convert_vcffile_to_readable     = False # ok 2025 01 20 complete tc,
     b_test_correct_covdepth_f              = False # ok 2024 01 20 tc,
     b_test_visualize_snp_v4                = False # ok 2024 03 27 complete tc,
     b_test = False
@@ -175,6 +175,7 @@ def __main__():
     # parser.set_defaults(b_test_visualize_snp_v4=False)
     parser.set_defaults(b_verbose=False)
     parser.set_defaults(var_significant_threshold=7)
+    parser.set_defaults(b_log_scale=True)
     if var_significant_threshold is not None:
         var_significant_threshold_str = str(var_significant_threshold)
 
@@ -380,6 +381,39 @@ def __main__():
         print(prog_tag + " END")
         # --------------------------------------------------------------
 
+        # --------------------------------------------------------------
+        # COMPLETE GENOME PCV2
+        # in files
+        pass_annot_f  = test_dir + "/res3_vadr_pass.tbl" # from vadr results
+        fail_annot_f  = test_dir + "/res3_vadr_fail.tbl" # from vadr results
+        seq_stat_f    = test_dir + "/res3_vadr.seqstat"  # from vadr results
+        vardict_vcf_f = test_dir + "/res3_vardict.vcf"   # from lofreq results  
+        cov_depth_f   = test_dir + "/res3_covdepth.txt"  # from samtools results  
+        # tmp out files
+        json_annot_f  = test_dir + "/res3_vadr.json"     # from convert_tbl2json.py
+        contig_limits_f= test_dir + "/contig3_limits.txt"
+        contig_names_f = test_dir + "/contig3_names.txt"
+        cov_depth_corr_f= test_dir + "/res3_covdepth_corr.txt"
+        # final out file
+        png_var_f     = test_dir + "/res3_vvv2.png"     # from ...
+        cmd = ' '.join([ dir_path + "/vvv2_display.py",
+                            "--pass_tbl_f", pass_annot_f,
+                            "--fail_tbl_f", fail_annot_f,
+                            "--seq_stat_f", seq_stat_f,
+                            "--vcf_f", vardict_vcf_f,
+                            "--contig_limits_f", contig_limits_f,   
+                            "--contig_names_f", contig_names_f,   
+                            "--cov_depth_f", cov_depth_f,  
+                            "--cov_depth_corr_f", cov_depth_corr_f,              
+                            "--png_var_f", png_var_f,
+                            "--var_significant_threshold", var_significant_threshold_str
+                    ])
+        print(prog_tag + " START")    
+        print(prog_tag + " cmd:" + cmd)
+        os.system(cmd)
+        print(prog_tag + " END")
+        # --------------------------------------------------------------
+
         sys.exit()
     # ------------------------------------------------------------------    
 
@@ -483,8 +517,8 @@ def __main__():
         # vardict_vcf_f = test_dir + "/res_vardict.vcf"  # from vardict results
         correct_vcf_f     = test_dir + "/res_correct.vcf"                  
         json_annot_f      = test_dir + "/res_vadr.json"
-        snp_loc_f         =  test_dir + "/res_snp.txt"
-        snp_loc_summary_f =  test_dir + "/res_snp_summary.txt"
+        snp_loc_f         = test_dir + "/res_snp.txt"
+        snp_loc_summary_f = test_dir + "/res_snp_summary.txt"
 
     if(snp_loc_f == ''):
        snp_loc_f = vardict_vcf_f
