@@ -49,7 +49,9 @@ if(inherits(contig_limits,"try-error")){
   }
   contig_names = lapply(contig_names, replacement_contigname)
   
-  print(contig_names)
+  if( b_verbose ){
+    print(contig_names)
+  }
 }  
 
 threshold = as.numeric(args[4]) # define threshold
@@ -172,10 +174,10 @@ if( length(genecols) != length(genecols_unique) ){
       }
       if( genecols_unique[icol] != genecols[icol] ){
         redund_vals = genecols[icol]
-    	  print("Color found several times:")
+        print("Color found several times:")
     	  print(redund_vals)
     	  stop()
-	}
+	    }
     }
     print("first values identical, added values in genecols:")
     for( icol in length(genecols_unique)+1:length(genecols) ){
@@ -498,5 +500,5 @@ if( b_covdepth ){
   g <- plot(p11)
 }
 
-ggsave(outfile, device = "png", plot = g, width = width, units="cm", height=29.7, dpi = 600) # save the graph
+ggsave(outfile, device = "png", plot = g, width = width, units="cm", height=29.7, dpi = 600, na.rm=TRUE) # save the graph
 # ~ end of script ~
