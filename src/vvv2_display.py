@@ -608,7 +608,7 @@ def __main__():
     
     # png_var_f = f"{ech}_graphic_variant.png"
     # Use --no-echo instead of --slave in R 4.0+
-    cmd = " ".join(["R --vanilla --quiet --slave --args",
+    cmd = " ".join(["R --vanilla --quiet --no-echo --args",
                 snp_loc_f, 
                 contig_limits_f,
                 contig_names_f,
