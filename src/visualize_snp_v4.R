@@ -383,7 +383,7 @@ p1bis = p1 + geom_rect(data=df, mapping=aes(xmin=xmi,
                         inherit.aes = FALSE) + geom_text(
                                                   data = df,
                                                   aes(x = xmm, y = ymm, label = gnames_label),
-                                                  size = 3, check_overlap = TRUE # vjust = 0, hjust = 0,
+                                                  size = 3, check_overlap = TRUE, na.rm = TRUE # vjust = 0, hjust = 0,
        )
 
 # needed to have more than 6 symbols for gene_id legend
@@ -392,7 +392,7 @@ p1ter = p1bis + scale_shape_manual(values=c(1:25,1:25))
 # use color more easily distinguishable
 p1quad = p1ter + scale_color_manual(values=genecols[1:length(gene_id_labels)])
 
-p2 = p1ter + geom_point(aes(x = position, y = as.numeric(variant_percent), color = density$gene_id_num, shape = density$protein_id_num)) # add the variant points
+p2 = p1ter + geom_point(aes(x = position, y = as.numeric(variant_percent), color = density$gene_id_num, shape = density$protein_id_num), na.rm = TRUE) # add the variant points
 # p2 = p1ter + geom_point(aes(x = position, y = as.numeric(variant_percent), color = density$gene_id_num, shape = density$gene_id)) # add the variant points
 
 p3 = p2 + geom_line(aes(x=position, y=threshold)) # add the threshold line
@@ -446,7 +446,8 @@ if(! is.null(contig_names)){ # means more than 1 contig
                               label=contig_names),  
                             color="black",
                             size = 3, 
-                            check_overlap = TRUE
+                            check_overlap = TRUE,
+                            na.rm = TRUE
                           )
 
 }
@@ -482,7 +483,7 @@ p7 = p6bis + theme( plot.title = element_text(hjust=0.5),
                     
                     ) # modify the legend position 
 
-p9 = p7 + geom_text(aes(x = position, y = variant_percent + 0.03, label = indice, angle = 0)) # add indice to the graph
+p9 = p7 + geom_text(aes(x = position, y = variant_percent + 0.03, label = indice, angle = 0), na.rm = TRUE) # add indice to the graph
 #p10 = p9 + geom_text(x = 0, y = threshold + 0.01, label = t) # add the threshold text
 #p11 = p10 + geom_line(aes(x = position, y = 0.5), color = "red") 
 p10 = p9 + geom_line(aes(x = position, y = 0.5), color = "red")
@@ -500,5 +501,5 @@ if( b_covdepth ){
   g <- plot(p11)
 }
 
-ggsave(outfile, device = "png", plot = g, width = width, units="cm", height=29.7, dpi = 600, na.rm=TRUE) # save the graph
+ggsave(outfile, device = "png", plot = g, width = width, units="cm", height=29.7, dpi = 600) # save the graph
 # ~ end of script ~
