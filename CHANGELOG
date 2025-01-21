@@ -1,3 +1,5 @@
+0.2.3.4:
+  - add na.rm=TRUE in gom_text geom_point of visualize_snp_v4.R to avoid warnings, and Galaxy error status
 0.2.3.3:
   - in convert_tbl2json.py, now when no gene found in bed, deduce them from CDS and name them gene_1 .. gene_N (not ORFN 
   because some prot are named ORF2 prot in PCV2, for an ORF that is not the second one!). It avoids to get a bug

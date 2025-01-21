@@ -1,6 +1,6 @@
-<tool id="vvv2_display" name="vvv2_display: Display SNP proportions and CDS of an assembly in png image" version="0.2.3.3" python_template_version="3.9">
+<tool id="vvv2_display" name="vvv2_display: Display SNP proportions and CDS of an assembly in png image" version="0.2.3.4" python_template_version="3.9">
     <requirements>
-      <requirement type="package" version="0.2.3.3">vvv2_display</requirement>	      
+      <requirement type="package" version="0.2.3.4">vvv2_display</requirement>	      
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
        vvv2_display.py -f '$vadr_fail_annotation' -p '$vadr_pass_annotation' -s '$vadr_seqstat' -n '$vardict_vcf' -r '$snp_img' -w '$var_significant_thres' -o '$cov_depth' -e '$cov_depth_corr' -t '$snp_loc' -u '$snp_loc_summary' -j '$json_annot' -k '$bed_annot' -l '$correct_vcf' -m '$contig_limits' $cov_depth_scale
