@@ -1,4 +1,5 @@
 0.2.3.4:
+  - correct a bug when gene displayed between product and protein_id
   - mask warnings and decrease default verbosity in convert_tbl2json.py (to avoid error status in Galaxy)
   - add na.rm=TRUE in gom_text geom_point of visualize_snp_v4.R to avoid warnings, and Galaxy error status
 0.2.3.3:
