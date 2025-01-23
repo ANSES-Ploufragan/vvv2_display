@@ -1004,6 +1004,24 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         # add info between brackets
                         product = product + ' ['+' '.join(line_fields)+']'
                         continue
+
+                    # added 2025 01 23: gene record not needed because gene already recorded
+                    elif line_fields[0] == 'gene':
+                        
+                        if b_verbose or b_check_gene_prot_rec:
+                            # if so, no need to record again
+                            print("\t".join([
+                                prog_tag,
+                                "PASS (already RECORDED new_name '"+names[last_gene_index]+"')",
+                                "type:gene",
+                                "starts:"+gene_start,
+                                "end:"+gene_end,
+                                "contig:"+contig+", line "+str(frame.f_lineno)
+                            ]))
+                        if len(names) != len(types):
+                            sys.exit(prog_tag+"[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
+                        continue
+
                     else:
                         print("expected protein_id")
                         print("line_fields:"+','.join(line_fields))                        
