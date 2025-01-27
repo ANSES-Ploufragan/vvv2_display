@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of the vvv2_display distribution (https://github.com/ANSES-Ploufragan/vvv2_display).
-# Copyright (c) 2023 Fabrice Touzain.
+# Copyright (c) 2023- Fabrice Touzain.
 # 
 # This program is free software: you can redistribute it and/or modify  
 # it under the terms of the GNU General Public License as published by  
@@ -629,6 +629,21 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                 "TMP_STEM_LOOP:"+line_fields[2],
                                 misc_feature_start,
                                 misc_feature_end
+                            ]))
+                    # added 2025 01 27 handle ncRNA when gene is expected
+                    elif line_fields[2] == 'ncRNA':
+                        cds_start = line_fields[0]
+                        cds_end   = line_fields[1]
+                        cds_start = re.sub(non_alphanum, '', cds_start)
+                        cds_end   = re.sub(non_alphanum, '', cds_end)
+                        b_next_is_product = True
+                        b_next_is_gene = False
+                        curr_type = 'rna' # 'CDS'
+                        if b_verbose:
+                            print("\t".join([
+                                "TMP_NC_RNA:"+line_fields[2],
+                                cds_start,
+                                cds_end
                             ]))
                     # added 2024 09 26 handle note after misc_feature
                     elif line_fields[0] == 'note':

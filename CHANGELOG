@@ -1,7 +1,9 @@
 0.2.3.4:
+  - bug correction: in convert_tbl2json.py, handle case of ncRNA when gene is expected (for dengue example)
   - correct a bug when gene displayed between product and protein_id
   - mask warnings and decrease default verbosity in convert_tbl2json.py (to avoid error status in Galaxy)
   - add na.rm=TRUE in gom_text geom_point of visualize_snp_v4.R to avoid warnings, and Galaxy error status
+  - change version 0.2.3.3 -> 0.2.3.4
 0.2.3.3:
   - in convert_tbl2json.py, now when no gene found in bed, deduce them from CDS and name them gene_1 .. gene_N (not ORFN 
   because some prot are named ORF2 prot in PCV2, for an ORF that is not the second one!). It avoids to get a bug
