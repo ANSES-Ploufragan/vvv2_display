@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of the vvv2_display distribution (https://github.com/ANSES-Ploufragan/vvv2_display).
-# Copyright (c) 2023 Fabrice Touzain.
+# Copyright (c) 2023- Fabrice Touzain.
 # 
 # This program is free software: you can redistribute it and/or modify  
 # it under the terms of the GNU General Public License as published by  
@@ -32,9 +32,10 @@ frame = inspect.currentframe()
 # debug
 b_test_convert_tbl2json = False # ok 2022 04 14
 b_test = False
-b_check_gene_prot_rec = True
+b_check_gene_prot_rec = False
 # to have protein id found for match (default: deactivated because takes a lot of place)
 b_include_protein_id = False
+b_display_not_treated_cases = False
 
 prog_tag = '[' + os.path.basename(__file__) + ']'
 
@@ -300,14 +301,15 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         ends.append(int(gene_end) + contig_pos_shift)
                         starts_vardict.append(int(gene_start))
                         ends_vardict.append(int(gene_end))
-                        print("\t".join([
-                            prog_tag,
-                            "RECORD: name:" + gene_name,
-                            "type:gene",
-                            "starts:"+gene_start,
-                            "end:"+gene_end,
-                            "contig:"+contig+", line "+str(frame.f_lineno)
-                        ]))
+                        if b_verbose or b_check_gene_prot_rec:
+                            print("\t".join([
+                                prog_tag,
+                                "RECORD: name:" + gene_name,
+                                "type:gene",
+                                "starts:"+gene_start,
+                                "end:"+gene_end,
+                                "contig:"+contig+", line "+str(frame.f_lineno)
+                            ]))
 
                         b_next_is_gene = False                            
                         b_next_is_product = False
@@ -325,7 +327,8 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         b_additional = False
                         m = re.search(r">Feature (\S+)", line)
                         contig = m.group(1)
-                        print(prog_tag + " Treating contig "+contig)
+                        if b_verbose:
+                            print(prog_tag + " Treating contig "+contig)
 
                         # get the index of current contig
                         contig_index = contig_names.index(contig)
@@ -366,15 +369,16 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                     # if so, we replace previously recorded name by current one
                                     names[i] = gene_name + ' ' + names[last_gene_index]
 
-                            # if so, no need to record again
-                            print("\t".join([
-                                prog_tag,
-                                "PASS (already RECORDED with "+names[last_gene_index]+")",
-                                "type:gene",
-                                "starts:"+gene_start,
-                                "end:"+gene_end,
-                                "contig:"+contig+", line "+str(frame.f_lineno)
-                            ]))                       
+                            if b_verbose or b_check_gene_prot_rec:
+                                # if so, no need to record again
+                                print("\t".join([
+                                    prog_tag,
+                                    "PASS (already RECORDED with "+names[last_gene_index]+")",
+                                    "type:gene",
+                                    "starts:"+gene_start,
+                                    "end:"+gene_end,
+                                    "contig:"+contig+", line "+str(frame.f_lineno)
+                                ]))                       
                                 
                         else:
                             # ----------------------------------------------------------
@@ -386,11 +390,12 @@ for annot_f in [pass_annot_f, fail_annot_f]:
 
                                 # print("CDS for line "+line)
 
-                                print(' '.join(['gene',
-                                                gene_start,
-                                                gene_end,
-                                                gene_name])
-                                    )
+                                if b_verbose:
+                                    print(' '.join(['gene',
+                                                    gene_start,
+                                                    gene_end,
+                                                    gene_name])
+                                        )
                                 
                                 # store info of previous line \d+ \d+, gene
                                 chrs.append(contig)
@@ -401,12 +406,13 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                 ends.append(int(gene_end) + contig_pos_shift)
                                 starts_vardict.append(int(gene_start))
                                 ends_vardict.append(int(gene_end))
-                                print("\t".join([prog_tag,
-                                                "RECORD: name:"+gene_name,
-                                                "type:"+types[len(types)-1],
-                                                "starts:"+gene_start,
-                                                "end:"+gene_end,
-                                                "contig:"+contig+ ", line "+str(frame.f_lineno)]))
+                                if b_verbose or b_check_gene_prot_rec:
+                                    print("\t".join([prog_tag,
+                                                    "RECORD: name:"+gene_name,
+                                                    "type:"+types[len(types)-1],
+                                                    "starts:"+gene_start,
+                                                    "end:"+gene_end,
+                                                    "contig:"+contig+ ", line "+str(frame.f_lineno)]))
                             
                         if len(names) != len(types):
                             sys.exit(prog_tag + "[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
@@ -421,11 +427,12 @@ for annot_f in [pass_annot_f, fail_annot_f]:
 
                     # NEW
                     elif line_fields[2] == 'mat_peptide':
-                        print(' '.join(['mat_peptide',
-                                       gene_start,
-                                       gene_end,
-                                       gene_name])
-                              )
+                        if b_verbose:
+                            print(' '.join(['mat_peptide',
+                                        gene_start,
+                                        gene_end,
+                                        gene_name])
+                                )
                         b_next_is_gene = False
                         b_next_is_product = True                        
                         
@@ -466,15 +473,16 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                         # if so, we replace previously recorded name by current one
                                         names[i] = gene_name + ' ' + names[last_gene_index]
 
-                                # if so, no need to record again
-                                print("\t".join([
-                                    prog_tag,
-                                    "PASS (already RECORDED with "+names[last_gene_index]+"): name:" + gene_name,
-                                    "type:gene",
-                                    "starts:"+gene_start,
-                                    "end:"+gene_end,
-                                    "contig:"+contig+", line "+str(frame.f_lineno)
-                                ]))
+                                if b_verbose or b_check_gene_prot_rec:
+                                    # if so, no need to record again
+                                    print("\t".join([
+                                        prog_tag,
+                                        "PASS (already RECORDED with "+names[last_gene_index]+"): name:" + gene_name,
+                                        "type:gene",
+                                        "starts:"+gene_start,
+                                        "end:"+gene_end,
+                                        "contig:"+contig+", line "+str(frame.f_lineno)
+                                    ]))
                                 b_next_is_gene = False                            
                                 b_next_is_product = False
                                 curr_type = 'gene'
@@ -512,14 +520,15 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         ends.append(int(gene_end) + contig_pos_shift)
                         starts_vardict.append(int(gene_start))
                         ends_vardict.append(int(gene_end))
-                        print("\t".join([
-                            prog_tag,
-                            "RECORD: name:" + gene_name,
-                            "type:gene",
-                            "starts:"+gene_start,
-                            "end:"+gene_end,
-                            "contig:"+contig+", line "+str(frame.f_lineno)
-                        ]))
+                        if b_verbose or b_check_gene_prot_rec:
+                            print("\t".join([
+                                prog_tag,
+                                "RECORD: name:" + gene_name,
+                                "type:gene",
+                                "starts:"+gene_start,
+                                "end:"+gene_end,
+                                "contig:"+contig+", line "+str(frame.f_lineno)
+                            ]))
 
                         gene_start = line_fields[0]
                         gene_end   = line_fields[1]
@@ -580,23 +589,25 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                 ends.append(int(gene_end) + contig_pos_shift)
                                 starts_vardict.append(int(gene_start))
                                 ends_vardict.append(int(gene_end))
-                                print("\t".join([
-                                    prog_tag,
-                                    "RECORD: name:" + gene_name,
-                                    "type:gene",
-                                    "starts:"+gene_start,
-                                    "end:"+gene_end,
-                                    "contig:"+contig+", line "+str(frame.f_lineno)
-                                ]))
+                                if b_verbose or b_check_gene_prot_rec:
+                                    print("\t".join([
+                                        prog_tag,
+                                        "RECORD: name:" + gene_name,
+                                        "type:gene",
+                                        "starts:"+gene_start,
+                                        "end:"+gene_end,
+                                        "contig:"+contig+", line "+str(frame.f_lineno)
+                                    ]))
 
                         else:
-                            print("\t".join([
-                                prog_tag,
-                                "MISC_FEATURE:",
-                                "starts:"+misc_feature_start,
-                                "end:"+misc_feature_end,
-                                "contig:"+contig + ", line "+str(frame.f_lineno)
-                            ]))
+                            if b_verbose or b_check_gene_prot_rec:
+                                print("\t".join([
+                                    prog_tag,
+                                    "MISC_FEATURE:",
+                                    "starts:"+misc_feature_start,
+                                    "end:"+misc_feature_end,
+                                    "contig:"+contig + ", line "+str(frame.f_lineno)
+                                ]))
                         
                         b_next_is_gene     = False # added 2024 10 01
                         b_next_is_note     = True
@@ -619,10 +630,26 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                 misc_feature_start,
                                 misc_feature_end
                             ]))
+                    # added 2025 01 27 handle ncRNA when gene is expected
+                    elif line_fields[2] == 'ncRNA':
+                        cds_start = line_fields[0]
+                        cds_end   = line_fields[1]
+                        cds_start = re.sub(non_alphanum, '', cds_start)
+                        cds_end   = re.sub(non_alphanum, '', cds_end)
+                        b_next_is_product = True
+                        b_next_is_gene = False
+                        curr_type = 'rna' # 'CDS'
+                        if b_verbose:
+                            print("\t".join([
+                                "TMP_NC_RNA:"+line_fields[2],
+                                cds_start,
+                                cds_end
+                            ]))
                     # added 2024 09 26 handle note after misc_feature
                     elif line_fields[0] == 'note':
                         note = ' '.join(line_fields[1:])
-                        print("initial note: "+note+", line "+ str(sys._getframe().f_lineno) )    
+                        if b_verbose:
+                            print("initial note: "+note+", line "+ str(sys._getframe().f_lineno) )    
 
                         # print("line_fields 1..3:"+str(line_fields[1:3]))
                         
@@ -640,7 +667,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                                 misc_feature_start,
                                                 misc_feature_end,
                                                 note]))
-                            print("found "+note+", line "+ str(sys._getframe().f_lineno) )    
+                                print("found "+note+", line "+ str(sys._getframe().f_lineno) )    
                             types.append('cds')
                             # types.append(curr_type)                            
                         # -----------------------------
@@ -652,8 +679,9 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                                 misc_feature_end,
                                                 note]))
                             # types.append('misc_feature')
-                            types.append(curr_type)                            
-                            print("found misc_feature "+note+", line "+ str(sys._getframe().f_lineno) )
+                            types.append(curr_type)                   
+                            if b_verbose:         
+                                print("found misc_feature "+note+", line "+ str(sys._getframe().f_lineno) )
                                     
                         # store info
                         chrs.append(contig)
@@ -663,14 +691,15 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         ends.append(int(misc_feature_end)  + contig_pos_shift)
                         starts_vardict.append(int(misc_feature_start))
                         ends_vardict.append(int(misc_feature_end))
-                        print("\t".join([
-                            prog_tag, 
-                            "RECORD: name:"+note,
-                            "type:"+types[-1],
-                            "starts:"+misc_feature_start,
-                            "end:"+misc_feature_end,
-                            "contig:"+contig+", line "+str(frame.f_lineno)
-                        ]))
+                        if b_verbose or b_check_gene_prot_rec:
+                            print("\t".join([
+                                prog_tag, 
+                                "RECORD: name:"+note,
+                                "type:"+types[-1],
+                                "starts:"+misc_feature_start,
+                                "end:"+misc_feature_end,
+                                "contig:"+contig+", line "+str(frame.f_lineno)
+                            ]))
                         note = ''
                         b_next_is_note = False
                         b_next_is_gene = False
@@ -713,13 +742,14 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         ends.append(int(cds_end) + contig_pos_shift)
                         starts_vardict.append(int(cds_start))
                         ends_vardict.append(int(cds_end))
-                        print("\t".join([
-                            prog_tag,
-                            "RECORD: name:"+tmp_name,
-                            "type:cds",
-                            "starts:"+gene_start,
-                            "end:"+gene_end+", line "+str(frame.f_lineno)
-                        ]))
+                        if b_verbose or b_check_gene_prot_rec:
+                            print("\t".join([
+                                prog_tag,
+                                "RECORD: name:"+tmp_name,
+                                "type:cds",
+                                "starts:"+gene_start,
+                                "end:"+gene_end+", line "+str(frame.f_lineno)
+                            ]))
                         product = ''
                         protein_id = ''
                         b_next_is_protein_id = False
@@ -733,7 +763,8 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         b_next_is_product    = False
                         b_next_is_protein_id = False 
                         b_additional         = True
-                        print("Additional section detected")
+                        if b_verbose:
+                            print("Additional section detected")
                         continue
                     elif not b_additional:
 
@@ -753,14 +784,15 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         ends.append(int(gene_end) + contig_pos_shift)
                         starts_vardict.append(int(gene_start))
                         ends_vardict.append(int(gene_end))
-                        print("\t".join([
-                            prog_tag,
-                            "RECORD: name:{gene_name}",
-                            "type:gene",
-                            "starts:"+gene_start,
-                            "end:"+gene_end,
-                            "contig:"+contig + ", line "+str(frame.f_lineno)
-                        ]))
+                        if b_verbose or b_check_gene_prot_rec:
+                            print("\t".join([
+                                prog_tag,
+                                "RECORD: name:{gene_name}",
+                                "type:gene",
+                                "starts:"+gene_start,
+                                "end:"+gene_end,
+                                "contig:"+contig + ", line "+str(frame.f_lineno)
+                            ]))
                         if len(names) != len(types):
                             sys.exit(prog_tag +"[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
                         gene_name  = ''
@@ -781,7 +813,8 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         continue
                     elif len(line_fields) == 2:
                         # means only coordinates because gene longer than CDS
-                        print(prog_tag + " CDS shorter than gene, skip useless coordinates")
+                        if b_verbose:
+                            print(prog_tag + " CDS shorter than gene, skip useless coordinates")
                         continue
                     # -----------------------------------------------------------------------------------
                     # this part until else MUST be useless, but bug found only when b_verbose is True...
@@ -805,20 +838,16 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             names[-1] = gene_name
                         else:
                             sys.exit(prog_tag + " [Error] found 'gene genename' supposed to correct recorded name at previous line, but previous type is "+types[-1]+", not normal, line "+str(frame.f_lineno))
-                        
-                        # print(' '.join(['gene',
-                        #                gene_start,
-                        #                gene_end,
-                        #                gene_name]))
-                        
-                        print("\t".join([
-                            prog_tag, 
-                            "CORRECT: name:" + gene_name,
-                            "type:gene",
-                            "starts:"+gene_start,
-                            "end:"+gene_end,
-                            "contig:"+contig+", line "+str(frame.f_lineno)
-                        ]))
+                                                
+                        if b_verbose or b_check_gene_prot_rec:
+                            print("\t".join([
+                                prog_tag, 
+                                "CORRECT: name:" + gene_name,
+                                "type:gene",
+                                "starts:"+gene_start,
+                                "end:"+gene_end,
+                                "contig:"+contig+", line "+str(frame.f_lineno)
+                            ]))
                         if len(names) != len(types):
                             sys.exit(prog_tag+"[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
                         
@@ -876,15 +905,16 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                     # if so, we replace previously recorded name by current one
                                     names[i] = product + ' ' + names[last_cds_index]
 
-                            # if so, no need to record again
-                            print("\t".join([
-                                prog_tag,
-                                "PASS (already RECORDED with "+names[last_cds_index]+")",
-                                "type:cds",
-                                "starts:"+cds_start,
-                                "end:"+cds_end,
-                                "contig:"+contig+", line "+str(frame.f_lineno)
-                            ]))                       
+                            if b_verbose or b_check_gene_prot_rec:
+                                # if so, no need to record again
+                                print("\t".join([
+                                    prog_tag,
+                                    "PASS (already RECORDED with "+names[last_cds_index]+")",
+                                    "type:cds",
+                                    "starts:"+cds_start,
+                                    "end:"+cds_end,
+                                    "contig:"+contig+", line "+str(frame.f_lineno)
+                                ]))                       
                             product = ''
                             protein_id = ''
                             b_next_is_protein_id = False    
@@ -913,13 +943,14 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             ends.append(int(cds_end) + contig_pos_shift)
                             starts_vardict.append(int(cds_start))
                             ends_vardict.append(int(cds_end))
-                            print("\t".join([
-                                prog_tag,
-                                "RECORD: name:"+tmp_name,
-                                "type:cds",
-                                "starts:"+cds_start,
-                                "end:"+cds_end+", line "+str(frame.f_lineno)
-                            ]))
+                            if b_verbose or b_check_gene_prot_rec:
+                                print("\t".join([
+                                    prog_tag,
+                                    "RECORD: name:"+tmp_name,
+                                    "type:cds",
+                                    "starts:"+cds_start,
+                                    "end:"+cds_end+", line "+str(frame.f_lineno)
+                                ]))
                             product = ''
                             protein_id = ''
                             b_next_is_protein_id = False    
@@ -960,13 +991,14 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         ends.append(int(cds_end) + contig_pos_shift)
                         starts_vardict.append(int(cds_start))
                         ends_vardict.append(int(cds_end))
-                        print("\t".join([
-                            prog_tag,
-                            "RECORD: name:"+tmp_name,
-                            "type:rna",
-                            "starts:"+gene_start,
-                            "end:"+gene_end+", line "+str(frame.f_lineno)
-                        ]))
+                        if b_verbose or b_check_gene_prot_rec:
+                            print("\t".join([
+                                prog_tag,
+                                "RECORD: name:"+tmp_name,
+                                "type:rna",
+                                "starts:"+gene_start,
+                                "end:"+gene_end+", line "+str(frame.f_lineno)
+                            ]))
                         product = ''
                         protein_id = ''
                         continue
@@ -976,16 +1008,35 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         product = product + ' ' + product_str
                         b_next_is_protein_id = True
                         b_next_is_product    = False
-                        print("\t".join([
-                            prog_tag,
-                            "TMP_PRODUCT: product:"+product,
-                            ", line "+str(frame.f_lineno)
-                        ]))
+                        if b_verbose or b_check_gene_prot_rec:
+                            print("\t".join([
+                                prog_tag,
+                                "TMP_PRODUCT: product:"+product,
+                                ", line "+str(frame.f_lineno)
+                            ]))
                         continue
                     elif line_fields[0] == 'exception':
                         # add info between brackets
                         product = product + ' ['+' '.join(line_fields)+']'
                         continue
+
+                    # added 2025 01 23: gene record not needed because gene already recorded
+                    elif line_fields[0] == 'gene':
+                        
+                        if b_verbose or b_check_gene_prot_rec:
+                            # if so, no need to record again
+                            print("\t".join([
+                                prog_tag,
+                                "PASS (already RECORDED new_name '"+names[last_gene_index]+"')",
+                                "type:gene",
+                                "starts:"+gene_start,
+                                "end:"+gene_end,
+                                "contig:"+contig+", line "+str(frame.f_lineno)
+                            ]))
+                        if len(names) != len(types):
+                            sys.exit(prog_tag+"[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
+                        continue
+
                     else:
                         print("expected protein_id")
                         print("line_fields:"+','.join(line_fields))                        
@@ -1021,8 +1072,9 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                                 misc_feature_end,
                                                 note]))
                             # types.append('misc_feature')
-                            types.append(curr_type)                            
-                            print("found misc_feature "+note+", line "+ str(sys._getframe().f_lineno) )
+                            types.append(curr_type)       
+                            if b_verbose:                     
+                                print("found misc_feature "+note+", line "+ str(sys._getframe().f_lineno) )
                                     
                         # store info
                         chrs.append(contig)
@@ -1032,14 +1084,15 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         ends.append(int(misc_feature_end)  + contig_pos_shift)
                         starts_vardict.append(int(misc_feature_start))
                         ends_vardict.append(int(misc_feature_end))
-                        print("\t".join([
-                            prog_tag, 
-                            "RECORD: name:"+note,
-                            "type:"+types[-1],
-                            "starts:"+misc_feature_start,
-                            "end:"+misc_feature_end,
-                            "contig:"+contig+", line "+str(frame.f_lineno)
-                        ]))
+                        if b_verbose or b_check_gene_prot_rec:
+                            print("\t".join([
+                                prog_tag, 
+                                "RECORD: name:"+note,
+                                "type:"+types[-1],
+                                "starts:"+misc_feature_start,
+                                "end:"+misc_feature_end,
+                                "contig:"+contig+", line "+str(frame.f_lineno)
+                            ]))
                         note = ''
                         b_next_is_note = False
                         b_next_is_gene = True # added 2024 09 19
@@ -1094,19 +1147,22 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                 sys.exit("'"+cds_name_2correct+"' or 'similar to "+cds_name_2correct+"' not found in names to correct end position of CDS with STOP codon into, line "+str(sys._getframe().f_lineno))
                                 
                         try:
-                            print(prog_tag + " Search for start:"+str(starts[index2correct])+", line "+str(sys._getframe().f_lineno) )
+                            if b_verbose:
+                                print(prog_tag + " Search for start:"+str(starts[index2correct])+", line "+str(sys._getframe().f_lineno) )
                             # if found, it is a misc_feature, we search first a gene with the same limits to modify too
                             # index_gene_start2correct = starts.index(starts[index2correct])
                             indexes_of_similar_starts = indexlist(starts[index2correct], # item2find
                                                                   starts)                # list_or_string
-                            print("indexes of similar starts:"+str(indexes_of_similar_starts)+", line "+str(sys._getframe().f_lineno) )
+                            if b_verbose:
+                                print("indexes of similar starts:"+str(indexes_of_similar_starts)+", line "+str(sys._getframe().f_lineno) )
                             # index_gene_end2correct = ends.index(ends[index2correct])
                             
                             for index2check in indexes_of_similar_starts:
                                 # check if end is also the same for the given index (compared to value of index to correct)
                                 if( (ori_end <= ends[index2check])and
                                     (types[index2check] in material_type_list) ):
-                                    print("'"+names[index2check]+"' with new end "+str(cds_stop_corrected)+" (replace "+str(ends[index2check])+")")
+                                    if b_verbose:
+                                        print("'"+names[index2check]+"' with new end "+str(cds_stop_corrected)+" (replace "+str(ends[index2check])+")")
                                     ends[index2check] = cds_stop_corrected
                                     corrected_name = names[index2check]
                                 else:
@@ -1151,7 +1207,8 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                     b_additional = False
                     m = re.search(r">Feature (\S+)", line)
                     contig = m.group(1)
-                    print(prog_tag + " Treating contig "+contig)
+                    if b_verbose:
+                        print(prog_tag + " Treating contig "+contig)
 
                     # get the index of current contig
                     contig_index = contig_names.index(contig)
@@ -1169,7 +1226,8 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         # record gene info: correct previous recorded gene name (gene_n)
                         if re.match(r'^gene_', gene_name) or gene_name == '': 
                             gene_name = ' '.join(line_fields[1:])
-                            print("gene_name set to "+gene_name+", line "+str(frame.f_lineno))
+                            if b_verbose:
+                                print("gene_name set to "+gene_name+", line "+str(frame.f_lineno))
                             
                         # ----------------------------------------------------------
                         # check if previous gene is the same with a better name
@@ -1188,24 +1246,27 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                     if re.match('gene_', names[last_gene_index]):
                                         # if so, we replace previously recorded name by current one
                                         names[last_gene_index] = gene_name
-                                        print("previous gene_name renamed to "+gene_name+", line "+str(frame.f_lineno))
+                                        if b_verbose:
+                                            print("previous gene_name renamed to "+gene_name+", line "+str(frame.f_lineno))
                                     # elif names[last_gene_index] == '':
                                     #     # if so, we replace previously missing name by current one
                                     #     names[last_gene_index] = gene_name
                                     elif re.match('similar to ', names[last_gene_index]):
                                         # if so, we replace previously recorded name by current one
                                         names[last_gene_index] = gene_name + ' ' + names[last_gene_index]
-                                        print("previous gene_name renamed to "+gene_name+", line "+str(frame.f_lineno))
+                                        if b_verbose:
+                                            print("previous gene_name renamed to "+gene_name+", line "+str(frame.f_lineno))
 
-                                # if so, no need to record again
-                                print("\t".join([
-                                    prog_tag,
-                                    "PASS (already RECORDED new_name '"+names[last_gene_index]+"')",
-                                    "type:gene",
-                                    "starts:"+gene_start,
-                                    "end:"+gene_end,
-                                    "contig:"+contig+", line "+str(frame.f_lineno)
-                                ]))
+                                if b_verbose or b_check_gene_prot_rec:
+                                    # if so, no need to record again
+                                    print("\t".join([
+                                        prog_tag,
+                                        "PASS (already RECORDED new_name '"+names[last_gene_index]+"')",
+                                        "type:gene",
+                                        "starts:"+gene_start,
+                                        "end:"+gene_end,
+                                        "contig:"+contig+", line "+str(frame.f_lineno)
+                                    ]))
                                 b_next_is_gene = False                            
                                 b_next_is_product = False
                                 curr_type = 'gene'
@@ -1233,14 +1294,15 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         ends.append(int(gene_end) + contig_pos_shift)
                         starts_vardict.append(int(gene_start))
                         ends_vardict.append(int(gene_end))
-                        print("\t".join([
-                            prog_tag,
-                            "RECORD: name:" + gene_name,
-                            "type:gene",
-                            "starts:"+gene_start,
-                            "end:"+gene_end,
-                            "contig:"+contig+", line "+str(frame.f_lineno)
-                        ]))
+                        if b_verbose or b_check_gene_prot_rec:
+                            print("\t".join([
+                                prog_tag,
+                                "RECORD: name:" + gene_name,
+                                "type:gene",
+                                "starts:"+gene_start,
+                                "end:"+gene_end,
+                                "contig:"+contig+", line "+str(frame.f_lineno)
+                            ]))
 
                         b_next_is_gene = False                            
                         b_next_is_product = False
@@ -1268,12 +1330,6 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             gene_end,
                             "for line "+str(line_fields)
                         ]))
-                    print("\t".join([
-                        "TMP_GENE:"+line_fields[2],
-                        gene_start,
-                        gene_end,
-                        "for line "+str(line_fields)
-                    ]))
 
                 elif line_fields[2] == 'CDS':
                     cds_start = line_fields[0]
@@ -1318,12 +1374,6 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             misc_feature_start,
                             misc_feature_end
                         ]))
-                    print("\t".join([
-                        "TMP_MISC_FEATURE:"+line_fields[2],
-                        misc_feature_start,
-                        misc_feature_end
-                    ]))
-
 
                 elif line_fields[2] == 'mat_peptide':
                     cds_start = line_fields[0]
@@ -1365,7 +1415,8 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                     b_next_is_protein_id = False 
 
                 else:
-                    print(prog_tag + " Case not treated for line "+line+", line "+str(sys._getframe().f_lineno))
+                    if b_display_not_treated_cases:
+                        print(prog_tag + " Case not treated for line "+line+", line "+str(sys._getframe().f_lineno))
 
             except IndexError:
                 print("Exception IndexError for line '"+line+"', line "+str(sys._getframe().f_lineno))

@@ -607,7 +607,8 @@ def __main__():
     threshold = "%.2f" % (var_significant_threshold / 100) #"0.07"
     
     # png_var_f = f"{ech}_graphic_variant.png"
-    cmd = " ".join(["R --vanilla --quiet --args",
+    # Use --no-echo instead of --slave in R 4.0+
+    cmd = " ".join(["R --vanilla --quiet --no-echo --args",
                 snp_loc_f, 
                 contig_limits_f,
                 contig_names_f,
