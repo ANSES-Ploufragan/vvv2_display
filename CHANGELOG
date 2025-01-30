@@ -1,3 +1,6 @@
+0.2.3.5:
+  - bug correction: in convert_tbl2json.py, modif to take into account of vadr flu annotation (sig_peptide, note just after gene, etc)
+  - change version 0.2.3.4 -> 0.2.3.5
 0.2.3.4:
   - bug correction: in convert_tbl2json.py, handle case of ncRNA when gene is expected (for dengue example)
   - correct a bug when gene displayed between product and protein_id
