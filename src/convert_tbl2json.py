@@ -49,7 +49,8 @@ bed_vardict_annot_f  = '' # out same as previous but positions on contigs not sh
 
 material_type_list = ['gene',
                       'misc_feature',
-                      'mat_peptide']
+                      'mat_peptide',
+                      'sig_peptide']
 material_type = '|'.join(material_type_list)
 
 parser = argparse.ArgumentParser()
@@ -445,6 +446,26 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         gene_name = ''
                         continue
                     
+                    # added 2025 01 29 to handle sig_peptide of vadr flu annotation
+                    elif line_fields[2] == 'sig_peptide':
+                        if b_verbose:
+                            print(' '.join(['sig_peptide',
+                                        gene_start,
+                                        gene_end,
+                                        gene_name])
+                                )
+                        b_next_is_gene = False
+                        b_next_is_product = True                        
+                        
+                        # ask to treat current mat_peptide info
+                        cds_start = line_fields[0]
+                        cds_end = line_fields[1]
+                        cds_start = re.sub(non_alphanum, '', cds_start)
+                        cds_end   = re.sub(non_alphanum, '', cds_end)
+                        curr_type = 'sig_peptide'
+                        gene_name = ''
+                        continue
+
                     # section added 2024 09 24, when 2 gene section are following each other
                     # without any other description
                     elif line_fields[2] == 'gene':
@@ -864,6 +885,37 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         b_next_is_gene = False
                         b_next_is_product = True
                         continue
+                    elif (len(line_fields) == 3) and (line_fields[2] == 'mat_peptide'):
+                        cds_start = line_fields[0]
+                        cds_end   = line_fields[1]
+                        cds_start = re.sub(non_alphanum, '', cds_start)
+                        cds_end   = re.sub(non_alphanum, '', cds_end)
+                        b_next_is_product = True
+                        b_next_is_gene = False
+                        curr_type = 'CDS'
+                        if b_verbose:
+                            print("\t".join([
+                                "TMP_MAT_PEPTIDE:"+line_fields[2],
+                                cds_start,
+                                cds_end
+                            ]))
+                        continue
+                    # added 2025 01 29 to handle sig_peptide in vadr flu annotations
+                    elif line_fields[2] == 'sig_peptide':
+                        cds_start = line_fields[0]
+                        cds_end   = line_fields[1]
+                        cds_start = re.sub(non_alphanum, '', cds_start)
+                        cds_end   = re.sub(non_alphanum, '', cds_end)
+                        b_next_is_product = True
+                        b_next_is_gene = False
+                        curr_type = 'CDS'
+                        if b_verbose:
+                            print("\t".join([
+                                "TMP_SIG_PEPTIDE:"+line_fields[2],
+                                cds_start,
+                                cds_end
+                            ]))
+                        continue
                     else:
                         print("line_fields:"+str(line_fields)+", line "+ str(sys._getframe().f_lineno) )
                         sys.exit(prog_tag + "[Error] Case not encountered line "+ str(sys._getframe().f_lineno) )
@@ -956,8 +1008,28 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             b_next_is_protein_id = False    
                             b_next_is_gene = True # added 2024 10 01                    
                             continue
-
-                    if line_fields[0] == 'ncRNA_class':
+                    # added 2025 01 29 to handle function provided in flu vadr annotations
+                    elif line_fields[0] == 'function':
+                        if b_verbose or b_check_gene_prot_rec:
+                            print("\t".join([
+                                    prog_tag,
+                                    "function found:",
+                                    ",".join(line_fields),
+                                    ", line "+str(frame.f_lineno)
+                            ]))
+                        continue
+                    # added 2025 01 29 to handle note provided in flu vadr annotations just after gene
+                    # do not bring usefull info
+                    elif line_fields[0] == 'note':
+                        if b_verbose or b_check_gene_prot_rec:
+                            print("\t".join([
+                                    prog_tag,
+                                    "note found:",
+                                    ",".join(line_fields),
+                                    ", line "+str(frame.f_lineno)
+                            ]))
+                        continue
+                    elif line_fields[0] == 'ncRNA_class':
                         protein_id = line_fields[1]
                         tmp_name = protein_id
                         b_next_is_protein_id = False
@@ -1316,7 +1388,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
 
                         continue
 
-                elif line_fields[2] == 'gene':
+                elif (len(line_fields) == 3)and(line_fields[2] == 'gene'):
                     gene_start = line_fields[0]
                     gene_end   = line_fields[1]
                     gene_start = re.sub(non_alphanum, '', gene_start)
@@ -1331,7 +1403,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             "for line "+str(line_fields)
                         ]))
 
-                elif line_fields[2] == 'CDS':
+                elif (len(line_fields) == 3)and(line_fields[2] == 'CDS'):
                     cds_start = line_fields[0]
                     cds_end   = line_fields[1]
                     cds_start = re.sub(non_alphanum, '', cds_start)
@@ -1346,7 +1418,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             cds_end
                         ]))
                         
-                elif line_fields[2] == 'ncRNA':
+                elif (len(line_fields) == 3)and(line_fields[2] == 'ncRNA'):
                     cds_start = line_fields[0]
                     cds_end   = line_fields[1]
                     cds_start = re.sub(non_alphanum, '', cds_start)
@@ -1361,7 +1433,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             cds_end
                         ]))
 
-                elif line_fields[2] == 'misc_feature':
+                elif (len(line_fields) == 3)and(line_fields[2] == 'misc_feature'):
                     misc_feature_start = line_fields[0]
                     misc_feature_end   = line_fields[1]
                     misc_feature_start = re.sub(non_alphanum, '', misc_feature_start)
@@ -1375,7 +1447,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             misc_feature_end
                         ]))
 
-                elif line_fields[2] == 'mat_peptide':
+                elif (len(line_fields) == 3)and(line_fields[2] == 'mat_peptide'):
                     cds_start = line_fields[0]
                     cds_end   = line_fields[1]
                     cds_start = re.sub(non_alphanum, '', cds_start)
@@ -1390,7 +1462,23 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             cds_end
                         ]))
 
-                elif line_fields[2] == 'stem_loop':
+                # added 2025 01 29 to handle sig_peptide in vadr flu annotations
+                elif (len(line_fields) == 3)and(line_fields[2] == 'sig_peptide'):
+                    cds_start = line_fields[0]
+                    cds_end   = line_fields[1]
+                    cds_start = re.sub(non_alphanum, '', cds_start)
+                    cds_end   = re.sub(non_alphanum, '', cds_end)
+                    b_next_is_product = True
+                    b_next_is_gene = False
+                    curr_type = 'CDS'
+                    if b_verbose:
+                        print("\t".join([
+                            "TMP_SIG_PEPTIDE:"+line_fields[2],
+                            cds_start,
+                            cds_end
+                        ]))
+
+                elif (len(line_fields) == 3)and(line_fields[2] == 'stem_loop'):
                     misc_feature_start = line_fields[0]
                     misc_feature_end   = line_fields[1]
                     misc_feature_start = re.sub(non_alphanum, '', misc_feature_start)

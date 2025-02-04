@@ -1,3 +1,6 @@
+0.2.3.5:
+  - bug correction: in convert_tbl2json.py, modif to take into account of vadr flu annotation (sig_peptide, note just after gene, etc)
+  - change version 0.2.3.4 -> 0.2.3.5
 0.2.3.4:
   - bug correction: in convert_tbl2json.py, handle case of ncRNA when gene is expected (for dengue example)
   - correct a bug when gene displayed between product and protein_id
@@ -6,8 +9,8 @@
   - change version 0.2.3.3 -> 0.2.3.4
 0.2.3.3:
   - in convert_tbl2json.py, now when no gene found in bed, deduce them from CDS and name them gene_1 .. gene_N (not ORFN 
-  because some prot are named ORF2 prot in PCV2, for an ORF that is not the second one!). It avoids to get a bug
-  for PCV2 viruses for instance
+    because some prot are named ORF2 prot in PCV2, for an ORF that is not the second one!). It avoids to get a bug
+    for PCV2 viruses for instance
   - in convert_vcffile_to_readablefile2.py, NOW handle genes in reverse orientation (did not display genes/prot labels previously)
   - change version 0.2.3.2 -> 0.2.3.3
 0.2.3.2:
@@ -63,6 +66,5 @@
   - pyvcf replaced by pysam to improve compatibility / long term maintening
   - consequence: PYTHON_SCRIPTS/convert_vcffile_to_readablefile.py replaced by PYTHON_SCRIPTS/convert_vcffile_to_readablefile2.py
   - vvv2.py renamed vvv2_display.py (because this program replace only the visualization part of vvv)
-
 0.1.0-alpha: first version
 
