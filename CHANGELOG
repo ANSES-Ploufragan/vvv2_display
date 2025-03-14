@@ -1,3 +1,7 @@
+0.2.3.6:
+  - add '2> /dev/null' after convert_vcffile_to_readablefile2.py call to avoid useless error msg
+    returned by pysam when contig name is not included in vcf file headers. Expected silent error
+    in Galaxy (with vvv2_display.xml wrapper)
 0.2.3.5:
   - bug correction: in convert_tbl2json.py, modif to take into account of vadr flu annotation (sig_peptide, note just after gene, etc)
   - change version 0.2.3.4 -> 0.2.3.5
