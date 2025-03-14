@@ -539,7 +539,8 @@ def __main__():
                     "--json", json_annot_f,
                     "--out", snp_loc_f,
                     "--outs", snp_loc_summary_f,
-                    "--threshold", threshold])
+                    "--threshold", threshold,
+                    "2> /dev/null"])
     print(prog_tag + " cmd:" + cmd)
 
     if b_test_convert_vcffile_to_readable:
