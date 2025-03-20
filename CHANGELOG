@@ -1,3 +1,7 @@
+0.2.3.7:
+  - add '/dev/null' after call of visualize...R in vvv2_display.py to avoid warnings of json lite about R version used 
+  - README: change citation order and description
+  - change version 0.2.3.6 -> 0.2.3.7
 0.2.3.6:
   - add '2> /dev/null' after convert_vcffile_to_readablefile2.py call to avoid useless error msg
     returned by pysam when contig name is not included in vcf file headers. Expected silent error
