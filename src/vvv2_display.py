@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/home/touzain/miniforge3/envs/vvv2-display-0.2.3.7/bin/python
 # -*- coding: utf-8 -*-
 #
 # This file is part of the vvv2_display distribution (https://github.com/ANSES-Ploufragan/vvv2_display).
@@ -623,9 +623,9 @@ def __main__():
         cmd = cmd + " " + cov_depth_corr_f + " "
     
     if b_verbose:
-        cmd = cmd + " ".join([" < ", r_script, " > /dev/null"])
+        cmd = cmd + " ".join([" < ", r_script, " 2> /dev/null"])
     else:
-        cmd = cmd + " ".join([" < ", r_script])
+        cmd = cmd + " ".join([" < ", r_script, " > /dev/null 2>&1"])
     print(prog_tag + " cmd:" + cmd)
 
     if b_test_visualize_snp_v4:
