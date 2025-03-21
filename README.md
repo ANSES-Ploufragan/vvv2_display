@@ -3,7 +3,8 @@
 # Description
 
 Tools to create:
-- a .png image file describing all variants (obtained from vardict-java variant caller) alongside a genome/assembly (to provide) with their proportion (ordinates), with CDS descriptions (obtained from vadr annotator). At the top of the figure can be displayed the coverage depth repartition (if `-o cov_depth_f` option is provided).
+- a _.png_ image file describing all variants (obtained from vardict-java variant caller) alongside a genome/assembly (to provide) with their proportion (ordinates), with CDS descriptions (obtained from vadr annotator). At the top of the figure can be displayed the coverage depth repartition (if `-o cov_depth_f` option is provided).
+- a _.tsv_ file describing all details of significant variants (according to the proportion threshold chosen by the user, default: 7 percents)
 
 Python/R scripts and Galaxy wrapper to use them.
 
