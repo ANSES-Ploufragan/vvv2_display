@@ -1,4 +1,4 @@
-#!/home/touzain/miniforge3/envs/vvv2-display-0.2.3.7/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # This file is part of the vvv2_display distribution (https://github.com/ANSES-Ploufragan/vvv2_display).
