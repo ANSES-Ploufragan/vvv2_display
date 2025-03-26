@@ -1,3 +1,7 @@
+0.2.3.8:
+  - bug correction: correct shebang of vvv2_display.py du to using WSL
+  - shorten prot description (max 40 letters) to allow better display (and no gene legend diseapearing on the left due to long prot legend)
+  - change version 0.2.3.7 -> 0.2.3.8
 0.2.3.7:
   - add '/dev/null' after call of visualize...R in vvv2_display.py to avoid warnings of json lite about R version used 
   - README: change citation order and description

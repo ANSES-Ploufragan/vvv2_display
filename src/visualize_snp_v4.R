@@ -19,6 +19,8 @@ library(cowplot)
 library(stringr)
 library(jsonlite) # to read json
 b_verbose <- FALSE
+# max string length for protein legends, to avoid genes legend disappear on the left of the figure
+max_str_l = 40
 
 args <- commandArgs(TRUE) # all arguments are character types
 b_log_scale <- TRUE # default value, modified bar args[7]
@@ -265,6 +267,10 @@ replacement <- function(x){
   replaced = str_replace_all(replaced, "dependent","dep.")  # remove useless annotations
   replaced = str_replace_all(replaced, "frameshift","fr.shift")  # remove useless annotations
   replaced = gsub(" metal binding [A-Za-z/]+","", replaced)  # remove useless annotations
+  if( nchar(replaced) >= max_str_l ){
+    replaced = str_sub(replaced, 1, max_str_l)
+    str_sub(replaced, max_str_l -2, max_str_l) <- '...'
+  }
   return( replaced )
 }
 
