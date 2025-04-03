@@ -1600,7 +1600,7 @@ print("creates "+json_annot_f+" file")
 with open(json_annot_f, 'w+') as f:
     f.write("{\"genomesize\": "+ genome_length +", ")
     if len(chrs) == 1:
-        f.write(f"\"virus_id\": \""+contig+"\", ")
+        f.write("\"virus_id\": \""+contig+"\", ")
     else:
         f.write("\"virus_id\": \"unkown\", ")
     b_first_cds_found = False
