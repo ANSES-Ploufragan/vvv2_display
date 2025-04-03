@@ -18,16 +18,16 @@
         <param type="data" name="cov_depth" format="txt" />
     </inputs>
     <outputs>
-        <data name="snp_img" format="png" />
-        <data name="snp_loc_summary" format="txt" />
+        <data name="snp_img" format="png" label="png image showing variants"/>
+        <data name="snp_loc_summary" format="tabular" label="tsv file of significant variants only"/>
 	<!-- intermediate output files added for Galaxy compatibility -->
-        <data name="snp_loc" format="txt" />
-        <data name="json_annot" format="json" />
-        <data name="bed_annot" format="bed" />
-        <data name="correct_vcf" format="vcf" />
-        <data name="contig_limits" format="txt" />
+        <data name="snp_loc" format="txt" hidden="true"/>
+        <data name="json_annot" format="json" hidden="true"/>
+        <data name="bed_annot" format="bed" hidden="true"/>
+        <data name="correct_vcf" format="vcf" hidden="true"/>
+        <data name="contig_limits" format="txt" hidden="true"/>
+        <data name="cov_depth_corr" format="txt" hidden="true"/>
 	<!-- end intermediate output files added for Galaxy compatibility -->		
-        <data name="cov_depth_corr" format="txt" />
     </outputs>
     <tests>
       <test>
@@ -37,15 +37,15 @@
             <param name="vardict_vcf" value="test_vvv2_display/res_vardict.vcf"/>
             <param name="var_significant_thres" value="7"/>
             <param name="cov_depth_scale" value="test_vvv2_display/res_covdepth.txt" />
-            <output name="snp_img" file="test_vvv2_display/res_snp.png"/>	    
-            <output name="snp_loc_summary" file="test_vvv2_display/res_snp_summary.txt"/>
+            <output name="snp_img" file="test_vvv2_display/res_snp.png" ftype="png"/>	    
+            <output name="snp_loc_summary" file="test_vvv2_display/res_snp_summary.tsv" ftype="tabular"/>
 	          <!-- intermediate output files -->
-            <output name="snp_loc" file="test_vvv2_display/res_snp.txt"/>
-	          <output name="json_annot" file="test_vvv2_display/res_vadr.json"/>
-            <output name="bed_annot" file="test_vvv2_display/res_vadr.4vardict.bed"/>
-            <output name="correct_vcf" file="test_vvv2_display/res_correct.vcf"/>
-            <output name="contig_limits" file="test_vvv2_display/contig_limits.txt"/>
-            <output name="cov_depth_corr" file="test_vvv2_display/res_covdepth_corrected.txt"/>
+            <output name="snp_loc" file="test_vvv2_display/res_snp.txt" ftype="txt"/>
+	          <output name="json_annot" file="test_vvv2_display/res_vadr.json" ftype="json"/>
+            <output name="bed_annot" file="test_vvv2_display/res_vadr.4vardict.bed" ftype="bed"/>
+            <output name="correct_vcf" file="test_vvv2_display/res_correct.vcf" ftype="vcf"/>
+            <output name="contig_limits" file="test_vvv2_display/contig_limits.txt" ftype="txt"/>
+            <output name="cov_depth_corr" file="test_vvv2_display/res_covdepth_corrected.txt" ftype="txt"/>
 	    <!-- end intermediate output files -->	    
       </test>
     </tests>
