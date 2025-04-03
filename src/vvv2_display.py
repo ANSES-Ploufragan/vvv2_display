@@ -127,10 +127,10 @@ def __main__():
                         help="[optional] out: text file of coverage depths with cumulated position in case of several contigs, for display (tmp file, for galaxy compatibility)",
                         metavar="FILE")                       
     parser.add_argument("-t", "--snp_loc_f", dest='snp_loc_f',
-                        help="[optional] out: variant description for relevant positions, txt file (if not provided, file name deduced from png name)",
+                        help="[optional] out: variant description for relevant positions, tsv file (if not provided, file name deduced from png name)",
                         metavar="FILE")  
     parser.add_argument("-u", "--snp_loc_summary_f", dest='snp_loc_summary_f',
-                        help="[optional] out: variant description for relevant positions, txt file (if not provided, file name deduced from png name)",
+                        help="[optional] out: variant description for relevant positions, tsv file (if not provided, file name deduced from png name)",
                         metavar="FILE")  
     parser.add_argument("-j", "--json_f", dest='json_annot_f',
                         help="[Optional] out (tmp out file for galaxy compatibility, no need in other cases): vadr annotation converted to json",
@@ -218,7 +218,7 @@ def __main__():
                          " - vadr assembly annotations",
                          "out:",
                          " - png file (image of SNP proportion alongside the assembly with CDS positions)",
-                         " - txt file with variant calling summary, location in CDS and surround DNA sequence.\n"]))
+                         " - tsv file with variant calling summary, location in CDS and surround DNA sequence.\n"]))
         parser.print_help()
         print(prog_tag + "[Error] we found "+str(len(sys.argv)) +
               " arguments, exit line "+str(frame.f_lineno))
@@ -251,11 +251,18 @@ def __main__():
         if args.snp_loc_summary_f is not None:
             snp_loc_summary_f = os.path.abspath(args.snp_loc_summary_f)
                    
-        if( (args.cov_depth_f is not None) and (os.path.isfile(args.cov_depth_f)) ):
-            cov_depth_f = os.path.abspath(args.cov_depth_f)
-            b_cov_depth_display = True
+        if (args.cov_depth_f is not None):
+            if os.path.isfile(args.cov_depth_f):
+                cov_depth_f = os.path.abspath(args.cov_depth_f)
+                b_cov_depth_display = True
+                print(prog_tag + " b_cov_depth_display is True due to file "+args.cov_depth_f+", line "+str(frame.f_lineno))
+            else:
+                b_cov_depth_display = False
+                print(prog_tag + " b_cov_depth_display is False due to file "+args.cov_depth_f+" NOT A FILE, line "+str(frame.f_lineno))
         else:
             b_cov_depth_display = False
+            print(prog_tag + " b_cov_depth_display is False due to file args.cov_depth_f None, line "+str(frame.f_lineno))
+
         if args.b_log_scale:
             b_log_scale_int   = 1
         else:
@@ -308,7 +315,9 @@ def __main__():
         if args.b_verbose is not None:
             b_verbose = args.b_verbose
         print(prog_tag + " arguments checked... line "+str(frame.f_lineno))
-
+    else:
+        # all tests include cov depth graph
+        b_cov_depth_display = True
 
     # ------------------------------------------------------------------
     # TEST for vvv2_display
@@ -517,15 +526,15 @@ def __main__():
         # vardict_vcf_f = test_dir + "/res_vardict.vcf"  # from vardict results
         correct_vcf_f     = test_dir + "/res_correct.vcf"                  
         json_annot_f      = test_dir + "/res_vadr.json"
-        snp_loc_f         = test_dir + "/res_snp.txt"
-        snp_loc_summary_f = test_dir + "/res_snp_summary.txt"
+        snp_loc_f         = test_dir + "/res_snp.tsv"
+        snp_loc_summary_f = test_dir + "/res_snp_summary.tsv"
 
     if(snp_loc_f == ''):
        snp_loc_f = vardict_vcf_f
-       snp_loc_f = re.sub(r'\.[^\.]+$', '_snp.txt', snp_loc_f)
+       snp_loc_f = re.sub(r'\.[^\.]+$', '_snp.tsv', snp_loc_f)
     if(snp_loc_summary_f == ''):   
        snp_loc_summary_f = vardict_vcf_f
-       snp_loc_summary_f = re.sub(r'\.[^\.]+$', '_snp_summary.txt', snp_loc_summary_f)
+       snp_loc_summary_f = re.sub(r'\.[^\.]+$', '_snp_summary.tsv', snp_loc_summary_f)
       
     # vcf file from vardict
     # json annotation file deduced from vadr, later vigor4(5?)
@@ -554,8 +563,8 @@ def __main__():
     # ------------------------------------------------------------------
 
     # creates corrected cov depth file
+    print(prog_tag + " b_cov_depth_display:"+str(b_cov_depth_display)+ ", line " + str(frame.f_lineno))
     if b_cov_depth_display:
-        print("b_cov_depth_display:"+str(b_cov_depth_display)+ ", line " + str(frame.f_lineno))
         if b_test_correct_covdepth_f and (not b_test_vvv2_display):
             cov_depth_f = test_dir + "/res_vvv2_covdepth.txt"
             cov_depth_corr_f = test_dir + "/res_vvv2_covdepth_corrected.txt"
@@ -580,24 +589,25 @@ def __main__():
         else:
             print(prog_tag + " cmd:" + cmd)
             os.system(cmd)
-
+    
     # ------------------------------------------------------------------
     # creates png graphic of variants from snp file and threshold
     # ------------------------------------------------------------------
     if b_test_visualize_snp_v4:
         # # COMPLETE GENOME
-        # snp_loc_f =  test_dir + "/res2_snp.txt"
-        # snp_loc_summary_f =  test_dir + "/res2_snp_summary.txt"
+        # snp_loc_f =  test_dir + "/res2_snp.tsv"
+        # snp_loc_summary_f =  test_dir + "/res2_snp_summary.tsv"
         # png_var_f =  test_dir + "/res2_snp.png"
         # CONTIGS
-        snp_loc_f         = test_dir + "/res_snp.txt"
-        snp_loc_summary_f = test_dir + "/res_snp_summary.txt"
+        snp_loc_f         = test_dir + "/res_snp.tsv"
+        snp_loc_summary_f = test_dir + "/res_snp_summary.tsv"
         json_annot_f      = test_dir + "/res_vadr.json"
         png_var_f         = test_dir + "/res_snp.png"
         contig_limits_f   = test_dir + "/contig_limits.txt"
         contig_names_f    = test_dir + "/contig_names.txt"
         b_log_scale_int   = 1
-        b_log_scale       = str(b_log_scale_int)
+        b_log_scale_str   = str(b_log_scale_int)
+        b_log_scale       = True
         
     if(png_var_f == ''):
        png_var_f = snp_loc_f
