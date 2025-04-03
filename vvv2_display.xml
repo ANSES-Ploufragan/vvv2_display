@@ -36,7 +36,8 @@
             <param name="vadr_seqstat" value="test_vvv2_display/res_vadr.seqstat"/>
             <param name="vardict_vcf" value="test_vvv2_display/res_vardict.vcf"/>
             <param name="var_significant_thres" value="7"/>
-            <param name="cov_depth_scale" value="test_vvv2_display/res_covdepth.txt" />
+            <param name="cov_depth_scale" value="-y" />
+            <param name="cov_depth" value="test_vvv2_display/res_covdepth.txt" />
             <output name="snp_img" file="test_vvv2_display/res_snp.png" ftype="png"/>	    
             <output name="snp_loc_summary" file="test_vvv2_display/res_snp_summary.tsv" ftype="tabular"/>
 	          <!-- intermediate output files -->
