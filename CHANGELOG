@@ -1,3 +1,6 @@
+0.2.3.9:
+  - vvv2_display.py: correct str conversion of an option
+  - vvv2_display.xml: add missing parameter, correct exiting one. Set useless output as 'hidden'
 0.2.3.8:
   - bug correction: correct shebang of vvv2_display.py du to using WSL
   - shorten prot description (max 40 letters) to allow better display (and no gene legend diseapearing on the left due to long prot legend)
