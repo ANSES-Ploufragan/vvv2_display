@@ -1,3 +1,9 @@
+0.2.4.0:
+  - vvv2_display.xml: add missing parameter contig_names
+  - vvv2_display.py: change max param number from 30 to 32. Comment unlinking temporary files contig_limits.txt and contig_names.txt to
+    have galaxy compatibility (needed for the wrapper)
+  - change version 0.2.3.9 -> 0.2.4.0
+  - README.md: add link to vadr Porcine Circo Virus database of zenodo with its doi
 0.2.3.9:
   - vvv2_display.py: correct str conversion of an option
   - vvv2_display.xml: add missing parameter, correct exiting one. Set useless output as 'hidden'
