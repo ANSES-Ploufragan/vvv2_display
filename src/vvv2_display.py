@@ -210,7 +210,7 @@ def __main__():
         # print(f"b_test_convert_tbl2json:{b_test_convert_tbl2json}")    
 
     if ((not b_test)and
-        ((len(sys.argv) < 9) or (len(sys.argv) > 30))):
+        ((len(sys.argv) < 9) or (len(sys.argv) > 32))):
         print("\n".join([prog_tag,
                          "Aim: Display of SNP proportions, annotations, for an assembly",
                          "in:", 
@@ -649,10 +649,11 @@ def __main__():
     print(png_var_f + " file created")
     
     # remove useless file
-    if os.path.isfile(contig_limits_f):
-        os.unlink(contig_limits_f)
-    if os.path.isfile(contig_names_f):
-        os.unlink(contig_names_f)
+    # MUST NOT REMOVE FOR GALAXY COMPATIBILITY
+    # if os.path.isfile(contig_limits_f):
+    #    os.unlink(contig_limits_f)
+    # if os.path.isfile(contig_names_f):
+    #    os.unlink(contig_names_f)
 
 ##### MAIN END
 if __name__=="__main__":__main__()
