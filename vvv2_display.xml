@@ -21,12 +21,12 @@
         <data name="snp_img" format="png" label="png image showing variants"/>
         <data name="snp_loc_summary" format="tabular" label="tsv file of significant variants only"/>
 	<!-- intermediate output files added for Galaxy compatibility -->
-        <data name="snp_loc" format="txt" hidden="true"/>
-        <data name="json_annot" format="json" hidden="true"/>
-        <data name="bed_annot" format="bed" hidden="true"/>
-        <data name="correct_vcf" format="vcf" hidden="true"/>
-        <data name="contig_limits" format="txt" hidden="true"/>
-        <data name="cov_depth_corr" format="txt" hidden="true"/>
+        <data name="snp_loc" format="txt" hidden="true" label="tsv file of all variants"/>
+        <data name="json_annot" format="json" hidden="true" label="json file of annotations"/>
+        <data name="bed_annot" format="bed" hidden="true" label="bed file of of annotations"/>
+        <data name="correct_vcf" format="vcf" hidden="true" label="vcf file of variants corrected for positions when multi contigs"/>
+        <data name="contig_limits" format="txt" hidden="true" label="txt file with contig limits"/>
+        <data name="cov_depth_corr" format="txt" hidden="true" label="txt file with pos and cov depth, pos corrected when multi contigs"/>
 	<!-- end intermediate output files added for Galaxy compatibility -->		
     </outputs>
     <tests>
