@@ -1,9 +1,9 @@
-<tool id="vvv2_display" name="vvv2_display: Display SNP proportions and CDS of an assembly in png image" version="0.2.3.9" python_template_version="3.9">
+<tool id="vvv2_display" name="vvv2_display: Display SNP proportions and CDS of an assembly in png image" version="0.2.4.0" python_template_version="3.9">
     <requirements>
-      <requirement type="package" version="0.2.3.9">vvv2_display</requirement>	      
+      <requirement type="package" version="0.2.4.0">vvv2_display</requirement>	      
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-       vvv2_display.py -f '$vadr_fail_annotation' -p '$vadr_pass_annotation' -s '$vadr_seqstat' -n '$vardict_vcf' -r '$snp_img' -w '$var_significant_thres' -o '$cov_depth' -e '$cov_depth_corr' -t '$snp_loc' -u '$snp_loc_summary' -j '$json_annot' -k '$bed_annot' -l '$correct_vcf' -m '$contig_limits' $cov_depth_scale
+       vvv2_display.py -f '$vadr_fail_annotation' -p '$vadr_pass_annotation' -s '$vadr_seqstat' -n '$vardict_vcf' -r '$snp_img' -w '$var_significant_thres' -o '$cov_depth' -e '$cov_depth_corr' -t '$snp_loc' -u '$snp_loc_summary' -j '$json_annot' -k '$bed_annot' -l '$correct_vcf' -m '$contig_limits' -N '$contig_names' $cov_depth_scale
     ]]></command>
     <inputs>
         <param type="data" name="vadr_fail_annotation" format="tabular" />
@@ -21,12 +21,13 @@
         <data name="snp_img" format="png" label="png image showing variants"/>
         <data name="snp_loc_summary" format="tabular" label="tsv file of significant variants only"/>
 	<!-- intermediate output files added for Galaxy compatibility -->
-        <data name="snp_loc" format="txt" hidden="true"/>
-        <data name="json_annot" format="json" hidden="true"/>
-        <data name="bed_annot" format="bed" hidden="true"/>
-        <data name="correct_vcf" format="vcf" hidden="true"/>
-        <data name="contig_limits" format="txt" hidden="true"/>
-        <data name="cov_depth_corr" format="txt" hidden="true"/>
+        <data name="snp_loc" format="txt" hidden="true" label="tsv file of all variants"/>
+        <data name="json_annot" format="json" hidden="true" label="json file of annotations"/>
+        <data name="bed_annot" format="bed" hidden="true" label="bed file of of annotations"/>
+        <data name="correct_vcf" format="vcf" hidden="true" label="vcf file of variants corrected for positions when multi contigs"/>
+        <data name="contig_limits" format="txt" hidden="true" label="txt file with contig limits"/>
+        <data name="contig_names" format="txt" hidden="true" label="txt file with contig names"/>
+        <data name="cov_depth_corr" format="txt" hidden="true" label="txt file with pos and cov depth, pos corrected when multi contigs"/>
 	<!-- end intermediate output files added for Galaxy compatibility -->		
     </outputs>
     <tests>
@@ -46,6 +47,7 @@
             <output name="bed_annot" file="test_vvv2_display/res_vadr.4vardict.bed" ftype="bed"/>
             <output name="correct_vcf" file="test_vvv2_display/res_correct.vcf" ftype="vcf"/>
             <output name="contig_limits" file="test_vvv2_display/contig_limits.txt" ftype="txt"/>
+            <output name="contig_names" file="test_vvv2_display/contig_names.txt" ftype="txt"/>
             <output name="cov_depth_corr" file="test_vvv2_display/res_covdepth_corrected.txt" ftype="txt"/>
 	    <!-- end intermediate output files -->	    
       </test>
