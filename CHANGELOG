@@ -1,3 +1,6 @@
+0.2.4.1:
+  - update test files in test-data directory
+  - update README.md to explain/show example
 0.2.4.0:
   - vvv2_display.xml: add missing parameter contig_names
   - vvv2_display.py: change max param number from 30 to 32. Comment unlinking temporary files contig_limits.txt and contig_names.txt to
