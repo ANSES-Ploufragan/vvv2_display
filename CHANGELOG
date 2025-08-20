@@ -1,4 +1,6 @@
 0.2.4.1:
+  - vvv2_display.py: add boolean detecting specif param for Galaxy, to rm tmp files
+    when program is called outside Galaxy instance 
   - update test files in test-data directory
   - update README.md to explain/show example
 0.2.4.0:
