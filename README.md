@@ -101,17 +101,22 @@ indice	position	ref	alt	freq	gene	prot	lseq	rseq	isHomo*
 
 # Test set
 
-Input data files to test the program are provided in the __test-data__ directory when you clone th program.
+Input data files to test the program are provided in the __test-data__ directory when you clone the repository of vvv2_display program.
 
-Then you can run on of the following command depending on your expected output:
+Then you can run one of the following command depending on your expected graphical output.
+
+* if you __don't want coverage depth__ graphical display in the picture or __do not have coverage depth informations__ of your sample:
 ```
-# if you __don't want coverage depth__ graphical display in the picture or __do not have coverage depth informations__ of your sample
 vvv2_display.py -p test-data/res2_vadr_pass.tbl -f test-data/res2_vadr_fail.tbl -s test-data/res2_vadr.seqstat -n test-data/res2_vardict.vcf -r test-data/res2_vvv2.png -u test-data/res2_vvv2.tsv
+```
 
-# if you __want coverage depth graphical display__ in the picture (log scale)
+* if you __want coverage depth graphical display__ in the picture (log scale)
+```
 vvv2_display.py -p test-data/res2_vadr_pass.tbl -f test-data/res2_vadr_fail.tbl -s test-data/res2_vadr.seqstat -n test-data/res2_vardict.vcf -o test-data/res2_covdepth.txt -r test-data/res2_vvv2.png -u test-data/res2_vvv2.tsv
+```
 
-# if you __want coverage depth graphical display__ in the picture (normal scale)
+* if you __want coverage depth graphical display__ in the picture (normal scale)
+```
 vvv2_display.py -p test-data/res2_vadr_pass.tbl -f test-data/res2_vadr_fail.tbl -s test-data/res2_vadr.seqstat -n test-data/res2_vardict.vcf -o test-data/res2_covdepth.txt -r test-data/res2_vvv2.png -u test-data/res2_vvv2.tsv -y
 ```
 
