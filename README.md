@@ -120,19 +120,34 @@ vvv2_display.py -p test-data/res2_vadr_pass.tbl -f test-data/res2_vadr_fail.tbl 
 vvv2_display.py -p test-data/res2_vadr_pass.tbl -f test-data/res2_vadr_fail.tbl -s test-data/res2_vadr.seqstat -n test-data/res2_vardict.vcf -o test-data/res2_covdepth.txt -r test-data/res2_vvv2.png -u test-data/res2_vvv2.tsv -y
 ```
 
+# Citation
+
+Please, if you use __vvv2_display__ and publish results, cite:
+- The __article__: Flageul, Alexandre, Edouard Hirchaud, Céline Courtillon, Flora Carnet, Paul Brown, Béatrice Grasland, and Fabrice Touzain. "vvv2_align_SE, vvv2_align_PE / __vvv2_display__: Galaxy worflows and software summarize variant calling and annotations of a viral assembly." _Bioinformatics_. __Submitted__
+
+- The __poster__: Flageul, Alexandre, Edouard Hirchaud, Céline Courtillon, Flora Carnet, Paul Brown, Béatrice Grasland, and Fabrice Touzain. “__vvv2_display__: variant calling pipeline summarized in two outputs, png image of variants (proportion, annotation and coverage depth), tsv file of significant variants information.” JOBIM 2025 Conference in Bordeaux (France, July 2025). https://zenodo.org/records/16918392 doi: 10.5281/zenodo.16918392 .
+
+And for __vardict-java__ and __vadr__, respectively:
+- Lai, Zhongwu, Aleksandra Markovets, Miika Ahdesmaki, Brad Chapman, Oliver Hofmann, Robert McEwen, Justin Johnson, Brian Dougherty, J. Carl Barrett, and Jonathan R. Dry. “__VarDict__: A Novel and Versatile Variant Caller for next-Generation Sequencing in Cancer Research.” _Nucleic Acids Research_ 44, no. 11 (June 20, 2016): e108–e108. https://doi.org/10.1093/nar/gkw227.
+- Schäffer, Alejandro A., Eneida L. Hatcher, Linda Yankie, Lara Shonkwiler, J. Rodney Brister, Ilene Karsch-Mizrachi, and Eric P. Nawrocki. “__VADR__: Validation and Annotation of Virus Sequence Submissions to GenBank.” _BMC Bioinformatics_ 21, no. 1 (December 2020): 211. https://doi.org/10.1186/s12859-020-3537-3.
+
 # Galaxy wrapper
 
 - ```vvv2_display.xml```:
 Allow Galaxy integration of ```vvv2_display.py```. vvv2_display can be used in Galaxy pipelines.
+> it can be found in the __Galaxy toolshed__ at https://toolshed.g2.bx.psu.edu/repository
 
-# Citation
+# Related Galaxy workflows on workflowhub
 
-Please, if you use __vvv2_display__ and publish results, cite:
-- Flageul, Alexandre, Pierrick Lucas, Edouard Hirchaud, Fabrice Touzain, Yannick Blanchard, Nicolas Eterradossi, Paul Brown, and Béatrice Grasland. “__Viral Variant Visualizer (VVV)__: A Novel Bioinformatic Tool for Rapid and Simple Visualization of Viral Genetic Diversity.” Virus Research 291 (January 2021): 198201. https://doi.org/10.1016/j.virusres.2020.198201.
+* with bwa-mem2 alignment of __Illumina paired-end__ sequencing data (Mi-seq, Nextseq, Novaseq, Hiseq, Iseq):
+https://workflowhub.eu/workflows/1738
+* with bwa-mem2 alignment of __Illumina__ or __Proton__ __single-end__ sequencing data:
+https://workflowhub.eu/workflows/1739
+* with bwa-mem2 alignment of __Nanopore__ sequencing data (MinION, PromethION, GridION):
+https://workflowhub.eu/workflows/1740
+* with minimap2 alignment of __Pacbio__ sequencing data (high quality long reads):
+https://workflowhub.eu/workflows/1741
 
-And for __vardict-java__ and __vadr__, respectively:
-- Lai, Zhongwu, Aleksandra Markovets, Miika Ahdesmaki, Brad Chapman, Oliver Hofmann, Robert McEwen, Justin Johnson, Brian Dougherty, J. Carl Barrett, and Jonathan R. Dry. “__VarDict__: A Novel and Versatile Variant Caller for next-Generation Sequencing in Cancer Research.” Nucleic Acids Research 44, no. 11 (June 20, 2016): e108–e108. https://doi.org/10.1093/nar/gkw227.
-- Schäffer, Alejandro A., Eneida L. Hatcher, Linda Yankie, Lara Shonkwiler, J. Rodney Brister, Ilene Karsch-Mizrachi, and Eric P. Nawrocki. “__VADR__: Validation and Annotation of Virus Sequence Submissions to GenBank.” BMC Bioinformatics 21, no. 1 (December 2020): 211. https://doi.org/10.1186/s12859-020-3537-3.
 
 # Additional informations / data for upstream programs
 
