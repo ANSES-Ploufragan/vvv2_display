@@ -99,21 +99,61 @@ indice	position	ref	alt	freq	gene	prot	lseq	rseq	isHomo*
      it looks like a restrictive measure, but Ion Torrent and Nanopore sequencing are very bad on such region, so make sure you verify these variants.
 ```
 
-# Galaxy wrapper
+# Test set
 
-- ```vvv2_display.xml```:
-Allow Galaxy integration of ```vvv2_display.py```. vvv2_display can be used in Galaxy pipelines.
+Input data files to test the program are provided in the __test-data__ directory when you clone the repository of vvv2_display program.
+
+Then you can run one of the following command depending on your expected graphical output.
+
+* if you __don't want coverage depth__ graphical display in the picture or __do not have coverage depth informations__ of your sample:
+```
+vvv2_display.py -p test-data/res2_vadr_pass.tbl -f test-data/res2_vadr_fail.tbl -s test-data/res2_vadr.seqstat -n test-data/res2_vardict.vcf -r test-data/res2_vvv2.png -u test-data/res2_vvv2.tsv
+```
+
+* if you __want coverage depth graphical display__ in the picture (log scale)
+```
+vvv2_display.py -p test-data/res2_vadr_pass.tbl -f test-data/res2_vadr_fail.tbl -s test-data/res2_vadr.seqstat -n test-data/res2_vardict.vcf -o test-data/res2_covdepth.txt -r test-data/res2_vvv2.png -u test-data/res2_vvv2.tsv
+```
+
+* if you __want coverage depth graphical display__ in the picture (normal scale)
+```
+vvv2_display.py -p test-data/res2_vadr_pass.tbl -f test-data/res2_vadr_fail.tbl -s test-data/res2_vadr.seqstat -n test-data/res2_vardict.vcf -o test-data/res2_covdepth.txt -r test-data/res2_vvv2.png -u test-data/res2_vvv2.tsv -y
+```
 
 # Citation
 
 Please, if you use __vvv2_display__ and publish results, cite:
-- Flageul, Alexandre, Pierrick Lucas, Edouard Hirchaud, Fabrice Touzain, Yannick Blanchard, Nicolas Eterradossi, Paul Brown, and Béatrice Grasland. “__Viral Variant Visualizer (VVV)__: A Novel Bioinformatic Tool for Rapid and Simple Visualization of Viral Genetic Diversity.” Virus Research 291 (January 2021): 198201. https://doi.org/10.1016/j.virusres.2020.198201.
+- The __article__: Flageul, Alexandre, Edouard Hirchaud, Céline Courtillon, Flora Carnet, Paul Brown, Béatrice Grasland, and Fabrice Touzain. "vvv2_align_SE, vvv2_align_PE / __vvv2_display__: Galaxy worflows and software summarize variant calling and annotations of a viral assembly." __Submitted__
 
 And for __vardict-java__ and __vadr__, respectively:
-- Lai, Zhongwu, Aleksandra Markovets, Miika Ahdesmaki, Brad Chapman, Oliver Hofmann, Robert McEwen, Justin Johnson, Brian Dougherty, J. Carl Barrett, and Jonathan R. Dry. “__VarDict__: A Novel and Versatile Variant Caller for next-Generation Sequencing in Cancer Research.” Nucleic Acids Research 44, no. 11 (June 20, 2016): e108–e108. https://doi.org/10.1093/nar/gkw227.
-- Schäffer, Alejandro A., Eneida L. Hatcher, Linda Yankie, Lara Shonkwiler, J. Rodney Brister, Ilene Karsch-Mizrachi, and Eric P. Nawrocki. “__VADR__: Validation and Annotation of Virus Sequence Submissions to GenBank.” BMC Bioinformatics 21, no. 1 (December 2020): 211. https://doi.org/10.1186/s12859-020-3537-3.
+- Lai, Zhongwu, Aleksandra Markovets, Miika Ahdesmaki, Brad Chapman, Oliver Hofmann, Robert McEwen, Justin Johnson, Brian Dougherty, J. Carl Barrett, and Jonathan R. Dry. “__VarDict__: A Novel and Versatile Variant Caller for next-Generation Sequencing in Cancer Research.” _Nucleic Acids Research_ 44, no. 11 (June 20, 2016): e108–e108. https://doi.org/10.1093/nar/gkw227.
+- Schäffer, Alejandro A., Eneida L. Hatcher, Linda Yankie, Lara Shonkwiler, J. Rodney Brister, Ilene Karsch-Mizrachi, and Eric P. Nawrocki. “__VADR__: Validation and Annotation of Virus Sequence Submissions to GenBank.” _BMC Bioinformatics_ 21, no. 1 (December 2020): 211. https://doi.org/10.1186/s12859-020-3537-3.
+
+# Galaxy wrapper
+
+- ```vvv2_display.xml```:
+Allow Galaxy integration of ```vvv2_display.py```. vvv2_display can be used in Galaxy pipelines.
+> it can be found in the __Galaxy toolshed__ at https://toolshed.g2.bx.psu.edu/repository
+
+# Related Galaxy workflows on workflowhub
+
+* with bwa-mem2 alignment of __Illumina paired-end__ sequencing data (Mi-seq, Nextseq, Novaseq, Hiseq, Iseq):
+https://workflowhub.eu/workflows/1738
+* with bwa-mem2 alignment of __Illumina__ or __Proton__ __single-end__ sequencing data:
+https://workflowhub.eu/workflows/1739
+* with bwa-mem2 alignment of __Nanopore__ sequencing data (MinION, PromethION, GridION):
+https://workflowhub.eu/workflows/1740
+* with minimap2 alignment of __Pacbio__ sequencing data (high quality long reads):
+https://workflowhub.eu/workflows/1741
+
 
 # Additional informations / data for upstream programs
 
+* Poster of the program accepted in JOBIM 2025 conference in Bordeaux (France, July 2025), can be found here:
+  [doi: 10.5281/zenodo.16918391](https://zenodo.org/records/16918392) or accessed using these QRcode (A0 pdf, __2.7 MB__):
+
+  ![QRcode_poster](img/QRcode_poster.png)
+  
+
 * Additional vadr database for specific viruses:
-  - Porcin Circo Virus: https://zenodo.org/records/15065124 , doi: 10.5281/zenodo.15065124
+  - Porcin Circo Virus: [doi: 10.5281/zenodo.15065124](https://zenodo.org/records/15065124)

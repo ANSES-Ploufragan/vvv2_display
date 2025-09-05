@@ -1,0 +1,37 @@
+KR822424.1	529	20341	1ab
+KR822424.1	529	12381	1a
+KR822424.1	12351	20341	similar to ORF1ab polyprotein
+KR822424.1	529	12381	ORF1a
+KR822424.1	529	2547	similar to NSP1/2
+KR822424.1	2548	7320	similar to NSP3:GBSEP:putative papain-like protease
+KR822424.1	7321	8862	similar to NSP4
+KR822424.1	8863	9783	similar to NSP5:GBSEP:putative 3C-like proteinase
+KR822424.1	9784	10662	similar to NSP6
+KR822424.1	10663	10911	similar to NSP7
+KR822424.1	10912	11541	similar to NSP8
+KR822424.1	11542	11874	similar to NSP9
+KR822424.1	11875	12309	similar to NSP10:GBSEP:growth-factor domain-containing mature protein
+KR822424.1	12351	15131	similar to NSP12:GBSEP:putative RNA-dependend RNA polymerase
+KR822424.1	12351	12374	similar to NSP11
+KR822424.1	15132	16931	similar to NSP13:GBSEP:putative helicase
+KR822424.1	16932	18494	similar to NSP14:GBSEP:putative exoribonuclease
+KR822424.1	18495	19508	similar to NSP15:GBSEP:putative uridylate-specific endoribonuclease
+KR822424.1	19509	20338	similar to NSP16:GBSEP:putative 2-O-ribose methyltransferase
+KR822424.1	20365	24013	S
+KR822424.1	20365	24013	similar to spike protein
+KR822424.1	23961	24134	3a
+KR822424.1	23961	24134	3a protein
+KR822424.1	24134	24328	3b
+KR822424.1	24134	24328	3b protein
+KR822424.1	24309	24585	3c
+KR822424.1	24309	24585	similar to envelope protein
+KR822424.1	24587	25258	M
+KR822424.1	24587	25258	membrane protein
+KR822424.1	25259	25543	ORFX
+KR822424.1	25259	25543	hypothetical protein
+KR822424.1	25618	25815	5a
+KR822424.1	25618	25815	5a protein
+KR822424.1	25812	26060	5b
+KR822424.1	25812	26060	5b protein
+KR822424.1	26003	27260	N
+KR822424.1	26003	27260	similar to nucleocapsid protein

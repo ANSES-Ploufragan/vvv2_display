@@ -1,0 +1,17 @@
+indice	position	ref	alt	freq	gene	prot	lseq	rseq	isHomo*
+1	6443	A	G	0.1429	1ab,1a	ORF1a,similar to NSP3:GBSEP:putative papain-like protease	GTATGGTCATCAAAATACAT	GTATTGTAGAAATTGTGATG	no
+2	6677	A	G	0.0833	1ab,1a	ORF1a,similar to NSP3:GBSEP:putative papain-like protease	GGAAGCATTGAAATGTGAAC	GAAGAAAGCTGTTTTTCTTA	no
+3	6893	A	G	0.1429	1ab,1a	ORF1a,similar to NSP3:GBSEP:putative papain-like protease	TATAATTTCTGTAGATACTG	AGTTTGTGACATTTTGTCTA	no
+4	7888	G	A	0.0909	1ab,1a	ORF1a,similar to NSP4	ATGCACCTGGAGCTTTACCA	ATTGTTTTAATGGTGATAAT	no
+5	8165	T	A	0.0833	1ab,1a	ORF1a,similar to NSP4	TAGTACATTCTTTACTGGTG	AGAACTTATGTTTAATATGG	no
+6	9383	A	G	0.1034	1ab,1a	ORF1a,similar to NSP5:GBSEP:putative 3C-like proteinase	CCTACATGGTGAGTTCTATG	TGCATTACACACTGGAACGG	no
+7	13495	A	C	0.1364	1ab	similar to ORF1ab polyprotein,similar to NSP12:GBSEP:putative RNA-dependend RNA polymerase	TTTAGTTGATCTTAGAACGT	GTTAGTGGGAACATCCAATA	no
+8	15361	A	T	0.0882	1ab	similar to ORF1ab polyprotein,similar to NSP13:GBSEP:putative helicase	GTTGTCAATACCGTTAGTAT	CTGTGGTAATCATAAACCAA	no
+9	15425	C	T	0.0769	1ab	similar to ORF1ab polyprotein,similar to NSP13:GBSEP:putative helicase	AGCGAAAATGTTGATGATTT	TACAGGGCTAATTGTGCTGG	no
+10	15432	A	G	0.08	1ab	similar to ORF1ab polyprotein,similar to NSP13:GBSEP:putative helicase	ATGTTGATGATTTTAATCAA	CTAATTGTGCTGGCAGCGAA	no
+11	20043	G	A	0.0714	1ab	similar to ORF1ab polyprotein,similar to NSP16:GBSEP:putative 2-O-ribose methyltransferase	AAAATTTATATGACATTGCA	TAACAGAGACAAGTTGGCAC	no
+12	21198	T	C	0.0811	S	similar to spike protein	GTTTCTTATGATTATCAGTG	TTACGTGGTGATAACACTGG	no
+13	25900	TT	AA	0.0838	5b	5b protein	CTTAACAAAGCAGGACAAGC	AGGATTAGATTGTGTTTACT	no
+
+*NB: an homopolymer region is set to 'yes' if there is a succession of at least 3 identical nucleotides.
+     it looks like a restrictive measure, but Ion Torrent and Nanopore sequencing are very bad on such region, so make sure you verify these variants.
