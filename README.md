@@ -123,7 +123,7 @@ Allow Galaxy integration of ```vvv2_display.py```. vvv2_display can be used in G
 # Citation
 
 Please, if you use __vvv2_display__ and publish results, cite:
-- Flageul, Alexandre, Pierrick Lucas, Edouard Hirchaud, Fabrice Touzain, Yannick Blanchard, Nicolas Eterradossi, Paul Brown, and Béatrice Grasland. “__Viral Variant Visualizer (VVV)__: A Novel Bioinformatic Tool for Rapid and Simple Visualization of Viral Genetic Diversity.” Virus Research 291 (January 2021): 198201. https://doi.org/10.1016/j.virusres.2020.198201.
+- Flageul, Alexandre, Edouard Hirchaud, Céline Courtillon, Flora Carnet, Paul Brown, Béatrice Grasland, and Fabrice Touzain. “vvv2_align_SE, vvv2_align_PE / __vvv2_display__: Galaxy workflows and software to compute, summarize and visualize variant calling and annoations of a viral assembly.” __submitted__.
 
 And for __vardict-java__ and __vadr__, respectively:
 - Lai, Zhongwu, Aleksandra Markovets, Miika Ahdesmaki, Brad Chapman, Oliver Hofmann, Robert McEwen, Justin Johnson, Brian Dougherty, J. Carl Barrett, and Jonathan R. Dry. “__VarDict__: A Novel and Versatile Variant Caller for next-Generation Sequencing in Cancer Research.” Nucleic Acids Research 44, no. 11 (June 20, 2016): e108–e108. https://doi.org/10.1093/nar/gkw227.
@@ -131,5 +131,11 @@ And for __vardict-java__ and __vadr__, respectively:
 
 # Additional informations / data for upstream programs
 
+* Poster of the program accepted in JOBIM 2025 conference, can be found here:
+  [doi: 10.5281/zenodo.16918391](https://zenodo.org/records/16918392) or accessed using these QRcode (A0 pdf, __2.7 MB__):
+
+  ![QRcode_poster](img/QRcode_poster.png)
+  
+
 * Additional vadr database for specific viruses:
-  - Porcin Circo Virus: https://zenodo.org/records/15065124 , doi: 10.5281/zenodo.15065124
+  - Porcin Circo Virus: [doi: 10.5281/zenodo.15065124](https://zenodo.org/records/15065124)
