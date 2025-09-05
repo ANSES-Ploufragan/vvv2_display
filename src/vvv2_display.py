@@ -192,6 +192,8 @@ def __main__():
     b_test_visualize_snp_v4                = args.b_test_visualize_snp_v4
     b_test_correct_covdepth_f              = args.b_test_correct_covdepth_f
 
+    b_unlink_tmp_f = False # must we remove tmp files? Yes only if not in Galaxy
+
     if b_test_vvv2_display:
         b_test_convert_tbl2json                = True
         b_test_correct_multicontig_vardict_vcf = True
@@ -289,6 +291,10 @@ def __main__():
             sha256_f = subprocess.getoutput(cmd).split()[0]
             contig_limits_f = str(sha256_f) + '_contig_limits.txt'
             # print(prog_tag + " contig_limits file name created:"+ contig_limits_f)
+
+            # ramdom generated file name means that program is not called in Galaxy, 
+            # we can remove tmp file
+            b_unlink_tmp_f = True
         else:
             contig_limits_f = os.path.abspath(args.contig_limits_f)
 
@@ -302,6 +308,9 @@ def __main__():
             sha256_f = subprocess.getoutput(cmd).split()[0]
             contig_names_f = str(sha256_f) + '_contig_names.txt'
             # print(prog_tag + " contig_names file name created:"+ contig_names_f)
+            # ramdom generated file name means that program is not called in Galaxy, 
+            # we can remove tmp file
+            b_unlink_tmp_f = True
         else:
             contig_names_f = os.path.abspath(args.contig_names_f)
         
@@ -650,10 +659,11 @@ def __main__():
     
     # remove useless file
     # MUST NOT REMOVE FOR GALAXY COMPATIBILITY
-    # if os.path.isfile(contig_limits_f):
-    #    os.unlink(contig_limits_f)
-    # if os.path.isfile(contig_names_f):
-    #    os.unlink(contig_names_f)
+    if b_unlink_tmp_f: # means not called in Galaxy
+      if os.path.isfile(contig_limits_f):
+        os.unlink(contig_limits_f)
+      if os.path.isfile(contig_names_f):
+        os.unlink(contig_names_f)
 
 ##### MAIN END
 if __name__=="__main__":__main__()
