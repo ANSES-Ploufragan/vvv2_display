@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 #
 # This file is part of the vvv2_display distribution (https://github.com/ANSES-Ploufragan/vvv2_display).
-# Copyright (c) 2023 Fabrice Touzain.
+# Copyright (c) 2025 Fabrice Touzain.
 # 
 # This program is free software: you can redistribute it and/or modify  
 # it under the terms of the GNU General Public License as published by  
@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License 
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
+# FT - add vcfout output, a vcf file conatining only significant variant when requested by user: September 5th 2025
 # FT - correct regexp part for description parsing: simplified, now do not miss variant: March 27th 2024
 # FT - correct gene identif/name (position provided instead sometimes): June 15th 2023
 # FT - last modification: September 19th 2022 to replace pyvcf by pysam
@@ -209,6 +210,7 @@ parser.add_argument('--json', type = str, help = "json gene position file")
 parser.add_argument('--out', type = str, help = "the output file")
 parser.add_argument('--outs', type = str, help = "the output summary file")
 parser.add_argument('--threshold', type = str, help='the threshold you use to cut the data', default = 0.1)
+parser.add_argument('--vcfo', type = str, help='the vcf output file summarizing signfificant variants only')
 
 args = parser.parse_args()
 
@@ -308,6 +310,9 @@ else:
 
     # Once harvested, data need to be recorded in a file
 
+    # TODO: get the vcf header to write it in the output file
+    if b_create_summary_vcf:
+        filoutvcf = open(vcfo, "w")
 
     A = 0 # this flag is used in the write_line function in order to add indices to line where variants are upper than threshold
     with open(args.out, "w") as filout:
@@ -316,6 +321,10 @@ else:
         REGEX = re.compile(regex)    
         filout.write("position\tSNP\tref\talt\tvariant_percent\tadd_ref\tadd_alt\tgene_id\tprotein_id\tsize_point\tindice\tlseq\trseq\tisHomo\n")
         a = 0 # flag to find the first genomic region after initialization of i
+
+        # create a vcf file of only significant variant for SnpEff and NextClade downlstream analyses
+        if b_create_summary_vcf:
+            filoutvcf.write(vcf_header)
 
         # this part is required to write the correct name of the genomic region
         for i in range(len(genomeposition)):
@@ -341,6 +350,9 @@ else:
                 new_line = str("\t".join( (indice, position, ref, alt, freq, gene, protein, homo) ))
                 summary_list.append(new_line + "\n")
 
+                # write in the vcf file of only significant variant for SnpEff and NextClade downlstream analyses
+                filoutvcf.write(line)
+
     with open(args.outs, "w") as filout:
         filout.write("indice\tposition\tref\talt\tfreq\tgene\tprot\tlseq\trseq\tisHomo*\n")
         for line in summary_list:
@@ -350,4 +362,6 @@ else:
      it looks like a restrictive measure, but Ion Torrent and Nanopore sequencing are very bad on such region, so make sure you verify these variants.""")
     print(prog_tag + ' '+ args.out +" file created")
     print(prog_tag + ' '+ args.outs +" file created")
+    if b_create_summary_vcf:
+        print(prog_tag + ' '+ args.vcfo +" file created")
 ## ~ end of script ~ ##

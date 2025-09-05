@@ -131,7 +131,12 @@ def __main__():
                         metavar="FILE")  
     parser.add_argument("-u", "--snp_loc_summary_f", dest='snp_loc_summary_f',
                         help="[optional] out: variant description for relevant positions, tsv file (if not provided, file name deduced from png name)",
-                        metavar="FILE")  
+                        metavar="FILE")     
+    # added 2025 09 05 ----------------
+    parser.add_argument("-x", "--snp_vcf_summary_f", dest='snp_vcf_summary_f',
+                        help="[optional] out: variant description for relevant positions, vcf file (for SnpEff of NextClade downstream analyses)",
+                        metavar="FILE")
+    # ---------------------------------  
     parser.add_argument("-j", "--json_f", dest='json_annot_f',
                         help="[Optional] out (tmp out file for galaxy compatibility, no need in other cases): vadr annotation converted to json",
                         metavar="FILE")
@@ -191,6 +196,7 @@ def __main__():
     b_test_convert_vcffile_to_readable     = args.b_test_convert_vcffile_to_readable
     b_test_visualize_snp_v4                = args.b_test_visualize_snp_v4
     b_test_correct_covdepth_f              = args.b_test_correct_covdepth_f
+    b_create_summary_vcf                   = False
 
     b_unlink_tmp_f = False # must we remove tmp files? Yes only if not in Galaxy
 
@@ -212,7 +218,7 @@ def __main__():
         # print(f"b_test_convert_tbl2json:{b_test_convert_tbl2json}")    
 
     if ((not b_test)and
-        ((len(sys.argv) < 9) or (len(sys.argv) > 32))):
+        ((len(sys.argv) < 9) or (len(sys.argv) > 34))):
         print("\n".join([prog_tag,
                          "Aim: Display of SNP proportions, annotations, for an assembly",
                          "in:", 
@@ -220,7 +226,8 @@ def __main__():
                          " - vadr assembly annotations",
                          "out:",
                          " - png file (image of SNP proportion alongside the assembly with CDS positions)",
-                         " - tsv file with variant calling summary, location in CDS and surround DNA sequence.\n"]))
+                         " - tsv file with variant calling summary, location in CDS and surround DNA sequence",
+                         " - [option] vcf file with variant calling summary, for SnpEff . NextClade downstream analyses.\n"]))
         parser.print_help()
         print(prog_tag + "[Error] we found "+str(len(sys.argv)) +
               " arguments, exit line "+str(frame.f_lineno))
@@ -252,6 +259,9 @@ def __main__():
             snp_loc_f = os.path.abspath(args.snp_loc_f)
         if args.snp_loc_summary_f is not None:
             snp_loc_summary_f = os.path.abspath(args.snp_loc_summary_f)
+        if args.snp_vcf_summary_f is not None:
+            snp_vcf_summary_f = os.path.abspath(args.snp_vcf_summary_f)
+            b_create_summary_vcf = True
                    
         if (args.cov_depth_f is not None):
             if os.path.isfile(args.cov_depth_f):
@@ -537,6 +547,7 @@ def __main__():
         json_annot_f      = test_dir + "/res_vadr.json"
         snp_loc_f         = test_dir + "/res_snp.tsv"
         snp_loc_summary_f = test_dir + "/res_snp_summary.tsv"
+        snp_vcf_summary_f = test_dir + "/res_snp_summary.vcf"
 
     if(snp_loc_f == ''):
        snp_loc_f = vardict_vcf_f
@@ -557,8 +568,12 @@ def __main__():
                     "--json", json_annot_f,
                     "--out", snp_loc_f,
                     "--outs", snp_loc_summary_f,
-                    "--threshold", threshold,
-                    "2> /dev/null"])
+                    "--threshold", threshold])
+    # if a vcf of significant variants only is requested by user for downstream SnpEff or NextClade analyses
+    if b_create_summary_vcf:
+        cmd = cmd + " --vcfo " + snp_vcf_summary_f + " "
+
+    cmd = cmd + " 2> /dev/null"
     print(prog_tag + " cmd:" + cmd)
 
     if b_test_convert_vcffile_to_readable:
