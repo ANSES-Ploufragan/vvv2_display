@@ -123,7 +123,7 @@ vvv2_display.py -p test-data/res2_vadr_pass.tbl -f test-data/res2_vadr_fail.tbl 
 # Citation
 
 Please, if you use __vvv2_display__ and publish results, cite:
-- The __article__: Flageul, Alexandre, Edouard Hirchaud, Céline Courtillon, Flora Carnet, Paul Brown, Béatrice Grasland, and Fabrice Touzain. "vvv2_align_SE, vvv2_align_PE / __vvv2_display__: Galaxy worflows and software summarize variant calling and annotations of a viral assembly." __Submitted__
+- The __article__: Flageul, Alexandre, Edouard Hirchaud, Céline Courtillon, Flora Carnet, Paul Brown, Béatrice Grasland, and Fabrice Touzain. "vvv2_align_SE, vvv2_align_PE / __vvv2_display__: Galaxy-Based Workflows and Tool Designed to Perform, Summarize and Visualize Variant Calling and Annotation in Viral Genome Assemblies". _Viruses_. 2025;17:1385. https://doi.org/10.3390/v17101385.
 
 And for __vardict-java__ and __vadr__, respectively:
 - Lai, Zhongwu, Aleksandra Markovets, Miika Ahdesmaki, Brad Chapman, Oliver Hofmann, Robert McEwen, Justin Johnson, Brian Dougherty, J. Carl Barrett, and Jonathan R. Dry. “__VarDict__: A Novel and Versatile Variant Caller for next-Generation Sequencing in Cancer Research.” _Nucleic Acids Research_ 44, no. 11 (June 20, 2016): e108–e108. https://doi.org/10.1093/nar/gkw227.
