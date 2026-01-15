@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/home/ftouzain/.local/share/mamba/envs/vvv2_display-0.2.4.0/bin/python
 # -*- coding: utf-8 -*-
 #
 # This file is part of the vvv2_display distribution (https://github.com/ANSES-Ploufragan/vvv2_display).
@@ -39,6 +39,8 @@ b_display_not_treated_cases = False
 
 prog_tag = '[' + os.path.basename(__file__) + ']'
 
+min_nb_args = 9
+max_nb_args = 12
 
 pass_annot_f = '' # in, pass tbl file from vadr
 fail_annot_f = '' # in, fail tbl file from vadr
@@ -95,7 +97,7 @@ else:
     b_test = b_test_convert_tbl2json
 
 if ((not b_test)and
-    ((len(sys.argv) < 9) or (len(sys.argv) > 11))):
+    ((len(sys.argv) < min_nb_args) or (len(sys.argv) > max_nb_args))):
     parser.print_help()
     print(prog_tag + "[Error] we found "+str(len(sys.argv)) +
           " arguments, exit line "+str(frame.f_lineno))
@@ -214,6 +216,8 @@ gene_start = ''
 gene_end = ''
 cds_start = ''
 cds_end = ''
+codon_start = '' # got, used to shift cds_start (change prot start pos in json):tells codon 
+                 # start relative pos when gene does not start at position 1
 product = ''
 protein_id = ''
 misc_feature_start = ''
@@ -424,6 +428,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         gene_name = ''
                         gene_start = ''
                         gene_end = ''
+                        codon_start = ''
                         continue
 
                     # NEW
@@ -969,6 +974,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                 ]))                       
                             product = ''
                             protein_id = ''
+                            codon_start = ''
                             b_next_is_protein_id = False    
                             b_next_is_gene = True
                             continue
@@ -1005,6 +1011,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                                 ]))
                             product = ''
                             protein_id = ''
+                            codon_start = ''
                             b_next_is_protein_id = False    
                             b_next_is_gene = True # added 2024 10 01                    
                             continue
@@ -1095,7 +1102,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                     # added 2025 01 23: gene record not needed because gene already recorded
                     elif line_fields[0] == 'gene':
                         
-                        if b_verbose or b_check_gene_prot_rec:
+                        if b_verbose and b_check_gene_prot_rec:
                             # if so, no need to record again
                             print("\t".join([
                                 prog_tag,
@@ -1109,6 +1116,19 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             sys.exit(prog_tag+"[Error] names len:"+str(len(names))+" != types len:"+str(len(types)))
                         continue
 
+                    # added 2026 01 12 vvv2_display 0.2.4.1:
+                    # to handle "codon_start" annotation (position), shift prot start position in json
+                    elif line_fields[0] == 'codon_start':
+                        codon_start = line_fields[1]
+                        # increase cds_start position to take into account shift in gene
+                        print("cds_start original:"+cds_start)
+                        cds_start = str(int(cds_start) + int(codon_start))
+                        print("\t".join([
+                                "cds_start after codon_start increase:",
+                                cds_start,
+                                " line "+str(frame.f_lineno)
+                        ]))
+                        continue
                     else:
                         print("expected protein_id")
                         print("line_fields:"+','.join(line_fields))                        

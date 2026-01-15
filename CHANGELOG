@@ -1,5 +1,6 @@
 0.2.4.1:
   - TODO: vvv2_display.xml: add --vcfo option (vcf output with only significant variants), change version to 0.2.4.1
+  - convert_tbl2json: handle codon_start annotation to shit cds_start for position of prot start in json
   - vvv2_display.py and convert_vcffile_to_readablefile: add option to generate vcf output file of significant variants only for SnpEff
     or NextClade donwstream analyses
   - vvv2_display.py: add boolean detecting specif param for Galaxy, to rm tmp files
