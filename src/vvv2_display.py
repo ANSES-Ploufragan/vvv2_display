@@ -370,7 +370,7 @@ def __main__():
                             "--png_var_f", png_var_f,
                             "--var_significant_threshold", var_significant_threshold_str
                     ])
-        print(prog_tag + " START")    
+        print(prog_tag + " START complete genome TEST")    
         print(prog_tag + " cmd:" + cmd)
         os.system(cmd)
         print(prog_tag + " END")
@@ -390,7 +390,7 @@ def __main__():
         contig_names_f = test_dir + "/contig_names.txt"  
         cov_depth_corr_f= test_dir + "/res_covdepth_corr.txt"
         # final out file
-        png_var_f    = test_dir + "/res_vvv2.png"     # from ...
+        png_var_f    = test_dir + "/res_vvv.png"     # from ...
         cmd = ' '.join([ dir_path + "/vvv2_display.py",
                     "--pass_tbl_f", pass_annot_f,
                     "--fail_tbl_f", fail_annot_f,
@@ -403,7 +403,7 @@ def __main__():
                     "--png_var_f", png_var_f,
                     "--var_significant_threshold", var_significant_threshold_str                    
                     ])
-        print(prog_tag + " START")    
+        print(prog_tag + " START multi-CONTIGS TEST")    
         print(prog_tag + " cmd:" + cmd)
         os.system(cmd)
         print(prog_tag + " END")
@@ -436,7 +436,40 @@ def __main__():
                             "--png_var_f", png_var_f,
                             "--var_significant_threshold", var_significant_threshold_str
                     ])
-        print(prog_tag + " START")    
+        print(prog_tag + " START PCV2 TEST")    
+        print(prog_tag + " cmd:" + cmd)
+        os.system(cmd)
+        print(prog_tag + " END")
+        # --------------------------------------------------------------
+
+        # --------------------------------------------------------------
+        # COMPLETE GENOME Influenza (flu)
+        # in files
+        pass_annot_f  = test_dir + "/res4_vadr_pass.tbl" # from vadr results
+        fail_annot_f  = test_dir + "/res4_vadr_fail.tbl" # from vadr results
+        seq_stat_f    = test_dir + "/res4_vadr.seqstat"  # from vadr results
+        vardict_vcf_f = test_dir + "/res4_vardict.vcf"   # from lofreq results  
+        cov_depth_f   = test_dir + "/res4_covdepth.txt"  # from samtools results  
+        # tmp out files
+        json_annot_f  = test_dir + "/res4_vadr.json"     # from convert_tbl2json.py
+        contig_limits_f= test_dir + "/contig4_limits.txt"
+        contig_names_f = test_dir + "/contig4_names.txt"
+        cov_depth_corr_f= test_dir + "/res4_covdepth_corr.txt"
+        # final out file
+        png_var_f     = test_dir + "/res4_vvv2.png"     # from ...
+        cmd = ' '.join([ dir_path + "/vvv2_display.py",
+                            "--pass_tbl_f", pass_annot_f,
+                            "--fail_tbl_f", fail_annot_f,
+                            "--seq_stat_f", seq_stat_f,
+                            "--vcf_f", vardict_vcf_f,
+                            "--contig_limits_f", contig_limits_f,   
+                            "--contig_names_f", contig_names_f,   
+                            "--cov_depth_f", cov_depth_f,  
+                            "--cov_depth_corr_f", cov_depth_corr_f,              
+                            "--png_var_f", png_var_f,
+                            "--var_significant_threshold", var_significant_threshold_str
+                    ])
+        print(prog_tag + " START FLU TEST")    
         print(prog_tag + " cmd:" + cmd)
         os.system(cmd)
         print(prog_tag + " END")
