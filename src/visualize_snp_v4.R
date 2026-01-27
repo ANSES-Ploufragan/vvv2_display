@@ -1,6 +1,21 @@
 #!/usr/bin/env Rscript
 #
-# FT; last modification January 20th 2025
+# This file is part of the vvv2_display distribution (https://github.com/ANSES-Ploufragan/vvv2_display).
+# Copyright (c) 2023-2026 Fabrice Touzain.
+# 
+# This program is free software: you can redistribute it and/or modify  
+# it under the terms of the GNU General Public License as published by  
+# the Free Software Foundation, version 3.
+#
+# This program is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License 
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+# FT; last modification January 27th 2026
 # AF; last modification February 16th 2019
 #
 # Description:  This script has been written in order to generate a graph

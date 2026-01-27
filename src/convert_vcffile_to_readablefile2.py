@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 #
 # This file is part of the vvv2_display distribution (https://github.com/ANSES-Ploufragan/vvv2_display).
-# Copyright (c) 2025 Fabrice Touzain.
+# Copyright (c) 2023-2026 Fabrice Touzain.
 # 
 # This program is free software: you can redistribute it and/or modify  
 # it under the terms of the GNU General Public License as published by  
@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License 
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
-# FT - add vcfout output, a vcf file conatining only significant variant when requested by user: September 5th 2025
+# FT - add vcfout output, a vcf file containing only significant variant when requested by user: September 5th 2025
 # FT - correct regexp part for description parsing: simplified, now do not miss variant: March 27th 2024
 # FT - correct gene identif/name (position provided instead sometimes): June 15th 2023
 # FT - last modification: September 19th 2022 to replace pyvcf by pysam
