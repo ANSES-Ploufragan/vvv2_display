@@ -56,7 +56,7 @@ frame = inspect.currentframe()
 ###############
 b_verbose = False
 prog_tag = '[' + os.path.basename(__file__) + ']'
-
+b_create_summary_vcf = False
 
 ###############
 ## Functions ##
@@ -350,8 +350,9 @@ else:
                 new_line = str("\t".join( (indice, position, ref, alt, freq, gene, protein, homo) ))
                 summary_list.append(new_line + "\n")
 
-                # write in the vcf file of only significant variant for SnpEff and NextClade downlstream analyses
-                filoutvcf.write(line)
+                # write in the vcf file of only significant variant for SnpEff and NextClade downstream analyses
+                if b_create_summary_vcf:
+                    filoutvcf.write(line)
 
     with open(args.outs, "w") as filout:
         filout.write("indice\tposition\tref\talt\tfreq\tgene\tprot\tlseq\trseq\tisHomo*\n")
