@@ -218,7 +218,7 @@ def __main__():
         # print(f"b_test_convert_tbl2json:{b_test_convert_tbl2json}")    
 
     if ((not b_test)and
-        ((len(sys.argv) < 9) or (len(sys.argv) > 34))):
+        ((len(sys.argv) < 9) or (len(sys.argv) > 36))):
         print("\n".join([prog_tag,
                          "Aim: Display of SNP proportions, annotations, for an assembly",
                          "in:", 
@@ -352,12 +352,13 @@ def __main__():
         vardict_vcf_f = test_dir + "/res2_vardict.vcf"   # from lofreq results  
         cov_depth_f   = test_dir + "/res2_covdepth.txt"  # from samtools results  
         # tmp out files
-        json_annot_f  = test_dir + "/res2_vadr.json"     # from convert_tbl2json.py
-        contig_limits_f= test_dir + "/contig_limits.txt"
-        contig_names_f = test_dir + "/contig_names.txt"
+        json_annot_f    = test_dir + "/res2_vadr.json"     # from convert_tbl2json.py
+        contig_limits_f = test_dir + "/contig_limits.txt"
+        contig_names_f  = test_dir + "/contig_names.txt"
         cov_depth_corr_f= test_dir + "/res2_covdepth_corr.txt"
         # final out file
-        png_var_f     = test_dir + "/res2_vvv2.png"     # from ...
+        png_var_f         = test_dir + "/res2_vvv2.png"     # from ...
+        snp_vcf_summary_f = test_dir + "/res2_vardict_snp_summary.vcf" # from convert_vcffile_to_readablefile2.py
         cmd = ' '.join([ dir_path + "/vvv2_display.py",
                             "--pass_tbl_f", pass_annot_f,
                             "--fail_tbl_f", fail_annot_f,
@@ -368,7 +369,8 @@ def __main__():
                             "--cov_depth_f", cov_depth_f,  
                             "--cov_depth_corr_f", cov_depth_corr_f,              
                             "--png_var_f", png_var_f,
-                            "--var_significant_threshold", var_significant_threshold_str
+                            "--var_significant_threshold", var_significant_threshold_str,
+                            "--snp_vcf_summary_f", snp_vcf_summary_f
                     ])
         print(prog_tag + " START complete genome TEST")    
         print(prog_tag + " cmd:" + cmd)
@@ -391,6 +393,7 @@ def __main__():
         cov_depth_corr_f= test_dir + "/res_covdepth_corr.txt"
         # final out file
         png_var_f    = test_dir + "/res_vvv2.png"     # from ...
+        snp_vcf_summary_f = test_dir + "/res_vardict_snp_summary.vcf" # from convert_vcffile_to_readablefile2.py
         cmd = ' '.join([ dir_path + "/vvv2_display.py",
                     "--pass_tbl_f", pass_annot_f,
                     "--fail_tbl_f", fail_annot_f,
@@ -401,7 +404,8 @@ def __main__():
                     "--cov_depth_f", cov_depth_f,                     
                     "--cov_depth_corr_f", cov_depth_corr_f,       
                     "--png_var_f", png_var_f,
-                    "--var_significant_threshold", var_significant_threshold_str                    
+                    "--var_significant_threshold", var_significant_threshold_str,
+                    "--snp_vcf_summary_f", snp_vcf_summary_f                    
                     ])
         print(prog_tag + " START multi-CONTIGS TEST")    
         print(prog_tag + " cmd:" + cmd)
@@ -424,6 +428,7 @@ def __main__():
         cov_depth_corr_f= test_dir + "/res3_covdepth_corr.txt"
         # final out file
         png_var_f     = test_dir + "/res3_vvv2.png"     # from ...
+        snp_vcf_summary_f = test_dir + "/res3_vardict_snp_summary.vcf" # from convert_vcffile_to_readablefile2.py
         cmd = ' '.join([ dir_path + "/vvv2_display.py",
                             "--pass_tbl_f", pass_annot_f,
                             "--fail_tbl_f", fail_annot_f,
@@ -434,7 +439,8 @@ def __main__():
                             "--cov_depth_f", cov_depth_f,  
                             "--cov_depth_corr_f", cov_depth_corr_f,              
                             "--png_var_f", png_var_f,
-                            "--var_significant_threshold", var_significant_threshold_str
+                            "--var_significant_threshold", var_significant_threshold_str,
+                            "--snp_vcf_summary_f", snp_vcf_summary_f
                     ])
         print(prog_tag + " START PCV2 TEST")    
         print(prog_tag + " cmd:" + cmd)
@@ -457,6 +463,7 @@ def __main__():
         cov_depth_corr_f= test_dir + "/res4_covdepth_corr.txt"
         # final out file
         png_var_f     = test_dir + "/res4_vvv2.png"     # from ...
+        snp_vcf_summary_f = test_dir + "/res4_vardict_snp_summary.vcf" # from convert_vcffile_to_readablefile2.py
         cmd = ' '.join([ dir_path + "/vvv2_display.py",
                             "--pass_tbl_f", pass_annot_f,
                             "--fail_tbl_f", fail_annot_f,
@@ -467,7 +474,8 @@ def __main__():
                             "--cov_depth_f", cov_depth_f,  
                             "--cov_depth_corr_f", cov_depth_corr_f,              
                             "--png_var_f", png_var_f,
-                            "--var_significant_threshold", var_significant_threshold_str
+                            "--var_significant_threshold", var_significant_threshold_str,
+                            "--snp_vcf_summary_f", snp_vcf_summary_f
                     ])
         print(prog_tag + " START FLU TEST")    
         print(prog_tag + " cmd:" + cmd)
@@ -575,7 +583,7 @@ def __main__():
         # snp_loc_f         =  test_dir + "/res2_snp.txt"
         # snp_loc_summary_f =  test_dir + "/res2_snp_summary.txt"
         # CONTIGS
-        # vardict_vcf_f = test_dir + "/res_vardict.vcf"  # from vardict results
+        vardict_vcf_f     = test_dir + "/res_vardict.vcf"  # from vardict results
         correct_vcf_f     = test_dir + "/res_correct.vcf"                  
         json_annot_f      = test_dir + "/res_vadr.json"
         snp_loc_f         = test_dir + "/res_snp.tsv"
@@ -598,6 +606,7 @@ def __main__():
     threshold = "%.2f" % (var_significant_threshold / 100)
     cmd = ' '.join([p_script,
                     "--vcfs", correct_vcf_f,
+                    "--vcfi", vardict_vcf_f, # needed to get true pos in summary tsv and vcf files
                     "--json", json_annot_f,
                     "--out", snp_loc_f,
                     "--outs", snp_loc_summary_f,
