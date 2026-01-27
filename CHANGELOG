@@ -1,5 +1,5 @@
 0.2.4.1:
-  - vvv2_display.xml: add --snp_vcf_summary_f option (vcf output with only significant variants), 
+  - vvv2_display.xml: add --snp_vcf_summary_f optional output (vcf output with only significant variants), 
   - convert_vcffile_to_readablefile2.py: add --vcfo option equiv to --snp_vcf_summary_f of vvv2_display
   - change version to 0.2.4.1
   - add Influenza test (flu)
