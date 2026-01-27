@@ -113,7 +113,7 @@ if(b_covdepth){
     if(b_log_scale)
     {
       #                                             +1 is only to avoid log(0) when cov depth is 0 (log(0)=-inf)
-      cd = ggplot(coverage_depth, aes(x = V1, y = V2+1)) + geom_line(color = "black", linewidth = 0.5) + coord_trans(y="log10")
+      cd = ggplot(coverage_depth, aes(x = V1, y = V2+1)) + geom_line(color = "black", linewidth = 0.5) + coord_transform(y="log10")
     }else
     {
       # when no log scale
@@ -447,11 +447,11 @@ if(! is.null(contig_names)){ # means more than 1 contig
   
   # create a list of 1.1 the number of times equal to contig number:
   # ok bug lose 1 contig over 2
-  # cy = rep(1.1, length(contig_names)) 
+  cy = rep(1.1, length(contig_names)) 
 
   # new 2026 01 26
   # try to alternate 2 different Y positions for contig name ordinates (quinconce)
-  cy=lapply(namerangei, FUN=function(x){ if((x %% 2) == 1){ 1.1 }else{ 1.05 } } )
+  #cy=lapply(namerangei, FUN=function(x){ if((x %% 2) == 1){ 1.1 }else{ 1.05 } } )
   if( b_verbose ){
     print("cy new:")
     print(cy)
