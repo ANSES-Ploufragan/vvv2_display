@@ -50,6 +50,7 @@ def __main__():
     # allow to run tests from everywhere
     
     prog_tag = '[' + os.path.basename(__file__) + ']'
+    version = '0.2.4.1'
 
     # to record if we display cov depth in graph or not (depends on provided intputs)
     b_cov_depth_display = False
@@ -98,7 +99,13 @@ def __main__():
     R_SCRIPTS      = dir_path + "/" # R_SCRIPTS/"
     #########################################
 
-    parser = argparse.ArgumentParser()
+    # add version at the end of help
+    parser = argparse.ArgumentParser(
+        prog=prog_tag,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="version: "+version)
+
+    #parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--pass_tbl_f", dest='pass_annot_f',
                         help="in: tabular file of vadr annotations, with pass status",
                         metavar="FILE")
