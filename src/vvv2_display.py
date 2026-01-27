@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of the vvv2_display distribution (https://github.com/ANSES-Ploufragan/vvv2_display).
-# Copyright (c) 2023-2025 Fabrice Touzain.
+# Copyright (c) 2023-2026 Fabrice Touzain.
 # 
 # This program is free software: you can redistribute it and/or modify  
 # it under the terms of the GNU General Public License as published by  
