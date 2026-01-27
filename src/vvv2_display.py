@@ -390,7 +390,7 @@ def __main__():
         contig_names_f = test_dir + "/contig_names.txt"  
         cov_depth_corr_f= test_dir + "/res_covdepth_corr.txt"
         # final out file
-        png_var_f    = test_dir + "/res_vvv.png"     # from ...
+        png_var_f    = test_dir + "/res_vvv2.png"     # from ...
         cmd = ' '.join([ dir_path + "/vvv2_display.py",
                     "--pass_tbl_f", pass_annot_f,
                     "--fail_tbl_f", fail_annot_f,
