@@ -3,7 +3,11 @@
       <requirement type="package" version="0.2.4.1">vvv2_display</requirement>	      
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-       vvv2_display.py -f '$vadr_fail_annotation' -p '$vadr_pass_annotation' -s '$vadr_seqstat' -n '$vardict_vcf' -r '$snp_img' -w '$var_significant_thres' -o '$cov_depth' -e '$cov_depth_corr' -t '$snp_loc' -u '$snp_loc_summary' -x '$snp_vcf_summary' -j '$json_annot' -k '$bed_annot' -l '$correct_vcf' -m '$contig_limits' -N '$contig_names' $cov_depth_scale
+       vvv2_display.py -f '$vadr_fail_annotation' -p '$vadr_pass_annotation' -s '$vadr_seqstat' -n '$vardict_vcf' -r '$snp_img' -w '$var_significant_thres' -o '$cov_depth' -e '$cov_depth_corr' -t '$snp_loc' -u '$snp_loc_summary' 
+       #if str($snp_vcf_summary):
+          -x '$snp_vcf_summary' 
+       #end if
+       -j '$json_annot' -k '$bed_annot' -l '$correct_vcf' -m '$contig_limits' -N '$contig_names' $cov_depth_scale
     ]]></command>
     <inputs>
         <param type="data" name="vadr_fail_annotation" format="tabular" />
@@ -20,7 +24,7 @@
     <outputs>
         <data name="snp_img" format="png" label="png image showing variants"/>
         <data name="snp_loc_summary" format="tabular" label="tsv file of significant variants only"/>
-        <data name="snp_vcf_summary" format="vcf" label="vcf file of significant variants only"/>
+        <data name="snp_vcf_summary" format="vcf" label="vcf file of significant variants only" optional="true" help="to get significant variants in vcf"/>
 	<!-- intermediate output files added for Galaxy compatibility -->
         <data name="snp_loc" format="txt" hidden="true" label="tsv file of all variants"/>
         <data name="json_annot" format="json" hidden="true" label="json file of annotations"/>
