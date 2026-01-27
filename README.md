@@ -5,6 +5,7 @@
 Tools to create:
 - a _.png_ image file describing all variants (obtained from vardict-java variant caller) alongside a genome/assembly (to provide) with their proportion (ordinates), with CDS descriptions (obtained from vadr annotator). At the top of the figure can be displayed the coverage depth repartition (if `-o cov_depth_f` option is provided).
 - a _.tsv_ file describing all details of significant variants (according to the proportion threshold chosen by the user, default: 7 percents)
+- [optional] a _.vcf_ file describing all significant variants (according to the proportion threshold)
 
 Python/R scripts and Galaxy wrapper to use them.
 
@@ -51,20 +52,27 @@ vvv2_display.py -h
 ```
 
 Typical usage:
-```
-vvv2_display.py -p res_vadr_pass.tsv -f res_vadr_fail.tsv -s res_vadr_seqstat.txt -n res_vardict_all.vcf -r res_vvv2_display.png -o cov_depth_f.txt -y -w 10
+```bash
+vvv2_display.py -p res_vadr_pass.tsv -f res_vadr_fail.tsv -s res_vadr_seqstat.txt -n res_vardict_all.vcf -r res_vvv2_display.png -u res_vvv2_display_snp_summary.tsv -o cov_depth_f.txt -y -w 10 -x res_vvv2_display_snp_summary.vcf
 ```
 where:
-  - `res_vadr_pass.tsv` is the 'pass' file of vadr annotation program run on the genome/assembly
-  - `res_vadr_fail.tsv` is the 'fail' file of vadr annotation program
-  - `res_vadr_seqstat.txt` is the 'seqstat' file of vadr annotation program
-  - `res_vardict_all.vcf` is the result of vardict-java variant caller
-  - `res_vvv2_display.png` is the name of the main output file (will be created)
-  - `cov_depth_f.txt` is the coverage depth by position, provided by `samtools depth` run on the bam alignement file
-  - `-y` tells to display coverage depth in _linear scale_ (default _log10 scale_)
-  - `-w 10` tells to set var significant threshold at _10%_ (default _7%_): graphics display all variants, tsv summary will keep only significant ones (representation higher than this threshold)
+  - `res_vadr_pass.tsv` is the 'pass' file of vadr annotation program run on the genome/assembly (__input__)
+  - `res_vadr_fail.tsv` is the 'fail' file of vadr annotation program (__input__)
+  - `res_vadr_seqstat.txt` is the 'seqstat' file of vadr annotation program (__input__)
+  - `res_vardict_all.vcf` is the result of vardict-java variant caller (__input__)
+  - `res_vvv2_display.png` is the name of the main output file (will be created) (__main output__)
+  - `res_vvv2_display_snp_summary.tsv` is the name of the main output file (will be __always__ created, this option __allow to choose its name__) (__main output__)
+  - `cov_depth_f.txt` is the coverage depth by position, provided by `samtools depth` run on the bam alignement file (__optional input__)
+  - `-y` tells to display coverage depth in _linear scale_ (default _log10 scale_) (__optional input__)
+  - `-w 10` tells to set var significant threshold at _10%_ (default _7%_): graphics display all variants, tsv summary will keep only significant ones (representation higher than this threshold) (__optional input__)
+  - `res_vvv2_display_snp_summary.vcf` is the summary of significatn variants in vcf format (__optional output__)
 
 > All other options are for Galaxy wrapper compatibility (these are intermediate temporary files that must appear as parameter for Galaxy wrapper but are not used in a usual command line call)
+
+Minimal usage:
+```bash
+vvv2_display.py -p res_vadr_pass.tsv -f res_vadr_fail.tsv -s res_vadr_seqstat.txt -n res_vardict_all.vcf -r res_vvv2_display.png [-o cov_depth_f.txt]
+```
 
 # Output example
 
