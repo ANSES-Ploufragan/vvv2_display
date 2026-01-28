@@ -1,4 +1,4 @@
-#!/home/ftouzain/.local/share/mamba/envs/vvv2_display-0.2.4.0/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # This file is part of the vvv2_display distribution (https://github.com/ANSES-Ploufragan/vvv2_display).

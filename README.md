@@ -87,21 +87,21 @@ Example is obtained on Turkey Coronavirus sequencing data, with as reference, th
 
 * tsv summary file:
 ```
-indice	position	ref	alt	freq	gene	prot	lseq	rseq	isHomo*
-1	6388	A	G	0.1429	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP3  putative papain-like protease	GTATTGTAGAAATTGTGATG	GTATGGTCATCAAAATACAT	no
-2	6622	A	G	0.0833	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP3  putative papain-like protease	GAAGAAAGCTGTTTTTCTTA	GGAAGCATTGAAATGTGAAC	no
-3	6838	A	G	0.1429	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP3  putative papain-like protease	AGTTTGTGACATTTTGTCTA	TATAATTTCTGTAGATACTG	no
-4	7014	R	A	0.8824	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP3  putative papain-like protease	TACCGTCATATGGTATAGAC	CTGATAAATTAACACCTCGT	no
-5	7833	G	A	0.0909	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP4	ATTGTTTTAATGGTGATAAT	ATGCACCTGGAGCTTTACCA	no
-6	8110	T	A	0.0833	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP4	AGAACTTATGTTTAATATGG	TAGTACATTCTTTACTGGTG	no
-7	9328	A	G	0.1034	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP5  putative 3C-like proteinase	TGCATTACACACTGGAACGG	CCTACATGGTGAGTTCTATG	no
-8	13404	A	C	0.1429	intergene	intergene	GTTAGTGGGAACATCCAATA	TTTAGTTGATCTTAGAACGT	no
-9	15255	A	T	0.0882	1ab	similar to ORF1ab polyprotein,similar to NSP13:GBSEP:putative helicase	CTGTGGTAATCATAAACCAA	GTTGTCAATACCGTTAGTAT	no
-10	15319	C	T	0.0769	1ab	similar to ORF1ab polyprotein,similar to NSP13:GBSEP:putative helicase	TACAGGGCTAATTGTGCTGG	AGCGAAAATGTTGATGATTT	no
-11	15326	A	G	0.08	1ab	similar to ORF1ab polyprotein,similar to NSP13:GBSEP:putative helicase	CTAATTGTGCTGGCAGCGAA	ATGTTGATGATTTTAATCAA	yes
-12	19937	G	A	0.0714	1ab	similar to ORF1ab polyprotein,similar to NSP16:GBSEP:putative 2-O-ribose methyltransferase	TAACAGAGACAAGTTGGCAC	AAAATTTATATGACATTGCA	no
-13	21092	T	C	0.0811	S	similar to spike protein	TTACGTGGTGATAACACTGG	GTTTCTTATGATTATCAGTG	no
-14	25794	TT	AA	0.0838	5b	5b protein	AGGATTAGATTGTGTTTACT	CTTAACAAAGCAGGACAAGC	no
+indice	position	position_ori	ref	alt	freq	gene	prot	lseq	rseq	isHomo*
+1	6388	6388	A	G	0.1429	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP3  putative papain-like protease	GTATGGTCATCAAAATACAT	GTATTGTAGAAATTGTGATG	no
+2	6622	6622	A	G	0.0833	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP3  putative papain-like protease	GGAAGCATTGAAATGTGAAC	GAAGAAAGCTGTTTTTCTTA	no
+3	6838	6838	A	G	0.1429	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP3  putative papain-like protease	TATAATTTCTGTAGATACTG	AGTTTGTGACATTTTGTCTA	no
+4	7014	7014	R	A	0.8824	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP3  putative papain-like protease	CTGATAAATTAACACCTCGT	TACCGTCATATGGTATAGAC	no
+5	7833	7833	G	A	0.0909	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP4	ATGCACCTGGAGCTTTACCA	ATTGTTTTAATGGTGATAAT	no
+6	8110	8110	T	A	0.0833	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP4	TAGTACATTCTTTACTGGTG	AGAACTTATGTTTAATATGG	no
+7	9328	9328	A	G	0.1034	1a	ORF1a,ORF1ab polyprotein [exception ribosomal slippage],NSP5  putative 3C-like proteinase	CCTACATGGTGAGTTCTATG	TGCATTACACACTGGAACGG	no
+8	13404	48	A	C	0.1429	intergene	intergene	TTTAGTTGATCTTAGAACGT	GTTAGTGGGAACATCCAATA	no
+9	15255	1358	A	T	0.0882	1ab	similar to ORF1ab polyprotein,similar to NSP13:GBSEP:putative helicase	GTTGTCAATACCGTTAGTAT	CTGTGGTAATCATAAACCAA	no
+10	15319	1422	C	T	0.0769	1ab	similar to ORF1ab polyprotein,similar to NSP13:GBSEP:putative helicase	AGCGAAAATGTTGATGATTT	TACAGGGCTAATTGTGCTGG	no
+11	15326	1429	A	G	0.08	1ab	similar to ORF1ab polyprotein,similar to NSP13:GBSEP:putative helicase	ATGTTGATGATTTTAATCAA	CTAATTGTGCTGGCAGCGAA	no
+12	19937	6040	G	A	0.0714	1ab	similar to ORF1ab polyprotein,similar to NSP16:GBSEP:putative 2-O-ribose methyltransferase	AAAATTTATATGACATTGCA	TAACAGAGACAAGTTGGCAC	no
+13	21092	7195	T	C	0.0811	S	similar to spike protein	GTTTCTTATGATTATCAGTG	TTACGTGGTGATAACACTGG	no
+14	25794	11897	TT	AA	0.0838	5b	5b protein	CTTAACAAAGCAGGACAAGC	AGGATTAGATTGTGTTTACT	no
 
 *NB: an homopolymer region is set to 'yes' if there is a succession of at least 3 identical nucleotides.
      it looks like a restrictive measure, but Ion Torrent and Nanopore sequencing are very bad on such region, so make sure you verify these variants.
