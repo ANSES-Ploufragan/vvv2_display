@@ -1,4 +1,6 @@
 0.2.5.0:
+  - convert_vcffile_to_readablefile2.py: __add pos_ori for contigs original positions_ in addition to position (on figure) in 
+    summary tsv file
   - vvv2_display.py: add version at the end of help msg
   - vvv2_display.xml: add --snp_vcf_summary_f optional output (vcf output with only significant variants), 
   - convert_vcffile_to_readablefile2.py: add --vcfo option equiv to --snp_vcf_summary_f of vvv2_display
@@ -6,8 +8,8 @@
   - add Influenza test (flu)
   - visualize_snp_v4.R: change ordinate at each contig to avoid overlaps when possible (quinconce)
   - convert_tbl2json: handle codon_start annotation to shit cds_start for position of prot start in json
-  - vvv2_display.py and convert_vcffile_to_readablefile: add option to generate vcf output file of significant variants only for SnpEff
-    or NextClade donwstream analyses
+  - vvv2_display.py and convert_vcffile_to_readablefile2.py: add option to generate vcf output file of significant variants 
+    only for SnpEff or NextClade donwstream analyses
   - vvv2_display.py: add boolean detecting specif param for Galaxy, to rm tmp files
     when program is called outside Galaxy instance 
   - update test files in test-data directory
