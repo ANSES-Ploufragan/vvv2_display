@@ -50,7 +50,7 @@ def __main__():
     # allow to run tests from everywhere
     
     prog_tag = '[' + os.path.basename(__file__) + ']'
-    version = '0.2.4.1'
+    version = '0.2.5.0'
 
     # to record if we display cov depth in graph or not (depends on provided intputs)
     b_cov_depth_display = False

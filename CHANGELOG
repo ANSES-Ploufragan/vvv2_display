@@ -1,8 +1,8 @@
-0.2.4.1:
+0.2.5.0:
   - vvv2_display.py: add version at the end of help msg
   - vvv2_display.xml: add --snp_vcf_summary_f optional output (vcf output with only significant variants), 
   - convert_vcffile_to_readablefile2.py: add --vcfo option equiv to --snp_vcf_summary_f of vvv2_display
-  - change version to 0.2.4.1
+  - change version to 0.2.5.0
   - add Influenza test (flu)
   - visualize_snp_v4.R: change ordinate at each contig to avoid overlaps when possible (quinconce)
   - convert_tbl2json: handle codon_start annotation to shit cds_start for position of prot start in json
