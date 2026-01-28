@@ -128,7 +128,7 @@ if(b_covdepth){
     if(b_log_scale)
     {
       #                                             +1 is only to avoid log(0) when cov depth is 0 (log(0)=-inf)
-      cd = ggplot(coverage_depth, aes(x = V1, y = V2+1)) + geom_line(color = "black", linewidth = 0.5) + coord_transform(y="log10")
+      cd = ggplot(coverage_depth, aes(x = V1, y = V2+1)) + geom_line(color = "black", linewidth = 0.5) + coord_trans(y="log10")
     }else
     {
       # when no log scale
