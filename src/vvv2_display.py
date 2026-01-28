@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of the vvv2_display distribution (https://github.com/ANSES-Ploufragan/vvv2_display).
-# Copyright (c) 2023-2025 Fabrice Touzain.
+# Copyright (c) 2023-2026 Fabrice Touzain.
 # 
 # This program is free software: you can redistribute it and/or modify  
 # it under the terms of the GNU General Public License as published by  
@@ -50,6 +50,7 @@ def __main__():
     # allow to run tests from everywhere
     
     prog_tag = '[' + os.path.basename(__file__) + ']'
+    version = '0.2.5.0'
 
     # to record if we display cov depth in graph or not (depends on provided intputs)
     b_cov_depth_display = False
@@ -98,7 +99,13 @@ def __main__():
     R_SCRIPTS      = dir_path + "/" # R_SCRIPTS/"
     #########################################
 
-    parser = argparse.ArgumentParser()
+    # add version at the end of help
+    parser = argparse.ArgumentParser(
+        prog=prog_tag,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="version: "+version)
+
+    #parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--pass_tbl_f", dest='pass_annot_f',
                         help="in: tabular file of vadr annotations, with pass status",
                         metavar="FILE")
@@ -131,7 +138,12 @@ def __main__():
                         metavar="FILE")  
     parser.add_argument("-u", "--snp_loc_summary_f", dest='snp_loc_summary_f',
                         help="[optional] out: variant description for relevant positions, tsv file (if not provided, file name deduced from png name)",
-                        metavar="FILE")  
+                        metavar="FILE")     
+    # added 2025 09 05 ----------------
+    parser.add_argument("-x", "--snp_vcf_summary_f", dest='snp_vcf_summary_f',
+                        help="[optional] out: variant description for relevant positions, vcf file (for SnpEff of NextClade downstream analyses)",
+                        metavar="FILE")
+    # ---------------------------------  
     parser.add_argument("-j", "--json_f", dest='json_annot_f',
                         help="[Optional] out (tmp out file for galaxy compatibility, no need in other cases): vadr annotation converted to json",
                         metavar="FILE")
@@ -191,6 +203,7 @@ def __main__():
     b_test_convert_vcffile_to_readable     = args.b_test_convert_vcffile_to_readable
     b_test_visualize_snp_v4                = args.b_test_visualize_snp_v4
     b_test_correct_covdepth_f              = args.b_test_correct_covdepth_f
+    b_create_summary_vcf                   = False
 
     b_unlink_tmp_f = False # must we remove tmp files? Yes only if not in Galaxy
 
@@ -212,7 +225,7 @@ def __main__():
         # print(f"b_test_convert_tbl2json:{b_test_convert_tbl2json}")    
 
     if ((not b_test)and
-        ((len(sys.argv) < 9) or (len(sys.argv) > 32))):
+        ((len(sys.argv) < 9) or (len(sys.argv) > 36))):
         print("\n".join([prog_tag,
                          "Aim: Display of SNP proportions, annotations, for an assembly",
                          "in:", 
@@ -220,7 +233,8 @@ def __main__():
                          " - vadr assembly annotations",
                          "out:",
                          " - png file (image of SNP proportion alongside the assembly with CDS positions)",
-                         " - tsv file with variant calling summary, location in CDS and surround DNA sequence.\n"]))
+                         " - tsv file with variant calling summary, location in CDS and surround DNA sequence",
+                         " - [option] vcf file with variant calling summary, for SnpEff . NextClade downstream analyses.\n"]))
         parser.print_help()
         print(prog_tag + "[Error] we found "+str(len(sys.argv)) +
               " arguments, exit line "+str(frame.f_lineno))
@@ -252,6 +266,9 @@ def __main__():
             snp_loc_f = os.path.abspath(args.snp_loc_f)
         if args.snp_loc_summary_f is not None:
             snp_loc_summary_f = os.path.abspath(args.snp_loc_summary_f)
+        if args.snp_vcf_summary_f is not None:
+            snp_vcf_summary_f = os.path.abspath(args.snp_vcf_summary_f)
+            b_create_summary_vcf = True
                    
         if (args.cov_depth_f is not None):
             if os.path.isfile(args.cov_depth_f):
@@ -342,12 +359,13 @@ def __main__():
         vardict_vcf_f = test_dir + "/res2_vardict.vcf"   # from lofreq results  
         cov_depth_f   = test_dir + "/res2_covdepth.txt"  # from samtools results  
         # tmp out files
-        json_annot_f  = test_dir + "/res2_vadr.json"     # from convert_tbl2json.py
-        contig_limits_f= test_dir + "/contig_limits.txt"
-        contig_names_f = test_dir + "/contig_names.txt"
+        json_annot_f    = test_dir + "/res2_vadr.json"     # from convert_tbl2json.py
+        contig_limits_f = test_dir + "/contig_limits.txt"
+        contig_names_f  = test_dir + "/contig_names.txt"
         cov_depth_corr_f= test_dir + "/res2_covdepth_corr.txt"
         # final out file
-        png_var_f     = test_dir + "/res2_vvv2.png"     # from ...
+        png_var_f         = test_dir + "/res2_vvv2.png"     # from ...
+        snp_vcf_summary_f = test_dir + "/res2_vardict_snp_summary.vcf" # from convert_vcffile_to_readablefile2.py
         cmd = ' '.join([ dir_path + "/vvv2_display.py",
                             "--pass_tbl_f", pass_annot_f,
                             "--fail_tbl_f", fail_annot_f,
@@ -358,9 +376,10 @@ def __main__():
                             "--cov_depth_f", cov_depth_f,  
                             "--cov_depth_corr_f", cov_depth_corr_f,              
                             "--png_var_f", png_var_f,
-                            "--var_significant_threshold", var_significant_threshold_str
+                            "--var_significant_threshold", var_significant_threshold_str,
+                            "--snp_vcf_summary_f", snp_vcf_summary_f
                     ])
-        print(prog_tag + " START")    
+        print(prog_tag + " START complete genome TEST")    
         print(prog_tag + " cmd:" + cmd)
         os.system(cmd)
         print(prog_tag + " END")
@@ -381,6 +400,7 @@ def __main__():
         cov_depth_corr_f= test_dir + "/res_covdepth_corr.txt"
         # final out file
         png_var_f    = test_dir + "/res_vvv2.png"     # from ...
+        snp_vcf_summary_f = test_dir + "/res_vardict_snp_summary.vcf" # from convert_vcffile_to_readablefile2.py
         cmd = ' '.join([ dir_path + "/vvv2_display.py",
                     "--pass_tbl_f", pass_annot_f,
                     "--fail_tbl_f", fail_annot_f,
@@ -391,9 +411,10 @@ def __main__():
                     "--cov_depth_f", cov_depth_f,                     
                     "--cov_depth_corr_f", cov_depth_corr_f,       
                     "--png_var_f", png_var_f,
-                    "--var_significant_threshold", var_significant_threshold_str                    
+                    "--var_significant_threshold", var_significant_threshold_str,
+                    "--snp_vcf_summary_f", snp_vcf_summary_f                    
                     ])
-        print(prog_tag + " START")    
+        print(prog_tag + " START multi-CONTIGS TEST")    
         print(prog_tag + " cmd:" + cmd)
         os.system(cmd)
         print(prog_tag + " END")
@@ -414,6 +435,7 @@ def __main__():
         cov_depth_corr_f= test_dir + "/res3_covdepth_corr.txt"
         # final out file
         png_var_f     = test_dir + "/res3_vvv2.png"     # from ...
+        snp_vcf_summary_f = test_dir + "/res3_vardict_snp_summary.vcf" # from convert_vcffile_to_readablefile2.py
         cmd = ' '.join([ dir_path + "/vvv2_display.py",
                             "--pass_tbl_f", pass_annot_f,
                             "--fail_tbl_f", fail_annot_f,
@@ -424,9 +446,45 @@ def __main__():
                             "--cov_depth_f", cov_depth_f,  
                             "--cov_depth_corr_f", cov_depth_corr_f,              
                             "--png_var_f", png_var_f,
-                            "--var_significant_threshold", var_significant_threshold_str
+                            "--var_significant_threshold", var_significant_threshold_str,
+                            "--snp_vcf_summary_f", snp_vcf_summary_f
                     ])
-        print(prog_tag + " START")    
+        print(prog_tag + " START PCV2 TEST")    
+        print(prog_tag + " cmd:" + cmd)
+        os.system(cmd)
+        print(prog_tag + " END")
+        # --------------------------------------------------------------
+
+        # --------------------------------------------------------------
+        # COMPLETE GENOME Influenza (flu)
+        # in files
+        pass_annot_f  = test_dir + "/res4_vadr_pass.tbl" # from vadr results
+        fail_annot_f  = test_dir + "/res4_vadr_fail.tbl" # from vadr results
+        seq_stat_f    = test_dir + "/res4_vadr.seqstat"  # from vadr results
+        vardict_vcf_f = test_dir + "/res4_vardict.vcf"   # from lofreq results  
+        cov_depth_f   = test_dir + "/res4_covdepth.txt"  # from samtools results  
+        # tmp out files
+        json_annot_f  = test_dir + "/res4_vadr.json"     # from convert_tbl2json.py
+        contig_limits_f= test_dir + "/contig4_limits.txt"
+        contig_names_f = test_dir + "/contig4_names.txt"
+        cov_depth_corr_f= test_dir + "/res4_covdepth_corr.txt"
+        # final out file
+        png_var_f     = test_dir + "/res4_vvv2.png"     # from ...
+        snp_vcf_summary_f = test_dir + "/res4_vardict_snp_summary.vcf" # from convert_vcffile_to_readablefile2.py
+        cmd = ' '.join([ dir_path + "/vvv2_display.py",
+                            "--pass_tbl_f", pass_annot_f,
+                            "--fail_tbl_f", fail_annot_f,
+                            "--seq_stat_f", seq_stat_f,
+                            "--vcf_f", vardict_vcf_f,
+                            "--contig_limits_f", contig_limits_f,   
+                            "--contig_names_f", contig_names_f,   
+                            "--cov_depth_f", cov_depth_f,  
+                            "--cov_depth_corr_f", cov_depth_corr_f,              
+                            "--png_var_f", png_var_f,
+                            "--var_significant_threshold", var_significant_threshold_str,
+                            "--snp_vcf_summary_f", snp_vcf_summary_f
+                    ])
+        print(prog_tag + " START FLU TEST")    
         print(prog_tag + " cmd:" + cmd)
         os.system(cmd)
         print(prog_tag + " END")
@@ -532,11 +590,12 @@ def __main__():
         # snp_loc_f         =  test_dir + "/res2_snp.txt"
         # snp_loc_summary_f =  test_dir + "/res2_snp_summary.txt"
         # CONTIGS
-        # vardict_vcf_f = test_dir + "/res_vardict.vcf"  # from vardict results
+        vardict_vcf_f     = test_dir + "/res_vardict.vcf"  # from vardict results
         correct_vcf_f     = test_dir + "/res_correct.vcf"                  
         json_annot_f      = test_dir + "/res_vadr.json"
         snp_loc_f         = test_dir + "/res_snp.tsv"
         snp_loc_summary_f = test_dir + "/res_snp_summary.tsv"
+        snp_vcf_summary_f = test_dir + "/res_snp_summary.vcf"
 
     if(snp_loc_f == ''):
        snp_loc_f = vardict_vcf_f
@@ -554,11 +613,16 @@ def __main__():
     threshold = "%.2f" % (var_significant_threshold / 100)
     cmd = ' '.join([p_script,
                     "--vcfs", correct_vcf_f,
+                    "--vcfi", vardict_vcf_f, # needed to get true pos in summary tsv and vcf files
                     "--json", json_annot_f,
                     "--out", snp_loc_f,
                     "--outs", snp_loc_summary_f,
-                    "--threshold", threshold,
-                    "2> /dev/null"])
+                    "--threshold", threshold])
+    # if a vcf of significant variants only is requested by user for downstream SnpEff or NextClade analyses
+    if b_create_summary_vcf:
+        cmd = cmd + " --vcfo " + snp_vcf_summary_f + " "
+
+    cmd = cmd + " 2> /dev/null"
     print(prog_tag + " cmd:" + cmd)
 
     if b_test_convert_vcffile_to_readable:

@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 #
 # This file is part of the vvv2_display distribution (https://github.com/ANSES-Ploufragan/vvv2_display).
-# Copyright (c) 2023 Fabrice Touzain.
+# Copyright (c) 2023-2026 Fabrice Touzain.
 # 
 # This program is free software: you can redistribute it and/or modify  
 # it under the terms of the GNU General Public License as published by  
@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License 
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
+# FT - add vcfout output, a vcf file containing only significant variant when requested by user: September 5th 2025
 # FT - correct regexp part for description parsing: simplified, now do not miss variant: March 27th 2024
 # FT - correct gene identif/name (position provided instead sometimes): June 15th 2023
 # FT - last modification: September 19th 2022 to replace pyvcf by pysam
@@ -55,7 +56,7 @@ frame = inspect.currentframe()
 ###############
 b_verbose = False
 prog_tag = '[' + os.path.basename(__file__) + ']'
-
+b_create_summary_vcf = False
 
 ###############
 ## Functions ##
@@ -155,21 +156,22 @@ def write_line(temp_count, pos, gene, protein, dico):
     global A
 
     if temp_count == 0:
-        line = str(pos) + "\tNA\tNA\tNA\tNA\tNA\tNA\t"+gene+"\t"+protein+"\t1\tNA\tNA\tNA\tNA\n"
+        line = str(pos) + "\tNA\tNA\tNA\tNA\tNA\tNA\tNA\t"+gene+"\t"+protein+"\t1\tNA\tNA\tNA\tNA\n"
     elif temp_count == 1:
         ref, alt = dico[str(pos)][0], dico[str(pos)][1]
         freq, snp = dico[str(pos)][2], dico[str(pos)][3]
         lseq, rseq = dico[str(pos)][4], dico[str(pos)][5]
+        pos_ori = dico[str(pos)][6]
 
         if float(freq) >= threshold:
             A+=1
             is_homo = is_homopolymer(lseq, rseq, ref, alt)
             if is_homo is True:
-                line = "\t".join( (str(pos), str(snp), ref, alt, freq, ref, alt, gene, protein, "1", str(A), lseq, rseq, "yes") ) + "\n"
+                line = "\t".join( (str(pos), str(pos_ori), str(snp), ref, alt, freq, ref, alt, gene, protein, "1", str(A), lseq, rseq, "yes") ) + "\n"
             else:
-                line = "\t".join( (str(pos), str(snp), ref, alt, freq, ref, alt, gene, protein, "1", str(A), lseq, rseq, "no") ) + "\n"
+                line = "\t".join( (str(pos), str(pos_ori), str(snp), ref, alt, freq, ref, alt, gene, protein, "1", str(A), lseq, rseq, "no") ) + "\n"
         else:
-            line = "\t".join( (str(pos), str(snp), ref, alt, freq, "NA\tNA", gene, protein, "1\tNA\tNA\tNA\tNA\n") )
+            line = "\t".join( (str(pos), str(pos_ori), str(snp), ref, alt, freq, "NA\tNA", gene, protein, "1\tNA\tNA\tNA\tNA\n") )
     return line
 
 def is_homopolymer(lseq, rseq, ref, alt):
@@ -204,16 +206,18 @@ def is_homopolymer(lseq, rseq, ref, alt):
 
 ## call for the command line arguments ##
 parser = argparse.ArgumentParser()
-parser.add_argument('--vcfs', type = str, help='the vcf file to count')
+parser.add_argument('--vcfs', type = str, help='the vcf file to count (corrected pos)')
+parser.add_argument('--vcfi', type = str, help='the vcf file to count (original  pos)')
 parser.add_argument('--json', type = str, help = "json gene position file")
 parser.add_argument('--out', type = str, help = "the output file")
 parser.add_argument('--outs', type = str, help = "the output summary file")
 parser.add_argument('--threshold', type = str, help='the threshold you use to cut the data', default = 0.1)
+parser.add_argument('--vcfo', type = str, help='the vcf output file summarizing signfificant variants only')
 
 args = parser.parse_args()
 
 ## check for the presence of all command line arguments ##
-if not args.vcfs or not args.json or not args.out or not args.outs or not args.threshold:           
+if not args.vcfs or not args.vcfi or not args.json or not args.out or not args.outs or not args.threshold:           
     parser.print_help()
     sys.exit(prog_tag + "\nAn error occured while entering the arguments.\nPlease, read the help section above.\n")
 else:
@@ -226,6 +230,10 @@ else:
     
     genomesize = dico_json["genomesize"]
     filin.close()
+    if args.vcfo is not None:
+        vcfo = args.vcfo
+        b_create_summary_vcf = True
+        print("b_create_summary_vcf set to True")
 
     # lists initializing
     genomeposition = []
@@ -244,7 +252,7 @@ else:
         shutil.copy(args.vcfs, args.out)
         print(prog_tag + ' ' + args.out +" file created")
         sys.exit()
-        
+    
 #    for record in vcf.Reader(file_vcf):     # use pyvcf deprecated
 #        snp_positions[record.POS-1] = True  # use pyvcf deprecated
     for record in file_vcf.fetch():
@@ -275,16 +283,29 @@ else:
     # dictionnary initialization to store data
     dico = {} # forward in the script key = snp_location
 
-    # parse vcf file and harvest snp data
-    with open(args.vcfs, "r") as file_vcf:
-        for line in file_vcf:
+    # to store original vcf_header to write in summary vcf out file
+    vcf_header = []
+    vcf_main   = []
+
+    # parse vcf file and harvest snp data, vcfs:corrected_pos, vcfi;initial_pos
+    with open(args.vcfs, "r") as file_vcf, open(args.vcfi, "r") as file_vcfi:
+        for line in file_vcf:            # line : corrected pos
+            line2 = file_vcfi.readline() # line2: original position
+
             if "#" in line: # skip the header section
+                # get the vcf header to write it in the vcf summary output file
+                vcf_header.append(line)
                 continue
             else: # data section
                 new_list = [] # add in this order = ref, alt, freq, snp_number, lseq, rseq
 
+                # print("line:")
                 # print(line)
+                # print("line2:")
+                # print(line2)
 
+                # original position before correction (read with line2 vcfi line), needed for final output tsv files
+                SNP_position_ori = (reg1.search(line2)).group(1)
                 # search for the motif and capture the wanted group
                 SNP_position = (reg1.search(line)).group(1)
                 ref = (reg1.search(line)).group(2) ; new_list.append(ref)
@@ -304,17 +325,30 @@ else:
                     leftseq = (lseq.search(line)).group(1); 
                 new_list.append(rightseq)
                 new_list.append(leftseq)
+                # 2026 01 27: added to store original position in case of multi contigs
+                new_list.append(SNP_position_ori)
                 dico[SNP_position] = new_list
+
+                # store retained variants of vcf
+                if float(freq) >= threshold:
+                    vcf_main.append(line2)
 
     # Once harvested, data need to be recorded in a file
 
+    # create vcf summary output file if asked of only significant variant for SnpEff and NextClade downlstream analyses
+    if b_create_summary_vcf:
+        filoutvcf = open(vcfo, "w")
+        filoutvcf.writelines(vcf_header)
+        # write in the vcf file of only significant variant for SnpEff and NextClade downstream analyses
+        filoutvcf.writelines(vcf_main)
+        print(prog_tag + ' '+ args.vcfo +" file created")
 
     A = 0 # this flag is used in the write_line function in order to add indices to line where variants are upper than threshold
     with open(args.out, "w") as filout:
         summary_list = []
-        regex = r'([0-9]+)\t1\t([A-Z\>\<]+)\t([A-Z\>\<]+)\t([0-9\.]+)\t[A-Z\>\<]+\t[A-Z\>\<]+\t([A-Z0-9a-z\-_\, /]+)\t([^\t]*)\t1\t([0-9]+)\t([A-Z]+\t[A-Z]+\t(no|yes))\n'
+        regex = r'([0-9]+)\t([0-9]+)\t1\t([A-Z\>\<]+)\t([A-Z\>\<]+)\t([0-9\.]+)\t[A-Z\>\<]+\t[A-Z\>\<]+\t([A-Z0-9a-z\-_\, /]+)\t([^\t]*)\t1\t([0-9]+)\t([A-Z]+\t[A-Z]+\t(no|yes))\n'
         REGEX = re.compile(regex)    
-        filout.write("position\tSNP\tref\talt\tvariant_percent\tadd_ref\tadd_alt\tgene_id\tprotein_id\tsize_point\tindice\tlseq\trseq\tisHomo\n")
+        filout.write("position\tposition_ori\tSNP\tref\talt\tvariant_percent\tadd_ref\tadd_alt\tgene_id\tprotein_id\tsize_point\tindice\tlseq\trseq\tisHomo\n")
         a = 0 # flag to find the first genomic region after initialization of i
 
         # this part is required to write the correct name of the genomic region
@@ -330,19 +364,20 @@ else:
             #print(line)
 
             if REGEX.match(line):
-                indice = (REGEX.search(line)).group(7)
-                gene = (REGEX.search(line)).group(5)
-                protein = (REGEX.search(line)).group(6)
-                ref = (REGEX.search(line)).group(2)
-                alt = (REGEX.search(line)).group(3)
+                indice = (REGEX.search(line)).group(8)
+                gene = (REGEX.search(line)).group(6)
+                protein = (REGEX.search(line)).group(7)
+                ref = (REGEX.search(line)).group(3)
+                alt = (REGEX.search(line)).group(4)
                 position = (REGEX.search(line)).group(1)
-                freq = (REGEX.search(line)).group(4)
-                homo = (REGEX.search(line)).group(8)
-                new_line = str("\t".join( (indice, position, ref, alt, freq, gene, protein, homo) ))
+                pos_ori = (REGEX.search(line)).group(2)
+                freq = (REGEX.search(line)).group(5)
+                homo = (REGEX.search(line)).group(9)
+                new_line = str("\t".join( (indice, position, pos_ori, ref, alt, freq, gene, protein, homo) ))
                 summary_list.append(new_line + "\n")
 
     with open(args.outs, "w") as filout:
-        filout.write("indice\tposition\tref\talt\tfreq\tgene\tprot\tlseq\trseq\tisHomo*\n")
+        filout.write("indice\tposition\tposition_ori\tref\talt\tfreq\tgene\tprot\tlseq\trseq\tisHomo*\n")
         for line in summary_list:
             filout.write(line)
         filout.write("""
@@ -350,4 +385,5 @@ else:
      it looks like a restrictive measure, but Ion Torrent and Nanopore sequencing are very bad on such region, so make sure you verify these variants.""")
     print(prog_tag + ' '+ args.out +" file created")
     print(prog_tag + ' '+ args.outs +" file created")
+    
 ## ~ end of script ~ ##

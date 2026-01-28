@@ -1,6 +1,21 @@
 #!/usr/bin/env Rscript
 #
-# FT; last modification January 20th 2025
+# This file is part of the vvv2_display distribution (https://github.com/ANSES-Ploufragan/vvv2_display).
+# Copyright (c) 2023-2026 Fabrice Touzain.
+# 
+# This program is free software: you can redistribute it and/or modify  
+# it under the terms of the GNU General Public License as published by  
+# the Free Software Foundation, version 3.
+#
+# This program is distributed in the hope that it will be useful, but 
+# WITHOUT ANY WARRANTY; without even the implied warranty of 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License 
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+# FT; last modification January 27th 2026
 # AF; last modification February 16th 2019
 #
 # Description:  This script has been written in order to generate a graph
@@ -113,7 +128,7 @@ if(b_covdepth){
     if(b_log_scale)
     {
       #                                             +1 is only to avoid log(0) when cov depth is 0 (log(0)=-inf)
-      cd = ggplot(coverage_depth, aes(x = V1, y = V2+1)) + geom_line(color = "black", linewidth = 0.5) + coord_trans(y="log10")
+      cd = ggplot(coverage_depth, aes(x = V1, y = V2+1)) + geom_line(color = "black", linewidth = 0.5) + coord_transform(y="log10")
     }else
     {
       # when no log scale
@@ -422,6 +437,7 @@ if(! is.null(contig_limits)){ # means more than 1 contig
     print(namerangei)
   }
 
+  # compute x coordinate for middle of a contig, to know where to place contig name
   xmidname=lapply(namerangei, FUN=function(x){ as.integer((as.integer(contig_limits[x-1]) + as.integer(contig_limits[x])) / 2) } )
   xmidname=as.numeric(unlist(xmidname))
   
@@ -434,17 +450,34 @@ if(! is.null(contig_names)){ # means more than 1 contig
   if( b_verbose ){
     print(contig_names)
   }
-  # for(ni in 1:(length(contig_names))){
-  #   n = contig_names[ni]
-  #   npos = xmidname[ni]
-  #   print("n:")
-  #   print(n)
-  #   print("npos:")
-  #   print(npos)
-  #   p3bis = p3bis + geom_text(aes(x = npos, y = 1.1, label = n, angle = 0)) # add name to the graph
-	# }
-  cy = rep(1.1, length(contig_names)) 
+  
+  # # original code for contig names
+  # # create a list of 1.1 the number of times equal to contig number:
+  # # loose 1 contig over 2 due to avoided overlap
+  # cy = rep(1.1, length(contig_names)) 
+  # print("cy:")
+  # print(cy)
+  # print("typeof")
+  # print(typeof(cy))
+
+  # --------------------------------------------------------
+  # new 2026 01 26
+  # try to alternate 2 different Y positions for contig name ordinates (quinconce)
+  namerange_strict = 1:length(contig_names)
+  # as.numeric(unlist allow the conversion of list to floats (list not accepted on geom_text)
+  cy=as.numeric(unlist(lapply(namerange_strict, FUN=function(x){ if((x %% 2) == 1){ 1.1 }else{ 1.05 } } )))
+  if( b_verbose ){
+    print("namerange_strict:")
+    print(namerange_strict)
+    print("cy new:")
+    print(cy)
+    print("typeof")
+    print(typeof(cy))
+  }
+  # --------------------------------------------------------
+
   dfc = data.frame(xmidname,cy,contig_names)
+  print("dfc ok")
   p3bis = p3bis + geom_text(data=dfc, 
                             mapping=aes(
                               x=xmidname, 
@@ -455,7 +488,7 @@ if(! is.null(contig_names)){ # means more than 1 contig
                             check_overlap = TRUE,
                             na.rm = TRUE
                           )
-
+  print("p3bis ok")
 }
 
 # # TODO stem_loops
