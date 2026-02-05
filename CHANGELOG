@@ -1,3 +1,5 @@
+0.2.5.1:
+  - vvv2_display.xml: correct Galaxy wrapper: now work bug gives empty vcf summary when this option is asked
 0.2.5.0:
   - convert_vcffile_to_readablefile2.py: __add pos_ori for contigs original positions_ in addition to position (on figure) in 
     summary tsv file
