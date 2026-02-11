@@ -3,11 +3,11 @@
       <requirement type="package" version="0.2.5.0">vvv2_display</requirement>	      
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-       vvv2_display.py -f '$vadr_fail_annotation' -p '$vadr_pass_annotation' -s '$vadr_seqstat' -n '$vardict_vcf' -r '$snp_img' -w '$var_significant_thres' -o '$cov_depth' -e '$cov_depth_corr' -t '$snp_loc' -u '$snp_loc_summary' 
-       #if str($snp_vcf_summary):
-          -x '$snp_vcf_summary' 
+       vvv2_display.py -f '$vadr_fail_annotation' -p '$vadr_pass_annotation' -s '$vadr_seqstat' -n '$vardict_vcf' -r '$snp_img' -w '$var_significant_thres' -o '$cov_depth' -e '$cov_depth_corr' -t '$snp_loc' -u '$snp_loc_summary' -j '$json_annot' -k '$bed_annot' -l '$correct_vcf' -m '$contig_limits' -N '$contig_names' $cov_depth_scale 
+       ## vcf significant output file option
+       #if $summary_output_vcf_request: 
+           -x 'res_snp_summary.vcf'
        #end if
-       -j '$json_annot' -k '$bed_annot' -l '$correct_vcf' -m '$contig_limits' -N '$contig_names' $cov_depth_scale
     ]]></command>
     <inputs>
         <param type="data" name="vadr_fail_annotation" format="tabular" />
@@ -20,12 +20,13 @@
 			    <option value="-y">linear scale</option>
         </param>
         <param type="data" name="cov_depth" format="txt" />
+        <param type="boolean" name="summary_output_vcf_request" label="tells if vcf summary output file is created" help="tells if vcf summary output file is created">
+        </param>
     </inputs>
     <outputs>
         <data name="snp_img" format="png" label="png image showing variants"/>
         <data name="snp_loc_summary" format="tabular" label="tsv file of significant variants only"/>
-        <data name="snp_vcf_summary" format="vcf" label="vcf file of significant variants only"/>
-	<!-- intermediate output files added for Galaxy compatibility -->
+	      <!-- intermediate output files added for Galaxy compatibility -->
         <data name="snp_loc" format="txt" hidden="true" label="tsv file of all variants"/>
         <data name="json_annot" format="json" hidden="true" label="json file of annotations"/>
         <data name="bed_annot" format="bed" hidden="true" label="bed file of of annotations"/>
@@ -33,21 +34,25 @@
         <data name="contig_limits" format="txt" hidden="true" label="txt file with contig limits"/>
         <data name="contig_names" format="txt" hidden="true" label="txt file with contig names"/>
         <data name="cov_depth_corr" format="txt" hidden="true" label="txt file with pos and cov depth, pos corrected when multi contigs"/>
+        <!-- present only if ask for summary vcf output-->
+        <data name="snp_vcf_summary_f" format="vcf" label="vcf file of significant variants only" from_work_dir="res_snp_summary.vcf">
+          <filter>summary_output_vcf_request</filter>       
+        </data>
 	<!-- end intermediate output files added for Galaxy compatibility -->		
     </outputs>
     <tests>
       <test>
-            <param name="vadr_fail_annotation" value="test_vvv2_display/res_vadr_fail.tbl"/>	
-            <param name="vadr_pass_annotation" value="test_vvv2_display/res_vadr_pass.tbl"/>
-            <param name="vadr_seqstat" value="test_vvv2_display/res_vadr.seqstat"/>
-            <param name="vardict_vcf" value="test_vvv2_display/res_vardict.vcf"/>
+            <param name="vadr_fail_annotation" value="test_vvv2_display/res_vadr_fail.tbl" ftype="tabular"/>	
+            <param name="vadr_pass_annotation" value="test_vvv2_display/res_vadr_pass.tbl" ftype="tabular"/>
+            <param name="vadr_seqstat" value="test_vvv2_display/res_vadr.seqstat" ftype="txt"/>
+            <param name="vardict_vcf" value="test_vvv2_display/res_vardict.vcf" ftype="vcf"/>
             <param name="var_significant_thres" value="7"/>
             <param name="cov_depth_scale" value="-y" />
             <param name="cov_depth" value="test_vvv2_display/res_covdepth.txt" />
+            <param name="summary_output_vcf_request" value="true"/>
             <output name="snp_img" file="test_vvv2_display/res_snp.png" ftype="png"/>	    
             <output name="snp_loc_summary" file="test_vvv2_display/res_snp_summary.tsv" ftype="tabular"/>
-            <output name="snp_vcf_summary" file="test_vvv2_display/res_snp_summary.vcf" ftype="vcf"/>
-	          <!-- intermediate output files -->
+            <!-- intermediate output files -->
             <output name="snp_loc" file="test_vvv2_display/res_snp.txt" ftype="txt"/>
 	          <output name="json_annot" file="test_vvv2_display/res_vadr.json" ftype="json"/>
             <output name="bed_annot" file="test_vvv2_display/res_vadr.4vardict.bed" ftype="bed"/>
@@ -55,7 +60,8 @@
             <output name="contig_limits" file="test_vvv2_display/contig_limits.txt" ftype="txt"/>
             <output name="contig_names" file="test_vvv2_display/contig_names.txt" ftype="txt"/>
             <output name="cov_depth_corr" file="test_vvv2_display/res_covdepth_corrected.txt" ftype="txt"/>
-	    <!-- end intermediate output files -->	    
+	          <!-- end intermediate output files -->	    
+            <output name="snp_vcf_summary_f" file="test_vvv2_display/res_snp_summary.vcf" ftype="vcf"/>
       </test>
     </tests>
     <help><![CDATA[
@@ -82,8 +88,31 @@ optional arguments:
                         in: vcf variant file provided by vardict
   -r FILE, --png_var_f FILE
                         out: png file with variant proportions and annotations
+  -w VAR_SIGNIFICANT_THRESHOLD, --var_significant_threshold VAR_SIGNIFICANT_THRESHOLD
+                        (percentage var_significant_threshold) Define minimal
+                        proportion of a variant to be kept in significant
+                        results     
+  -y, --covdepth_linear_scale
+                        [Optional] to display covepth ordinates in linear
+                        scale (default log10 scale)
   -o FILE, --cov_depth_f FILE
                         [optional] in: text file of coverage depths (given by samtools depth)
+  -e FILE, --cov_depth_corr_f FILE
+                        [optional] out: text file of coverage depths with
+                        cumulated position in case of several contigs, for
+                        display (tmp file, for galaxy compatibility)
+  -t FILE, --snp_loc_f FILE
+                        [optional] out: variant description for relevant
+                        positions, tsv file (if not provided, file name
+                        deduced from png name)
+  -u FILE, --snp_loc_summary_f FILE
+                        [optional] out: variant description for relevant
+                        positions, tsv file (if not provided, file name
+                        deduced from png name)
+  -x FILE, --snp_vcf_summary_f FILE
+                        [optional] out: variant description for relevant
+                        positions, vcf file (for SnpEff of NextClade
+                        downstream analyses)
     ]]></help>
     <citations>
         <citation type="bibtex">
@@ -95,6 +124,7 @@ optional arguments:
   journal = {GitHub repository},
   url = {https://github.com/ANSES-Ploufragan/vvv2_display},
 	}</citation>
+      <citation type="doi">10.3390/v17101385</citation>
       <citation type="doi">10.1016/j.virusres.2020.198201</citation>
     </citations>
 </tool>
