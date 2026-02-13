@@ -231,6 +231,7 @@ def __main__():
                          "in:", 
                          " - vardict variant calling output",
                          " - vadr assembly annotations",
+                         " - [option] samtools depth output (coverage depth txt file)",
                          "out:",
                          " - png file (image of SNP proportion alongside the assembly with CDS positions)",
                          " - tsv file with variant calling summary, location in CDS and surround DNA sequence",
