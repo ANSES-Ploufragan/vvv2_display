@@ -1,6 +1,14 @@
-<tool id="vvv2_display" name="vvv2_display: Display SNP proportions and CDS of an assembly in png image" version="0.2.5.0" python_template_version="3.9">
+<tool id="vvv2_display" name="vvv2_display" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.9">
+    <description>Display SNP proportions (vardict outputs), CDS (vadr annotations) of an assembly/genome, coverage depth (samtools depth), in png image</description>
+    <macros>
+        <token name="@TOOL_VERSION@">0.2.5.0</token>
+        <token name="@VERSION_SUFFIX@">2</token>
+    </macros>
+    <xrefs>
+        <xref type='bio.tools'>vvv2_display</xref>
+    </xrefs>
     <requirements>
-      <requirement type="package" version="0.2.5.0">vvv2_display</requirement>	      
+        <requirement type="package" version="@TOOL_VERSION@">vvv2_display</requirement>	      
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
        vvv2_display.py -f '$vadr_fail_annotation' -p '$vadr_pass_annotation' -s '$vadr_seqstat' -n '$vardict_vcf' -r '$snp_img' -w '$var_significant_thres' -o '$cov_depth' -e '$cov_depth_corr' -t '$snp_loc' -u '$snp_loc_summary' -j '$json_annot' -k '$bed_annot' -l '$correct_vcf' -m '$contig_limits' -N '$contig_names' $cov_depth_scale 
@@ -16,8 +24,8 @@
         <param type="data" name="vardict_vcf" format="vcf" />
         <param type="integer" name="var_significant_thres" value="7" min="0" max="100" label="min int threshold to keep significant variant (%age)" format="int" />
         <param type="select" name="cov_depth_scale" label="tells if cov depth scale (ordinate) is displayed with log10 (default) or linear scale" help="tells if cov depth scale (ordinate) is displayed with log10 (default) or linear scale">
-          <option value="">log10 scale</option>
-			    <option value="-y">linear scale</option>
+            <option value="">log10 scale</option>
+			      <option value="-y">linear scale</option>
         </param>
         <param type="data" name="cov_depth" format="txt" />
         <param type="boolean" name="summary_output_vcf_request" label="tells if vcf summary output file is created" help="tells if vcf summary output file is created">
@@ -36,12 +44,12 @@
         <data name="cov_depth_corr" format="txt" hidden="true" label="txt file with pos and cov depth, pos corrected when multi contigs"/>
         <!-- present only if ask for summary vcf output-->
         <data name="snp_vcf_summary_f" format="vcf" label="vcf file of significant variants only" from_work_dir="res_snp_summary.vcf">
-          <filter>summary_output_vcf_request</filter>       
+            <filter>summary_output_vcf_request</filter>       
         </data>
 	<!-- end intermediate output files added for Galaxy compatibility -->		
     </outputs>
     <tests>
-      <test>
+        <test>
             <param name="vadr_fail_annotation" value="test_vvv2_display/res_vadr_fail.tbl" ftype="tabular"/>	
             <param name="vadr_pass_annotation" value="test_vvv2_display/res_vadr_pass.tbl" ftype="tabular"/>
             <param name="vadr_seqstat" value="test_vvv2_display/res_vadr.seqstat" ftype="txt"/>
@@ -62,17 +70,19 @@
             <output name="cov_depth_corr" file="test_vvv2_display/res_covdepth_corrected.txt" ftype="txt"/>
 	          <!-- end intermediate output files -->	    
             <output name="snp_vcf_summary_f" file="test_vvv2_display/res_snp_summary.vcf" ftype="vcf"/>
-      </test>
+        </test>
     </tests>
     <help><![CDATA[
 [vvv2_display.py]
 Aim: Display of SNP proportions, annotations, for an assembly
 in:
-- vardict variant calling output
+- vardict variant calling outputS
 - vadr assembly annotations
+- [option] samtools depth output (coverage depth txt file)
 out:
 - png file (image of SNP proportion alongside the assembly with CDS positions)
-- txt file with variant calling summary, location in CDS and surround DNA sequence.
+- txt file with variant calling summary, location in CDS and surround DNA sequence
+- [option] vcf file with variant calling summary, for SnpEff . NextClade downstream analyses.
 
 usage: vvv2_display.py [-h] [-p FILE] [-f FILE] [-s FILE] [-n FILE] [-r FILE]
 
