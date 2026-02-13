@@ -1,4 +1,6 @@
 0.2.5.1:
+  - vvv2_display.py: improve help
+  - vvv2_display.xml: add description and bio.tools ref
   - vvv2_display.xml: correct Galaxy wrapper: works, attribute fix name to optional vcf summary output file
 0.2.5.0:
   - convert_vcffile_to_readablefile2.py: __add pos_ori for contigs original positions_ in addition to position (on figure) in 
