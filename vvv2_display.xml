@@ -22,7 +22,7 @@
         <param type="data" name="vadr_pass_annotation" format="tabular" />
         <param type="data" name="vadr_seqstat" format="txt" />
         <param type="data" name="vardict_vcf" format="vcf" />
-        <param type="integer" name="var_significant_thres" value="7" min="0" max="100" label="min int threshold to keep significant variant (%age)" format="int" />
+        <param type="integer" name="var_significant_thres" value="7" min="0" max="100" label="min int threshold to keep significant variant (%age)"/>
         <param type="select" name="cov_depth_scale" label="tells if cov depth scale (ordinate) is displayed with log10 (default) or linear scale" help="tells if cov depth scale (ordinate) is displayed with log10 (default) or linear scale">
             <option value="">log10 scale</option>
 			      <option value="-y">linear scale</option>
@@ -76,8 +76,8 @@
 [vvv2_display.py]
 Aim: Display of SNP proportions, annotations, for an assembly
 in:
-- vardict variant calling outputS
-- vadr assembly annotations
+- vardict variant calling (all.vcf)
+- vadr assembly annotation outputS (pass.tbl, fail.tbl and seqstat.txt)
 - [option] samtools depth output (coverage depth txt file)
 out:
 - png file (image of SNP proportion alongside the assembly with CDS positions)
@@ -107,14 +107,6 @@ optional arguments:
                         scale (default log10 scale)
   -o FILE, --cov_depth_f FILE
                         [optional] in: text file of coverage depths (given by samtools depth)
-  -e FILE, --cov_depth_corr_f FILE
-                        [optional] out: text file of coverage depths with
-                        cumulated position in case of several contigs, for
-                        display (tmp file, for galaxy compatibility)
-  -t FILE, --snp_loc_f FILE
-                        [optional] out: variant description for relevant
-                        positions, tsv file (if not provided, file name
-                        deduced from png name)
   -u FILE, --snp_loc_summary_f FILE
                         [optional] out: variant description for relevant
                         positions, tsv file (if not provided, file name
