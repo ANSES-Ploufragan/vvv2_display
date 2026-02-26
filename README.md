@@ -165,3 +165,10 @@ https://workflowhub.eu/workflows/1741
 
 * Additional vadr database for specific viruses:
   - Porcin Circo Virus: [doi: 10.5281/zenodo.15065124](https://zenodo.org/records/15065124)
+
+# Fundings
+
+* EMERGEN/EMERGEN2 ANR project involving:
+  - Agence Nationale de Sécurité Sanitaire de l'Alimentation, de l'Environnement et du Travail
+  - Santé Publique France
+* Conseil régional de Bretagne
