@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/media/dd_travail/mamba_env_wip/2bc7c1800cbad08cf53d62fe5fdf2730_/bin/python
 # -*- coding: utf-8 -*-
 #
 # This file is part of the vvv2_display distribution (https://github.com/ANSES-Ploufragan/vvv2_display).
@@ -132,7 +132,6 @@ elif(not b_test):
 if args.b_verbose is not None:
     b_verbose = args.b_verbose
 
-
 if b_test_convert_tbl2json:
     test_dir = 'test_convert_tbl2json/'
     test_name = [
@@ -238,6 +237,7 @@ starts_vardict = []
 ends_vardict   = []
 chrs  = []
 cpt_gene = 0
+last_gene_index = None
 
 # pattern to remove non alphanumeric character (ie: <> character befire start end positions of genes, cds, etc...)
 non_alphanum = re.compile(r"\W") # [\'\(\)\W]")
@@ -299,6 +299,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         #                gene_name]))
 
                        # store info
+                        # print("contig_pos_shift:"+str(contig_pos_shift)+", line "+str(frame.f_lineno))
                         chrs.append(contig)
                         names.append(gene_name)
                         types.append('gene')
@@ -309,10 +310,10 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         if b_verbose or b_check_gene_prot_rec:
                             print("\t".join([
                                 prog_tag,
-                                "RECORD: name:" + gene_name,
+                                "RECORD: name:" + names[-1],
                                 "type:gene",
-                                "starts:"+gene_start,
-                                "end:"+gene_end,
+                                "starts:"+str(starts[-1]),
+                                "end:"+str(ends[-1]),
                                 "contig:"+contig+", line "+str(frame.f_lineno)
                             ]))
 
@@ -1106,7 +1107,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                             # if so, no need to record again
                             print("\t".join([
                                 prog_tag,
-                                "PASS (already RECORDED new_name '"+names[last_gene_index]+"')",
+                                "PASS (already RECORDED new_name in names '"+str(names)+"')",
                                 "type:gene",
                                 "starts:"+gene_start,
                                 "end:"+gene_end,
@@ -1308,6 +1309,13 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                     # to the sum of all previous found contigs
                     if contig_index != 0:
                         contig_pos_shift += int(contig_lengths[contig_index - 1])
+                        if b_verbose:
+                            print("contig_pos_shift set to "+str(contig_pos_shift)+" because contig_index != 0 ("+str(contig_index)+") and previous contig length is "+contig_lengths[contig_index - 1]+", line "+str(frame.f_lineno))
+                    else:
+                        # first contig
+                        contig_pos_shift = 0
+                        if b_verbose:
+                            print("contig_pos_shift set to "+str(contig_pos_shift)+" because contig_index == 0 ("+str(contig_index)+"), line "+str(frame.f_lineno))
                     continue
 
                 # added 2024 09 24: now need to replace name of previous record, testing if start end are the same
@@ -1387,6 +1395,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                         starts_vardict.append(int(gene_start))
                         ends_vardict.append(int(gene_end))
                         if b_verbose or b_check_gene_prot_rec:
+                            print("contig_pos_shift:"+str(contig_pos_shift)+", line "+str(frame.f_lineno))
                             print("\t".join([
                                 prog_tag,
                                 "RECORD: name:" + gene_name,
@@ -1524,13 +1533,13 @@ for annot_f in [pass_annot_f, fail_annot_f]:
 
                 else:
                     if b_display_not_treated_cases:
-                        print(prog_tag + " Case not treated for line "+line+", line "+str(sys._getframe().f_lineno))
+                        print(prog_tag + " Case not treated for line "+line+", line "+str(frame.f_lineno))
 
             except IndexError:
-                print("Exception IndexError for line '"+line+"', line "+str(sys._getframe().f_lineno))
+                print("Exception IndexError for line '"+line+"', line "+str(frame.f_lineno))
                 raise # means no other line
             except:
-                print("Exception for line "+line+", line "+str(sys._getframe().f_lineno))
+                print("Exception for line "+line+", line "+str(frame.f_lineno))
                 print("Unexpected error:", sys.exc_info()[0])
                 raise
     paf.close()
@@ -1564,7 +1573,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
 # print(f"len names :{ len(names)}")
 
 if b_verbose and b_check_gene_prot_rec:
-    print(prog_tag+ " check genes/prot records BEFORE cds/gene selection--------------")
+    print(prog_tag+ " check genes/prot records BEFORE cds/gene selection line "+ str(frame.f_lineno) +"--------------")
     for i in range(len(names)):
         print("name:"+names[i]+"\ttype:"+types[i]+" ["+str(starts[i])+", "+str(ends[i])+"]")
     print(prog_tag+ "---------------------------------------")
@@ -1609,7 +1618,7 @@ for i in range(len(types_ori)):
 # -------------------------------------------------------------
 # check gene prot record
 if b_check_gene_prot_rec:
-    print(prog_tag+ " check genes/prot/rna/stem_loop records --------------")
+    print(prog_tag+ " check genes/prot/rna/stem_loop records line "+str(frame.f_lineno)+"--------------")
     for i in range(len(names)):
         print("name:"+names[i]+"\ttype:"+types[i]+" ["+str(starts[i])+", "+str(ends[i])+"]")
     print(prog_tag+ "---------------------------------------")
@@ -1635,6 +1644,8 @@ with open(json_annot_f, 'w+') as f:
                 f.write(", ")
 
             f.write("\""+names[i]+"\": ["+str(starts[i])+", "+str(ends[i])+"]")
+            if b_verbose:
+                print("WRITE \""+names[i]+"\": ["+str(starts[i])+", "+str(ends[i])+"], line "+str(frame.f_lineno))
             b_first_cds_found = True
             b_gene_found = True
 
@@ -1651,6 +1662,8 @@ with open(json_annot_f, 'w+') as f:
                     f.write(", ")
 
                 f.write("\""+tmp_name+"\": ["+str(starts[i])+", "+str(ends[i])+"]")
+                if b_verbose:
+                    print("WRITE \""+tmp_name+"\": ["+str(starts[i])+", "+str(ends[i])+"], line "+str(frame.f_lineno))
                 b_first_cds_found = True
     # ------------------------------------------
 
@@ -1666,6 +1679,8 @@ with open(json_annot_f, 'w+') as f:
                 f.write(", ")
 
             f.write("\""+names[i]+"\": ["+str(starts[i])+", "+str(ends[i])+"]")
+            if b_verbose:
+                print("WRITE \""+names[i]+"\": ["+str(starts[i])+", "+str(ends[i])+"], line "+str(frame.f_lineno))
             b_first_cds_found = True
     f.write("}")
 
@@ -1678,6 +1693,8 @@ with open(json_annot_f, 'w+') as f:
                 f.write(", ")
 
             f.write("\""+names[i]+"\": ["+str(starts[i])+", "+str(ends[i])+"]")
+            if b_verbose:
+                print("WRITE \""+names[i]+"\": ["+str(starts[i])+", "+str(ends[i])+"], line "+str(frame.f_lineno))
             b_first_cds_found = True
     f.write("}")
 
@@ -1690,6 +1707,8 @@ with open(json_annot_f, 'w+') as f:
                 f.write(", ")
 
             f.write("\""+names[i]+"\": ["+str(starts[i])+", "+str(ends[i])+"]")
+            if b_verbose:
+                print("WRITE \""+names[i]+"\": ["+str(starts[i])+", "+str(ends[i])+"], line "+str(frame.f_lineno))
             b_first_cds_found = True
     f.write("}")
     
