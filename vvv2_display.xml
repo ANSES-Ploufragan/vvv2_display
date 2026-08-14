@@ -1,8 +1,8 @@
 <tool id="vvv2_display" name="vvv2_display" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" python_template_version="3.9">
     <description>Display SNP proportions (vardict outputs), CDS (vadr annotations) of an assembly/genome, coverage depth (samtools depth), in png image</description>
     <macros>
-        <token name="@TOOL_VERSION@">0.2.5.0</token>
-        <token name="@VERSION_SUFFIX@">2</token>
+        <token name="@TOOL_VERSION@">0.2.5.1</token>
+        <token name="@VERSION_SUFFIX@">1</token>
     </macros>
     <xrefs>
         <xref type='bio.tools'>vvv2_display</xref>
