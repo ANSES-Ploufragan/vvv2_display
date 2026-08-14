@@ -50,7 +50,7 @@ def __main__():
     # allow to run tests from everywhere
     
     prog_tag = '[' + os.path.basename(__file__) + ']'
-    version = '0.2.5.0'
+    version = '0.2.5.1'
 
     # to record if we display cov depth in graph or not (depends on provided intputs)
     b_cov_depth_display = False
@@ -231,6 +231,7 @@ def __main__():
                          "in:", 
                          " - vardict variant calling output",
                          " - vadr assembly annotations",
+                         " - [option] samtools depth output (coverage depth txt file)",
                          "out:",
                          " - png file (image of SNP proportion alongside the assembly with CDS positions)",
                          " - tsv file with variant calling summary, location in CDS and surround DNA sequence",
