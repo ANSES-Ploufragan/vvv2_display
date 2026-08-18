@@ -1,4 +1,4 @@
-#!/media/dd_travail/mamba_env_wip/2bc7c1800cbad08cf53d62fe5fdf2730_/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # This file is part of the vvv2_display distribution (https://github.com/ANSES-Ploufragan/vvv2_display).
