@@ -1,3 +1,5 @@
+0.2.5.3:
+  - convert_tbl2json: correct typo ('bline' instead of 'line')
 0.2.5.2:
   - convert_tbl2json: correct bad absolute shebang
 0.2.5.1:

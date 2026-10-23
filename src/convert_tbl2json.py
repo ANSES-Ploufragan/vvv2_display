@@ -847,7 +847,7 @@ for annot_f in [pass_annot_f, fail_annot_f]:
                     # this part until else MUST be useless, but bug found only when b_verbose is True...
                     elif (len(line_fields) == 3) and (line_fields[2] == 'misc_feature'):
                         misc_feature_start = re.sub(non_alphanum, '', line_fields[0])
-                        misc_feature_end   = re.sub(non_alphanum, '',bline_fields[1])
+                        misc_feature_end   = re.sub(non_alphanum, '', line_fields[1])
                         b_next_is_note     = True
                         b_next_is_product  = False
                         continue
