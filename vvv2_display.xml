@@ -49,7 +49,7 @@
 	<!-- end intermediate output files added for Galaxy compatibility -->		
     </outputs>
     <tests>
-        <test>
+        <test expect_num_outputs="8">
             <param name="vadr_fail_annotation" value="test_vvv2_display/res_vadr_fail.tbl" ftype="tabular"/>	
             <param name="vadr_pass_annotation" value="test_vvv2_display/res_vadr_pass.tbl" ftype="tabular"/>
             <param name="vadr_seqstat" value="test_vvv2_display/res_vadr.seqstat" ftype="txt"/>
@@ -62,7 +62,7 @@
             <output name="snp_loc_summary" file="test_vvv2_display/res_snp_summary.tsv" ftype="tabular"/>
             <!-- intermediate output files -->
             <output name="snp_loc" file="test_vvv2_display/res_snp.txt" ftype="txt"/>
-	          <output name="json_annot" file="test_vvv2_display/res_vadr.json" ftype="json"/>
+	        <output name="json_annot" file="test_vvv2_display/res_vadr.json" ftype="json"/>
             <output name="bed_annot" file="test_vvv2_display/res_vadr.4vardict.bed" ftype="bed"/>
             <output name="correct_vcf" file="test_vvv2_display/res_correct.vcf" ftype="vcf"/>
             <output name="contig_limits" file="test_vvv2_display/contig_limits.txt" ftype="txt"/>
