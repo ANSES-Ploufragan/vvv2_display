@@ -2,7 +2,7 @@
     <description>Display SNP proportions (vardict outputs), CDS (vadr annotations) of an assembly/genome, coverage depth (samtools depth), in png image</description>
     <macros>
         <token name="@TOOL_VERSION@">0.2.5.3</token>
-        <token name="@VERSION_SUFFIX@">1</token>
+        <token name="@VERSION_SUFFIX@">0</token>
     </macros>
     <xrefs>
         <xref type='bio.tools'>vvv2_display</xref>
